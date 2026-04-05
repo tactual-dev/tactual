@@ -18,7 +18,7 @@ program
     "Screen-reader navigation cost analyzer. " +
       "Measures how hard it is for AT users to discover, reach, and operate web content.",
   )
-  .version(VERSION);
+  .version(VERSION, "-v, --version");
 
 // ---- analyze-url ----
 
