@@ -121,6 +121,94 @@ describe("CLI", () => {
     });
   });
 
+  describe("trace-path command", () => {
+    it("shows help for trace-path", () => {
+      const { stdout } = exec("trace-path --help");
+      expect(stdout).toContain("Trace the step-by-step");
+      expect(stdout).toContain("<url>");
+      expect(stdout).toContain("<target>");
+      expect(stdout).toContain("--profile");
+      expect(stdout).toContain("--explore");
+      expect(stdout).toContain("--wait-for-selector");
+    });
+
+    it("rejects missing arguments", () => {
+      const { exitCode } = exec("trace-path", true);
+      expect(exitCode).not.toBe(0);
+    });
+  });
+
+  describe("save-auth command", () => {
+    it("shows help for save-auth", () => {
+      const { stdout } = exec("save-auth --help");
+      expect(stdout).toContain("Authenticate with a web app");
+      expect(stdout).toContain("--click");
+      expect(stdout).toContain("--fill");
+      expect(stdout).toContain("--wait-for-url");
+      expect(stdout).toContain("--output");
+    });
+
+    it("rejects missing URL argument", () => {
+      const { exitCode } = exec("save-auth", true);
+      expect(exitCode).not.toBe(0);
+    });
+  });
+
+  describe("analyze-pages command", () => {
+    it("shows help for analyze-pages", () => {
+      const { stdout } = exec("analyze-pages --help");
+      expect(stdout).toContain("Analyze multiple pages");
+      expect(stdout).toContain("<urls...>");
+      expect(stdout).toContain("--profile");
+      expect(stdout).toContain("--storage-state");
+      expect(stdout).toContain("--wait-for-selector");
+    });
+
+    it("rejects missing URLs argument", () => {
+      const { exitCode } = exec("analyze-pages", true);
+      expect(exitCode).not.toBe(0);
+    });
+  });
+
+  describe("suggest-remediations command", () => {
+    it("shows help for suggest-remediations", () => {
+      const { stdout } = exec("suggest-remediations --help");
+      expect(stdout).toContain("remediation suggestions");
+      expect(stdout).toContain("<file>");
+      expect(stdout).toContain("--max");
+    });
+
+    it("exits non-zero for missing file", () => {
+      const { exitCode } = exec("suggest-remediations nonexistent.json", true);
+      expect(exitCode).not.toBe(0);
+    });
+  });
+
+  describe("analyze-url new flags", () => {
+    it("help shows new flags", () => {
+      const { stdout } = exec("analyze-url --help");
+      expect(stdout).toContain("--wait-for-selector");
+      expect(stdout).toContain("--wait-time");
+      expect(stdout).toContain("--storage-state");
+      expect(stdout).toContain("--summary-only");
+      expect(stdout).toContain("--probe");
+    });
+  });
+
+  describe("help lists all commands", () => {
+    it("shows all 8 commands", () => {
+      const { stdout } = exec("--help");
+      expect(stdout).toContain("analyze-url");
+      expect(stdout).toContain("trace-path");
+      expect(stdout).toContain("save-auth");
+      expect(stdout).toContain("analyze-pages");
+      expect(stdout).toContain("suggest-remediations");
+      expect(stdout).toContain("diff");
+      expect(stdout).toContain("profiles");
+      expect(stdout).toContain("init");
+    });
+  });
+
   describe("unknown command", () => {
     it("shows error for unknown command", () => {
       const { stderr, exitCode } = exec("nonexistent-command", true);

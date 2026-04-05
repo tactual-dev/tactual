@@ -100,7 +100,7 @@ describe("analyze", () => {
     const state = makeState();
     const result = analyze([state], genericMobileWebSrV0);
 
-    expect(result.metadata.version).toBe("0.1.0");
+    expect(result.metadata.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(result.metadata.duration).toBeGreaterThanOrEqual(0);
   });
 });

@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.1.2 (2026-04-05)
+
+Full CLI/MCP parity, performance improvements, and output polish.
+
+### CLI Parity
+
+All 7 MCP tools are now available as CLI commands:
+- `trace-path <url> <target>`: step-by-step SR navigation trace with colored output
+- `save-auth <url>`: authenticate and save session state (`--click`, `--fill`, `--wait-for-url`)
+- `analyze-pages <urls...>`: multi-page site analysis with aggregated stats
+- `suggest-remediations <file>`: extract ranked fixes from analysis JSON
+
+New `analyze-url` flags matching MCP parameters:
+- `--wait-for-selector`: CSS selector to wait for (essential for SPAs)
+- `--wait-time`: additional milliseconds to wait after page load
+- `--storage-state`: Playwright storageState JSON for authenticated pages
+- `--summary-only`: compact ~500 byte output for health checks
+- `--probe`: opt-in keyboard probes for deep investigation
+
+### Performance
+
+- Keyboard probes now opt-in via `--probe` flag (CLI) and `probe` parameter (MCP). Default analysis runs in 5-15s instead of 2+ minutes.
+- Shared browser pool across MCP tool calls eliminates ~2s launch overhead per call
+- Network idle replaced with 2s fixed wait + convergence-based polling
+
+### CLI Output
+
+- ANSI colors: red for severe/high, yellow for moderate, green for passing
+- Score bars: visual representation at a glance
+- Only actionable findings shown (severe/high/moderate) — acceptable/strong filtered from console
+- Animated progress indicator with elapsed time
+- Issue groups with cleaner descriptions (no redundant counts)
+- `actionType` shown inline on findings
+- Respects `NO_COLOR` environment variable
+
 ## 0.1.0 (2026-04-05)
 
 Initial release.
@@ -28,6 +63,10 @@ Initial release.
 ### CLI
 
 - `analyze-url`: all 4 output formats, exploration, device emulation, severity/count filtering, threshold gating for CI
+- `trace-path`: step-by-step SR navigation trace
+- `save-auth`: authenticate and save session state
+- `analyze-pages`: multi-page site analysis
+- `suggest-remediations`: extract ranked fixes from analysis JSON
 - `diff`: compare two analysis results
 - `profiles`: list available AT profiles
 - `benchmark`: run benchmark suites against HTML fixtures

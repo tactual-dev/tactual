@@ -7,6 +7,8 @@ import { analyze } from "../core/analyzer.js";
 import { validateUrl } from "../core/url-validation.js";
 import { loadConfig, mergeConfigWithFlags, configToFilter } from "../core/config.js";
 import { checkThreshold } from "../core/filter.js";
+import { buildGraph } from "../core/graph-builder.js";
+import { collectEntryPoints, computePathsFromEntries } from "../core/path-analysis.js";
 import type { AnalysisResult, Finding } from "../core/types.js";
 import { VERSION } from "../version.js";
 
@@ -18,7 +20,7 @@ program
     "Screen-reader navigation cost analyzer. " +
       "Measures how hard it is for AT users to discover, reach, and operate web content.",
   )
-  .version(VERSION);
+  .version(VERSION, "-v, --version");
 
 // ---- analyze-url ----
 
@@ -42,6 +44,8 @@ program
   .option("--exclude-selector <selectors...>", "CSS selectors to exclude from capture")
   .option("--focus <landmarks...>", "Only analyze targets within these landmarks")
   .option("--suppress <codes...>", "Suppress these diagnostic codes")
+  // Analysis
+  .option("--probe", "Run keyboard probes on interactive targets (adds 30-60s but detects focus/keyboard issues)")
   // Display
   .option("--top <n>", "Only show the worst N findings")
   .option("--min-severity <level>", "Minimum severity to report (severe|high|moderate|acceptable|strong)")
@@ -52,6 +56,10 @@ program
   // Browser
   .option("--no-headless", "Run browser in headed mode (helps with bot-blocked sites)")
   .option("--timeout <ms>", "Page load timeout in milliseconds", "30000")
+  .option("--wait-for-selector <selector>", "CSS selector to wait for before capturing (essential for SPAs)")
+  .option("--wait-time <ms>", "Additional milliseconds to wait after page load")
+  .option("--storage-state <path>", "Playwright storageState JSON file for authenticated pages")
+  .option("--summary-only", "Output only summary stats (~500 bytes)")
   .action(
     async (
       url: string,
@@ -68,6 +76,7 @@ program
         excludeSelector?: string[];
         focus?: string[];
         suppress?: string[];
+        probe?: boolean;
         top?: string;
         minSeverity?: string;
         quiet?: boolean;
@@ -75,6 +84,10 @@ program
         config?: string;
         headless?: boolean;
         timeout?: string;
+        waitForSelector?: string;
+        waitTime?: string;
+        storageState?: string;
+        summaryOnly?: boolean;
       },
     ) => {
       // Load config file and merge with CLI flags
@@ -108,16 +121,32 @@ program
         process.exit(1);
       }
 
+      // Progress indicator
+      const startTime = Date.now();
+      const isTTY = process.stderr.isTTY;
+      let dots = 0;
+      const progress = isTTY ? setInterval(() => {
+        dots = (dots + 1) % 4;
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(0);
+        process.stderr.write(`\r  Analyzing ${url}${".".repeat(dots)}${" ".repeat(3 - dots)} (${elapsed}s)`);
+      }, 500) : null;
+      const stopProgress = () => {
+        if (progress) {
+          clearInterval(progress);
+          process.stderr.write("\r" + " ".repeat(80) + "\r");
+        }
+      };
+
       let browser;
       try {
         const pw = await import("playwright");
         const { captureState } = await import("../playwright/capture.js");
 
         const headless = opts.headless !== false;
-        console.error(`Launching browser${headless ? "" : " (headed)"}...`);
         browser = await pw.chromium.launch({ headless });
 
         const contextOptions: Record<string, unknown> = {};
+        if (opts.storageState) { contextOptions.storageState = opts.storageState; }
         const device = merged.device ?? opts.device;
         if (device) {
           const dev = pw.devices[device];
@@ -132,26 +161,28 @@ program
         const page = await context.newPage();
 
         const timeout = parseInt(opts.timeout ?? "30000", 10);
-        console.error(`Navigating to ${urlCheck.url}...`);
         await page.goto(urlCheck.url!, {
           waitUntil: "domcontentloaded",
           timeout,
         });
         // Short wait before capture — SPA convergence in captureState handles content readiness
         await page.waitForTimeout(2000);
+        if (opts.waitForSelector) { await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => {}); }
+        if (opts.waitTime) { await page.waitForTimeout(parseInt(opts.waitTime, 10)); }
 
-        console.error(`Capturing accessibility state...`);
         const rawState = await captureState(page, {
           device,
           provenance: "scripted",
           excludeSelectors: merged.excludeSelectors,
         });
 
-        // Run keyboard probes on interactive targets
-        console.error(`Probing ${rawState.targets.filter(t => ["button","link","menuitem","tab","combobox","menu","dialog","checkbox","radio","switch","slider","listbox"].includes(t.role?.toLowerCase() ?? "")).length} interactive targets...`);
-        const { probeTargets } = await import("../playwright/probes.js");
-        const probedTargets = await probeTargets(page, rawState.targets);
-        const state = { ...rawState, targets: probedTargets };
+        // Keyboard probes — opt-in via --probe flag (adds 30-60s)
+        let targets = rawState.targets;
+        if (opts.probe) {
+          const { probeTargets } = await import("../playwright/probes.js");
+          targets = await probeTargets(page, rawState.targets);
+        }
+        const state = { ...rawState, targets };
 
         const snapshotText = await page.ariaSnapshot().catch(() => "");
 
@@ -162,30 +193,14 @@ program
           const depth = parseInt(opts.exploreDepth ?? "3", 10);
           const budget = parseInt(opts.exploreBudget ?? "50", 10);
           const maxTargets = parseInt(opts.exploreMaxTargets ?? "2000", 10);
-          console.error(`Exploring hidden branches (depth=${depth}, budget=${budget})...`);
           const exploreResult = await exploreState(page, state, {
             device,
             maxDepth: depth,
             maxActions: budget,
             maxTotalTargets: maxTargets,
-            onStep: (step) => {
-              console.error(
-                `  [depth=${step.depth}] ${step.action}: "${step.targetName}" → ${step.newTargetsFound} new targets (${step.totalStates} states)`,
-              );
-            },
           });
           states = exploreResult.states;
-          console.error(
-            `Exploration complete: ${exploreResult.branchesExplored} branches, ` +
-              `${exploreResult.actionsPerformed} actions, ` +
-              `${exploreResult.skippedUnsafe} unsafe skipped`,
-          );
         }
-
-        const totalTargets = states.reduce((sum, s) => sum + s.targets.length, 0);
-        console.error(
-          `Captured ${totalTargets} targets across ${states.length} states. Analyzing...`,
-        );
 
         const result = analyze(states, profile, {
           name: url,
@@ -194,22 +209,22 @@ program
           filter,
         });
 
-        // Surface diagnostics to stderr
-        for (const d of result.diagnostics) {
-          if (opts.quiet && d.level === "info") continue;
-          const prefix = d.level === "error" ? "ERROR" : d.level === "warning" ? "WARN" : "INFO";
-          console.error(`[${prefix}] ${d.message}`);
+        if (opts.summaryOnly) {
+          const { summarize } = await import("../reporters/summarize.js");
+          const s = summarize(result);
+          stopProgress();
+          console.log(JSON.stringify({ url, profile: s.profile, stats: s.stats, severityCounts: s.severityCounts, topIssues: s.issueGroups.slice(0, 3).map(g => ({ issue: g.issue, count: g.count, worstScore: g.worstScore })) }, null, 2));
+          return; // skip normal output
         }
 
-        const hasErrors = result.diagnostics.some((d) => d.level === "error");
-        if (hasErrors) {
-          console.error(
-            "Analysis may be unreliable due to errors above. " +
-              "Results reflect what was captured, not necessarily the actual site.",
-          );
-        }
-
+        stopProgress();
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
         const output = formatReport(result, opts.format as ReportFormat);
+
+        // For console format, append timing
+        if (opts.format === "console" && isTTY) {
+          console.error(`  ${"\x1b[90m"}Completed in ${elapsed}s${"\x1b[0m"}`);
+        }
 
         if (opts.output) {
           const fs = await import("fs/promises");
@@ -234,9 +249,10 @@ program
           );
         }
       } catch (err) {
+        stopProgress();
         if (
           err instanceof Error &&
-          err.message.includes("Cannot find module")
+          (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))
         ) {
           console.error(
             "Playwright is required for analyze-url. Install it: npm install playwright",
@@ -249,6 +265,418 @@ program
       }
     },
   );
+
+// ---- trace-path ----
+
+program
+  .command("trace-path")
+  .description("Trace the step-by-step screen-reader navigation path to a specific target")
+  .argument("<url>", "URL of the page")
+  .argument("<target>", "Target ID or glob pattern (e.g., '*search*', 'combobox:search')")
+  .option("-p, --profile <id>", "AT profile to use")
+  .option("-d, --device <name>", "Device to emulate")
+  .option("-e, --explore", "Explore hidden branches before tracing")
+  .option("--wait-for-selector <selector>", "CSS selector to wait for (SPAs)")
+  .option("--timeout <ms>", "Page load timeout", "30000")
+  .action(
+    async (
+      url: string,
+      targetPattern: string,
+      opts: {
+        profile?: string;
+        device?: string;
+        explore?: boolean;
+        waitForSelector?: string;
+        timeout?: string;
+      },
+    ) => {
+      const profileId = opts.profile ?? "generic-mobile-web-sr-v0";
+      const profile = getProfile(profileId);
+      if (!profile) {
+        console.error(`Unknown profile: ${profileId}`);
+        console.error(`Available: ${listProfiles().join(", ")}`);
+        process.exit(1);
+      }
+
+      const urlCheck = validateUrl(url);
+      if (!urlCheck.valid) {
+        console.error(`Invalid URL: ${urlCheck.error}`);
+        process.exit(1);
+      }
+
+      const startTime = Date.now();
+      const isTTY = process.stderr.isTTY;
+      let dots = 0;
+      const progress = isTTY ? setInterval(() => {
+        dots = (dots + 1) % 4;
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(0);
+        process.stderr.write(`\r  Tracing path to "${targetPattern}"${".".repeat(dots)}${" ".repeat(3 - dots)} (${elapsed}s)`);
+      }, 500) : null;
+      const stopProgress = () => {
+        if (progress) {
+          clearInterval(progress);
+          process.stderr.write("\r" + " ".repeat(80) + "\r");
+        }
+      };
+
+      let browser;
+      try {
+        const pw = await import("playwright");
+        const { captureState } = await import("../playwright/capture.js");
+        const { findMatchingTargets, modelAnnouncement } = await import("../mcp/trace-helpers.js");
+
+        const timeout = parseInt(opts.timeout ?? "30000", 10);
+        browser = await pw.chromium.launch();
+        const context = await browser.newContext();
+        const page = await context.newPage();
+
+        await page.goto(urlCheck.url!, { waitUntil: "domcontentloaded", timeout });
+        await page.waitForTimeout(2000);
+
+        if (opts.waitForSelector) {
+          await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => {});
+        }
+
+        const state = await captureState(page, { provenance: "scripted" });
+        let states = [state];
+
+        if (opts.explore) {
+          const { explore: exploreState } = await import("../playwright/explorer.js");
+          const result = await exploreState(page, state, { maxDepth: 2, maxActions: 30 });
+          states = result.states;
+        }
+
+        await context.close();
+
+        // Build graph and find targets
+        const graph = buildGraph(states, profile);
+        const matches = findMatchingTargets(states, targetPattern);
+
+        stopProgress();
+
+        if (matches.length === 0) {
+          const available = states
+            .flatMap((s) => s.targets)
+            .filter((t) => t.kind !== "heading" && t.kind !== "landmark")
+            .slice(0, 15)
+            .map((t) => `  ${t.id} (${t.kind}: ${t.name || "(unnamed)"})`)
+            .join("\n");
+          console.error(`No targets matching "${targetPattern}" found.\n\nAvailable targets:\n${available}`);
+          process.exit(1);
+        }
+
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+        if (isTTY) console.error(`  \x1b[90mCompleted in ${elapsed}s\x1b[0m`);
+
+        // Trace each match
+        for (const match of matches.slice(0, 5)) {
+          const targetNodeId = `${match.stateId}:${match.target.id}`;
+          if (!graph.hasNode(targetNodeId)) continue;
+
+          const matchState = states.find((s) => s.id === match.stateId);
+          if (!matchState) continue;
+
+          const entryPoints = collectEntryPoints(matchState, graph);
+          const paths = computePathsFromEntries(graph, entryPoints, targetNodeId);
+          const bestPath = paths[0] ?? null;
+
+          console.log("");
+          console.log(`  \x1b[1mTrace: ${match.target.id}\x1b[0m`);
+          console.log(`  \x1b[2m${match.target.role} "${match.target.name}"\x1b[0m`);
+          if (match.target.selector) {
+            console.log(`  \x1b[2m${match.target.selector}\x1b[0m`);
+          }
+
+          if (!bestPath) {
+            console.log(`  \x1b[31mNo path found from any entry point.\x1b[0m`);
+            continue;
+          }
+
+          console.log(`  \x1b[2mTotal cost: ${bestPath.totalCost.toFixed(1)} | Steps: ${bestPath.edges.length}\x1b[0m`);
+          console.log("");
+
+          for (let i = 0; i < bestPath.edges.length; i++) {
+            const edge = bestPath.edges[i];
+            const toNode = graph.getNode(edge.to);
+            const toMeta = toNode?.metadata as { target?: import("../core/types.js").Target } | undefined;
+            const toTarget = toMeta?.target;
+            const cumCost = bestPath.edges.slice(0, i + 1).reduce((s: number, e) => s + e.cost, 0);
+
+            const announcement = modelAnnouncement(
+              edge.action,
+              toTarget?.role ?? "unknown",
+              toTarget?.name || "(unnamed)",
+              toTarget?.kind,
+            );
+
+            const isLast = i === bestPath.edges.length - 1;
+            const arrow = isLast ? "\x1b[32m→\x1b[0m" : "\x1b[2m→\x1b[0m";
+            const nameColor = isLast ? "\x1b[1m" : "";
+
+            console.log(`  ${arrow}  \x1b[33m${edge.action}\x1b[0m  ${nameColor}${toTarget?.name || "(unnamed)"}\x1b[0m`);
+            console.log(`     \x1b[2m${announcement}  (cost +${edge.cost}, total ${cumCost.toFixed(1)})\x1b[0m`);
+          }
+          console.log("");
+        }
+      } catch (err) {
+        stopProgress();
+        if (
+          err instanceof Error &&
+          (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))
+        ) {
+          console.error("Playwright is required. Install it: npm install playwright");
+          process.exit(1);
+        }
+        throw err;
+      } finally {
+        await browser?.close().catch(() => {});
+      }
+    },
+  );
+
+// ---- save-auth ----
+
+program
+  .command("save-auth")
+  .description("Authenticate with a web app and save session state for later analysis")
+  .argument("<url>", "Login page URL")
+  .option("-o, --output <path>", "Output file for storageState JSON", "tactual-auth.json")
+  .option("--click <text>", "Click a button/link with this text")
+  .option("--fill <pairs...>", "Fill form fields: selector=value (e.g., '#email=user@test.com')")
+  .option("--wait-for-url <pattern>", "Wait until URL contains this string")
+  .option("--timeout <ms>", "Timeout per step in ms", "30000")
+  .action(async (url: string, opts: {
+    output: string;
+    click?: string;
+    fill?: string[];
+    waitForUrl?: string;
+    timeout?: string;
+  }) => {
+    const urlCheck = validateUrl(url);
+    if (!urlCheck.valid) { console.error(`Invalid URL: ${urlCheck.error}`); process.exit(1); }
+
+    try {
+      const pw = await import("playwright");
+      const fs = await import("fs/promises");
+      const pathMod = await import("path");
+
+      const timeout = parseInt(opts.timeout ?? "30000", 10);
+      const browser = await pw.chromium.launch();
+      const context = await browser.newContext();
+      const page = await context.newPage();
+
+      await page.goto(urlCheck.url!, { waitUntil: "domcontentloaded", timeout });
+      await page.waitForTimeout(2000);
+
+      // Execute steps
+      if (opts.fill) {
+        for (const pair of opts.fill) {
+          const [selector, value] = pair.split("=", 2);
+          if (selector && value) await page.fill(selector, value);
+        }
+      }
+      if (opts.click) {
+        const target = page.getByRole("button", { name: opts.click })
+          .or(page.getByRole("link", { name: opts.click }))
+          .or(page.getByText(opts.click, { exact: false }));
+        if (await target.count() > 0) {
+          await target.first().click({ timeout });
+        } else {
+          await page.click(opts.click, { timeout });
+        }
+      }
+      if (opts.waitForUrl) {
+        await page.waitForURL(`**${opts.waitForUrl}**`, { timeout });
+      }
+
+      await page.waitForTimeout(2000);
+
+      const state = await context.storageState();
+      const resolved = pathMod.resolve(opts.output);
+      await fs.writeFile(resolved, JSON.stringify(state, null, 2));
+
+      console.log(`Auth state saved to ${resolved}`);
+      console.log(`Use with: tactual analyze-url <url> --storage-state ${opts.output}`);
+
+      await browser.close();
+    } catch (err) {
+      console.error(`Auth failed: ${err instanceof Error ? err.message : err}`);
+      process.exit(1);
+    }
+  });
+
+// ---- analyze-pages ----
+
+program
+  .command("analyze-pages")
+  .description("Analyze multiple pages with site-level aggregation")
+  .argument("<urls...>", "URLs to analyze (space-separated)")
+  .option("-p, --profile <id>", "AT profile to use")
+  .option("-f, --format <format>", "Output format: json, console", "console")
+  .option("--wait-for-selector <selector>", "CSS selector to wait for on each page")
+  .option("--wait-time <ms>", "Additional wait per page in ms")
+  .option("--storage-state <path>", "Playwright storageState JSON for authenticated pages")
+  .option("--timeout <ms>", "Page load timeout per URL", "30000")
+  .action(async (urls: string[], opts: {
+    profile?: string;
+    format: string;
+    waitForSelector?: string;
+    waitTime?: string;
+    storageState?: string;
+    timeout?: string;
+  }) => {
+    const profileId = opts.profile ?? "generic-mobile-web-sr-v0";
+    const profile = getProfile(profileId);
+    if (!profile) { console.error(`Unknown profile: ${profileId}\nAvailable: ${listProfiles().join(", ")}`); process.exit(1); }
+
+    try {
+      const pw = await import("playwright");
+      const { captureState } = await import("../playwright/capture.js");
+
+      const timeout = parseInt(opts.timeout ?? "30000", 10);
+      const browser = await pw.chromium.launch();
+      const contextOptions: Record<string, unknown> = {};
+      if (opts.storageState) contextOptions.storageState = opts.storageState;
+      const context = await browser.newContext(contextOptions);
+
+      const allScores: number[] = [];
+      const allSeverity = { severe: 0, high: 0, moderate: 0, acceptable: 0, strong: 0 };
+      const pageResults: Array<{ url: string; targets: number; p10: number; median: number; avg: number; worst: number; topIssue: string | null }> = [];
+
+      for (const url of urls) {
+        const urlCheck = validateUrl(url);
+        if (!urlCheck.valid) {
+          pageResults.push({ url, targets: 0, p10: 0, median: 0, avg: 0, worst: 0, topIssue: `Invalid URL: ${urlCheck.error}` });
+          continue;
+        }
+
+        try {
+          const page = await context.newPage();
+          await page.goto(urlCheck.url!, { waitUntil: "domcontentloaded", timeout });
+          await page.waitForTimeout(2000);
+          if (opts.waitForSelector) await page.waitForSelector(opts.waitForSelector, { timeout: 10000 }).catch(() => {});
+          if (opts.waitTime) await page.waitForTimeout(parseInt(opts.waitTime, 10));
+
+          const state = await captureState(page, { provenance: "scripted", spaWaitTimeout: 15000 });
+          await page.close();
+
+          const result = analyze([state], profile, { name: url });
+          const scores = result.findings.map(f => f.scores.overall);
+          const sorted = [...scores].sort((a, b) => a - b);
+          const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length * 10) / 10 : 0;
+          const p10 = sorted.length >= 5 ? sorted[Math.floor(sorted.length * 0.1)] : sorted[0] ?? 0;
+          const median = sorted.length > 0 ? sorted[Math.floor(sorted.length * 0.5)] : 0;
+          const worst = sorted[0] ?? 0;
+
+          for (const f of result.findings) {
+            const sev = f.severity as keyof typeof allSeverity;
+            if (allSeverity[sev] !== undefined) allSeverity[sev]++;
+          }
+          allScores.push(...scores);
+
+          const worstFinding = result.findings.sort((a, b) => a.scores.overall - b.scores.overall)[0];
+          pageResults.push({
+            url, targets: result.findings.length, p10, median, avg, worst,
+            topIssue: worstFinding ? `${worstFinding.targetId} (${worstFinding.scores.overall}/100)` : null,
+          });
+        } catch (err) {
+          pageResults.push({ url, targets: 0, p10: 0, median: 0, avg: 0, worst: 0, topIssue: `Error: ${err instanceof Error ? err.message.slice(0, 60) : "unknown"}` });
+        }
+      }
+
+      await browser.close();
+
+      // Aggregate
+      const allSorted = [...allScores].sort((a, b) => a - b);
+      const siteP10 = allSorted.length >= 5 ? allSorted[Math.floor(allSorted.length * 0.1)] : allSorted[0] ?? 0;
+      const siteMedian = allSorted.length > 0 ? allSorted[Math.floor(allSorted.length * 0.5)] : 0;
+      const siteAvg = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length * 10) / 10 : 0;
+
+      if (opts.format === "json") {
+        console.log(JSON.stringify({
+          site: { pagesAnalyzed: pageResults.length, totalTargets: allScores.length, p10: siteP10, median: siteMedian, average: siteAvg, worst: allSorted[0] ?? 0, severityCounts: allSeverity },
+          pages: pageResults,
+        }, null, 2));
+      } else {
+        // Console format
+        const c = process.stdout.isTTY !== false && !process.env.NO_COLOR;
+        const bold = c ? "\x1b[1m" : "";
+        const dim = c ? "\x1b[2m" : "";
+        const green = c ? "\x1b[32m" : "";
+        const yellow = c ? "\x1b[33m" : "";
+        const red = c ? "\x1b[31m" : "";
+        const reset = c ? "\x1b[0m" : "";
+
+        console.log("");
+        console.log(`  ${bold}Tactual Site Analysis${reset}  ${dim}${urls.length} pages · ${profileId}${reset}`);
+        console.log(`  ${dim}P10${reset} ${siteP10}  ${dim}Median${reset} ${siteMedian}  ${dim}Avg${reset} ${siteAvg}  ${dim}Targets${reset} ${allScores.length}`);
+        const sevParts: string[] = [];
+        for (const [sev, count] of Object.entries(allSeverity)) {
+          if (count > 0) {
+            const color = sev === "severe" || sev === "high" ? red : sev === "moderate" ? yellow : green;
+            sevParts.push(`${color}${count} ${sev}${reset}`);
+          }
+        }
+        if (sevParts.length > 0) console.log(`  ${sevParts.join(`${dim}  ·  ${reset}`)}`);
+        console.log("");
+
+        for (const r of pageResults) {
+          const scoreColor = r.p10 >= 90 ? green : r.p10 >= 75 ? green : r.p10 >= 60 ? yellow : red;
+          console.log(`  ${scoreColor}P10:${r.p10}${reset}  ${dim}Med:${r.median} Avg:${r.avg}${reset}  ${r.url}`);
+          if (r.topIssue) console.log(`  ${dim}       ↳ ${r.topIssue}${reset}`);
+        }
+        console.log("");
+      }
+    } catch (err) {
+      if (err instanceof Error && (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))) {
+        console.error("Playwright is required. Install it: npm install playwright");
+        process.exit(1);
+      }
+      throw err;
+    }
+  });
+
+// ---- suggest-remediations ----
+
+program
+  .command("suggest-remediations")
+  .description("Extract top remediation suggestions from an analysis result")
+  .argument("<file>", "Path to analysis JSON file")
+  .option("-n, --max <n>", "Maximum suggestions to show", "10")
+  .action(async (file: string, opts: { max: string }) => {
+    const fs = await import("fs/promises");
+    try {
+      const data = JSON.parse(await fs.readFile(file, "utf-8"));
+      // Handle both full AnalysisResult and summarized JSON
+      const findings = data.findings ?? data.worstFindings ?? [];
+      const sorted = [...findings].sort((a: any, b: any) => (a.scores?.overall ?? a.overall ?? 100) - (b.scores?.overall ?? b.overall ?? 100));
+      const max = parseInt(opts.max, 10);
+      const seenFixes = new Set<string>();
+
+      console.log("");
+      let count = 0;
+      for (const f of sorted) {
+        const fixes = f.suggestedFixes ?? [];
+        for (const fix of fixes) {
+          if (seenFixes.has(fix)) continue;
+          seenFixes.add(fix);
+          const score = f.scores?.overall ?? f.overall ?? "?";
+          const id = f.targetId ?? "unknown";
+          console.log(`  ${score}/100  ${id}`);
+          console.log(`  \x1b[2m↳ ${fix}\x1b[0m`);
+          console.log("");
+          count++;
+          if (count >= max) break;
+        }
+        if (count >= max) break;
+      }
+      if (count === 0) console.log("  No fix suggestions found.");
+      console.log("");
+    } catch (err) {
+      console.error(`Error: ${err}`);
+      process.exit(1);
+    }
+  });
 
 // ---- diff ----
 
@@ -341,7 +769,7 @@ program
         process.exit(1);
       }
     } catch (err) {
-      if (err instanceof Error && err.message.includes("Cannot find module")) {
+      if (err instanceof Error && (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))) {
         console.error("Playwright is required for benchmarks. Install it: npm install playwright");
         process.exit(1);
       }

@@ -238,10 +238,14 @@ function groupByIssue(findings: Finding[]): IssueGroup[] {
       }
     }
 
-    // Use a count-aware description when the penalty was parameterized
-    const issue = affected.length > 2 && representative.match(/^\d+/)
-      ? representative.replace(/^\d+/, `${affected.length} targets with`)
-      : representative;
+    // For parameterized penalties ("42 controls precede..."), strip the
+    // leading number to avoid redundancy with the Nx count prefix.
+    let issue = representative;
+    if (representative.match(/^\d+\s/)) {
+      issue = representative.replace(/^\d+\s+/, "");
+      // Capitalize first letter
+      issue = issue.charAt(0).toUpperCase() + issue.slice(1);
+    }
 
     groups.push({ issue, count: affected.length, fix, worstScore, examples });
   }

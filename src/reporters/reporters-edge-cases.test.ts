@@ -31,8 +31,8 @@ function makeFinding(overrides: Partial<Finding> = {}): Finding {
   return {
     targetId: overrides.targetId ?? "target-1",
     profile: "generic-mobile-web-sr-v0",
-    scores: { discoverability: 80, reachability: 70, operability: 90, recovery: 85, interopRisk: 0, overall: 80 },
-    severity: "acceptable" as const,
+    scores: { discoverability: 60, reachability: 60, operability: 70, recovery: 65, interopRisk: 0, overall: 65 },
+    severity: "moderate" as const,
     bestPath: ["nextHeading: Main", "nextItem: Button"],
     alternatePaths: [],
     penalties: [],
@@ -209,6 +209,7 @@ describe("reporters edge cases", () => {
   describe("score edge cases", () => {
     it("maps all-zero scores to severe severity", () => {
       const finding = makeFinding({
+        targetId: "t-severe",
         scores: { discoverability: 0, reachability: 0, operability: 0, recovery: 0, interopRisk: 0, overall: 0 },
         severity: "severe",
       });
@@ -216,9 +217,8 @@ describe("reporters edge cases", () => {
       const outputs = allFormats(result);
       assertAllValid(outputs);
 
-      // Console should show severe icon
-      expect(outputs.console).toContain("[!!]");
-      expect(outputs.console).toContain("[severe]");
+      // Console should contain the severe finding
+      expect(outputs.console).toContain("t-severe");
 
       // SARIF should report as error
       const sarif = JSON.parse(outputs.sarif);
@@ -237,7 +237,7 @@ describe("reporters edge cases", () => {
       assertAllValid(outputs);
 
       // Console severity overview should mention strong
-      expect(outputs.console).toContain("strong: 1");
+      expect(outputs.console).toContain("1 strong");
 
       // SARIF should skip strong findings
       const sarif = JSON.parse(outputs.sarif);
@@ -246,14 +246,14 @@ describe("reporters edge cases", () => {
 
     it("assigns correct severity at exact boundary scores", () => {
       const boundaries = [
-        { overall: 39, expectedSeverity: "severe", expectedIcon: "[!!]", expectedSarifRule: "tactual/severe", expectedSarifLevel: "error" },
-        { overall: 40, expectedSeverity: "high", expectedIcon: "[! ]", expectedSarifRule: "tactual/high", expectedSarifLevel: "error" },
-        { overall: 59, expectedSeverity: "high", expectedIcon: "[! ]", expectedSarifRule: "tactual/high", expectedSarifLevel: "error" },
-        { overall: 60, expectedSeverity: "moderate", expectedIcon: "[~ ]", expectedSarifRule: "tactual/moderate", expectedSarifLevel: "warning" },
-        { overall: 74, expectedSeverity: "moderate", expectedIcon: "[~ ]", expectedSarifRule: "tactual/moderate", expectedSarifLevel: "warning" },
-        { overall: 75, expectedSeverity: "acceptable", expectedIcon: "[ok]", expectedSarifRule: "tactual/acceptable", expectedSarifLevel: "note" },
-        { overall: 89, expectedSeverity: "acceptable", expectedIcon: "[ok]", expectedSarifRule: "tactual/acceptable", expectedSarifLevel: "note" },
-        { overall: 90, expectedSeverity: "strong", expectedIcon: "[++]", sarifSkipped: true },
+        { overall: 39, expectedSeverity: "severe", expectedSarifRule: "tactual/severe", expectedSarifLevel: "error" },
+        { overall: 40, expectedSeverity: "high", expectedSarifRule: "tactual/high", expectedSarifLevel: "error" },
+        { overall: 59, expectedSeverity: "high", expectedSarifRule: "tactual/high", expectedSarifLevel: "error" },
+        { overall: 60, expectedSeverity: "moderate", expectedSarifRule: "tactual/moderate", expectedSarifLevel: "warning" },
+        { overall: 74, expectedSeverity: "moderate", expectedSarifRule: "tactual/moderate", expectedSarifLevel: "warning" },
+        { overall: 75, expectedSeverity: "acceptable", expectedSarifRule: "tactual/acceptable", expectedSarifLevel: "note" },
+        { overall: 89, expectedSeverity: "acceptable", expectedSarifRule: "tactual/acceptable", expectedSarifLevel: "note" },
+        { overall: 90, expectedSeverity: "strong", sarifSkipped: true },
       ];
 
       for (const b of boundaries) {
@@ -267,11 +267,12 @@ describe("reporters edge cases", () => {
         // but appear in the severity overview line
         const consoleOut = formatConsole(result);
         if (b.sarifSkipped) {
-          // Strong: check severity overview line instead of finding icon
-          expect(consoleOut, `console severity overview at score ${b.overall}`).toContain(`${b.expectedSeverity}: 1`);
+          // Strong: check severity overview line
+          expect(consoleOut, `console severity overview at score ${b.overall}`).toContain(`1 ${b.expectedSeverity}`);
         } else {
-          expect(consoleOut, `console at score ${b.overall}`).toContain(b.expectedIcon);
-          expect(consoleOut, `console severity label at score ${b.overall}`).toContain(`[${b.expectedSeverity}]`);
+          // Non-strong: check that the score appears in findings
+          expect(consoleOut, `console score at ${b.overall}`).toContain(String(b.overall));
+          expect(consoleOut, `console severity word at ${b.overall}`).toContain(b.expectedSeverity);
         }
 
         // SARIF format
@@ -358,9 +359,9 @@ describe("reporters edge cases", () => {
       expect(mdOut).not.toContain("Analysis took 500ms");
 
       const consoleOut = formatConsole(result);
-      expect(consoleOut).toContain("!!!");
+      expect(consoleOut).toContain("ERROR");
       expect(consoleOut).toContain("Page has no landmarks");
-      expect(consoleOut).toContain(" ! ");
+      expect(consoleOut).toContain("Warning:");
       expect(consoleOut).toContain("Heading structure is weak");
       // Info-level diagnostics are filtered out in summarized output
       expect(consoleOut).not.toContain("Analysis took 500ms");

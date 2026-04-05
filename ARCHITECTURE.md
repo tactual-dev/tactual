@@ -65,12 +65,10 @@ index.ts (public API re-exports)
     └── suites/public-fixtures.ts ← Built-in benchmark suite
 ```
 
-No circular dependencies. All imports flow downward.
-
 ## Key Design Decisions
 
-### In-memory graph, not Neo4j
-The navigation graph is a directed weighted adjacency list (core/graph.ts). Graphs are ephemeral — built per analysis run, not persisted. At the scale of a single page (10-500 targets, 50-2000 edges), in-memory Dijkstra is fast enough. Neo4j would add deployment complexity without benefit.
+### In-memory graph
+The navigation graph is a directed weighted adjacency list (core/graph.ts). Graphs are ephemeral — built per analysis run, not persisted. At the scale of a single page (10-500 targets, 50-2000 edges), in-memory Dijkstra is efficient.
 
 ### Single package, multiple entry points
 Rather than a monorepo with 7 packages, Tactual is one npm package with sub-path exports (`tactual`, `tactual/playwright`, `tactual/mcp`). Playwright is an optional peer dependency — users who only want the library API don't need to install it.
