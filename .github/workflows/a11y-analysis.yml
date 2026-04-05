@@ -5,7 +5,7 @@ name: Accessibility Analysis
 #
 #   jobs:
 #     a11y:
-#       uses: tactual-dev/tactual/.github/workflows/a11y-analysis.yml@master
+#       uses: tactual-dev/tactual/.github/workflows/a11y-analysis.yml@main
 #       with:
 #         url: https://your-app.example.com
 #         profile: generic-mobile-web-sr-v0
@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: tactual-dev/tactual
-          ref: master
+          ref: main
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
