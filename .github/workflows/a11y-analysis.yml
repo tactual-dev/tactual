@@ -1,0 +1,112 @@
+name: Accessibility Analysis
+
+# Reusable workflow — other repos can call this to analyze their pages.
+# Usage in another repo's workflow:
+#
+#   jobs:
+#     a11y:
+#       uses: tactual-dev/tactual/.github/workflows/a11y-analysis.yml@master
+#       with:
+#         url: https://your-app.example.com
+#         profile: generic-mobile-web-sr-v0
+#         explore: true
+
+on:
+  workflow_call:
+    inputs:
+      url:
+        description: URL to analyze
+        required: true
+        type: string
+      profile:
+        description: AT profile to use
+        required: false
+        type: string
+        default: generic-mobile-web-sr-v0
+      explore:
+        description: Explore hidden branches
+        required: false
+        type: boolean
+        default: false
+      format:
+        description: Output format (json, markdown, console, sarif)
+        required: false
+        type: string
+        default: sarif
+      fail-below:
+        description: Fail if average score is below this threshold
+        required: false
+        type: number
+        default: 0
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Tactual
+        uses: actions/checkout@v4
+        with:
+          repository: tactual-dev/tactual
+          ref: master
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install Playwright
+        run: npx playwright install chromium --with-deps
+
+      - name: Run analysis
+        id: analysis
+        run: |
+          EXPLORE_FLAG=""
+          if [ "${{ inputs.explore }}" = "true" ]; then
+            EXPLORE_FLAG="--explore"
+          fi
+
+          node dist/cli/index.js analyze-url "${{ inputs.url }}" \
+            --profile "${{ inputs.profile }}" \
+            --format "${{ inputs.format }}" \
+            $EXPLORE_FLAG \
+            --output results.${{ inputs.format == 'sarif' && 'sarif' || inputs.format == 'json' && 'json' || 'txt' }}
+
+          # Also generate JSON for threshold check
+          node dist/cli/index.js analyze-url "${{ inputs.url }}" \
+            --profile "${{ inputs.profile }}" \
+            $EXPLORE_FLAG \
+            --format json \
+            --output results.json
+
+      - name: Check score threshold
+        if: inputs.fail-below > 0
+        run: |
+          AVG=$(node -e "
+            const r = JSON.parse(require('fs').readFileSync('results.json','utf8'));
+            const avg = r.findings.reduce((s,f) => s + f.scores.overall, 0) / r.findings.length;
+            console.log(Math.round(avg * 10) / 10);
+          ")
+          echo "Average score: $AVG"
+          if (( $(echo "$AVG < ${{ inputs.fail-below }}" | bc -l) )); then
+            echo "::error::Average score $AVG is below threshold ${{ inputs.fail-below }}"
+            exit 1
+          fi
+
+      - name: Upload SARIF results
+        if: inputs.format == 'sarif' && always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+          category: tactual-a11y
+
+      - name: Upload analysis artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tactual-analysis
+          path: results.*

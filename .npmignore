@@ -1,0 +1,15 @@
+src/
+fixtures/
+*.test.ts
+*.config.ts
+*.config.js
+.prettierrc
+.github/
+.vscode/
+coverage/
+*.tsbuildinfo
+scripts/
+docs/
+*.md
+!README.md
+!LICENSE

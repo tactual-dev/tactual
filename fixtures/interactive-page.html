@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Accessibility Example</title>
+  <style>
+    .hidden { display: none; }
+    .menu { border: 1px solid #ccc; padding: 8px; background: white; }
+    .tab-panel { border: 1px solid #ccc; padding: 16px; }
+    .tab-panel.hidden { display: none; }
+    dialog { padding: 20px; border: 1px solid #333; border-radius: 8px; }
+    dialog::backdrop { background: rgba(0,0,0,0.5); }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <h1>Interactive Example</h1>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#products">Products</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Dropdown Menu -->
+    <section aria-label="Menu Demo">
+      <h2>Menu Example</h2>
+      <button aria-expanded="false" aria-haspopup="true" id="menu-btn"
+              onclick="toggleMenu()">
+        Options Menu
+      </button>
+      <div role="menu" id="dropdown-menu" class="menu hidden" aria-label="Options">
+        <button role="menuitem" onclick="alert('Settings')">Settings</button>
+        <button role="menuitem" onclick="alert('Preferences')">Preferences</button>
+        <button role="menuitem" onclick="alert('Help')">Help</button>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <section aria-label="Tab Demo">
+      <h2>Tabbed Content</h2>
+      <div role="tablist" aria-label="Product Info">
+        <button role="tab" id="tab-desc" aria-selected="true" aria-controls="panel-desc"
+                onclick="switchTab('desc')">Description</button>
+        <button role="tab" id="tab-specs" aria-selected="false" aria-controls="panel-specs"
+                onclick="switchTab('specs')">Specifications</button>
+        <button role="tab" id="tab-reviews" aria-selected="false" aria-controls="panel-reviews"
+                onclick="switchTab('reviews')">Reviews</button>
+      </div>
+      <div role="tabpanel" id="panel-desc" aria-labelledby="tab-desc" class="tab-panel">
+        <h3>Product Description</h3>
+        <p>This is the best widget ever made.</p>
+        <a href="#learn-more">Learn more about this product</a>
+      </div>
+      <div role="tabpanel" id="panel-specs" aria-labelledby="tab-specs" class="tab-panel hidden">
+        <h3>Technical Specifications</h3>
+        <p>Weight: 100g. Dimensions: 10x5x3 cm.</p>
+        <a href="#spec-sheet">Download spec sheet</a>
+      </div>
+      <div role="tabpanel" id="panel-reviews" aria-labelledby="tab-reviews" class="tab-panel hidden">
+        <h3>Customer Reviews</h3>
+        <p>Rated 4.5/5 by 200 customers.</p>
+        <a href="#all-reviews">Read all reviews</a>
+      </div>
+    </section>
+
+    <!-- Disclosure / Accordion -->
+    <section aria-label="FAQ">
+      <h2>Frequently Asked Questions</h2>
+      <details>
+        <summary>What is the return policy?</summary>
+        <p>You can return items within 30 days for a full refund.</p>
+        <a href="#returns">Full return policy</a>
+      </details>
+      <details>
+        <summary>Do you ship internationally?</summary>
+        <p>Yes, we ship to over 50 countries.</p>
+        <a href="#shipping">Shipping details</a>
+      </details>
+    </section>
+
+    <!-- Dialog -->
+    <section aria-label="Dialog Demo">
+      <h2>Help & Support</h2>
+      <button onclick="document.getElementById('help-dialog').showModal()">
+        Open Help
+      </button>
+      <dialog id="help-dialog" aria-label="Help">
+        <h3>Need Help?</h3>
+        <p>Contact us at support@example.com or call 1-800-HELP.</p>
+        <a href="#faq">View FAQ</a>
+        <button onclick="document.getElementById('help-dialog').close()">Close</button>
+      </dialog>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2026 Interactive Example</p>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const btn = document.getElementById('menu-btn');
+      const menu = document.getElementById('dropdown-menu');
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      menu.classList.toggle('hidden');
+    }
+
+    function switchTab(tab) {
+      // Deselect all tabs, hide all panels
+      document.querySelectorAll('[role="tab"]').forEach(t => {
+        t.setAttribute('aria-selected', 'false');
+      });
+      document.querySelectorAll('[role="tabpanel"]').forEach(p => {
+        p.classList.add('hidden');
+      });
+      // Select the clicked tab, show its panel
+      document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
+      document.getElementById('panel-' + tab).classList.remove('hidden');
+    }
+
+    // Close menu on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const menu = document.getElementById('dropdown-menu');
+        if (!menu.classList.contains('hidden')) {
+          toggleMenu();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

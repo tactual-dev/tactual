@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Good Accessibility Example</title>
+</head>
+<body>
+  <header role="banner">
+    <h1>Good Example Store</h1>
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Featured Products</h2>
+    <p>Browse our selection of products below.</p>
+
+    <section aria-label="Product List">
+      <h3>Widget A</h3>
+      <p>A great widget for everyday use.</p>
+      <button>Add to Cart</button>
+
+      <h3>Widget B</h3>
+      <p>Premium quality widget.</p>
+      <button>Add to Cart</button>
+    </section>
+
+    <section aria-label="Search">
+      <h2>Search Products</h2>
+      <label for="search">Search:</label>
+      <input type="search" id="search" name="search" placeholder="Search products...">
+      <button>Search</button>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <p>&copy; 2026 Good Example Store</p>
+    <a href="#privacy">Privacy Policy</a>
+  </footer>
+</body>
+</html>

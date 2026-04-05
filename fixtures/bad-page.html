@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bad Accessibility Example</title>
+</head>
+<body>
+  <!-- No landmarks, no heading hierarchy, poor labeling -->
+  <div>
+    <div class="logo">Bad Example Store</div>
+    <div class="nav">
+      <a href="#products">Products</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="#help">Help</a>
+      <a href="#faq">FAQ</a>
+      <a href="#terms">Terms</a>
+      <a href="#careers">Careers</a>
+      <a href="#blog">Blog</a>
+      <a href="#news">News</a>
+      <a href="#press">Press</a>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="product">
+      <div class="product-name">Widget A</div>
+      <div>A great widget.</div>
+      <div class="btn" onclick="addToCart()">Add to Cart</div>
+    </div>
+
+    <div class="product">
+      <div class="product-name">Widget B</div>
+      <div>Premium widget.</div>
+      <div class="btn" onclick="addToCart()">Add to Cart</div>
+    </div>
+
+    <div class="search-area">
+      <input type="text" placeholder="Search...">
+      <div class="btn" onclick="search()">Go</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <a href="#privacy">Privacy</a>
+  </div>
+</body>
+</html>

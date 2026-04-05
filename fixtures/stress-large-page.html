@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stress Test: Large Admin Dashboard (200+ Interactive Elements)</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 0; color: #1a1a1a; }
+    .skip-link { position: absolute; top: -40px; left: 0; background: #005fcc; color: #fff; padding: 8px 16px; z-index: 100; text-decoration: none; }
+    .skip-link:focus { top: 0; }
+    header { background: #1a1a2e; color: #fff; padding: 12px 24px; }
+    nav ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+    nav li { display: inline; }
+    nav a { color: #a8d8ff; text-decoration: none; padding: 4px 8px; display: inline-block; }
+    main { padding: 24px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 16px; padding: 8px; background: #f0f0f0; border-radius: 4px; }
+    .toolbar button { padding: 4px 10px; cursor: pointer; }
+    fieldset { margin-bottom: 16px; padding: 12px; border: 1px solid #ccc; border-radius: 4px; }
+    legend { font-weight: bold; }
+    label { display: block; margin: 6px 0 2px; }
+    input, select, textarea { margin-bottom: 8px; padding: 4px 8px; }
+    details { margin: 4px 0; border: 1px solid #ddd; border-radius: 4px; padding: 4px 8px; }
+    summary { cursor: pointer; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+    th { background: #f5f5f5; }
+  </style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header role="banner">
+  <h1>Admin Dashboard</h1>
+  <nav aria-label="Primary Navigation">
+    <ul>
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#users">Users</a></li>
+      <li><a href="#orders">Orders</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#inventory">Inventory</a></li>
+      <li><a href="#reports">Reports</a></li>
+      <li><a href="#analytics">Analytics</a></li>
+      <li><a href="#settings">Settings</a></li>
+      <li><a href="#integrations">Integrations</a></li>
+      <li><a href="#billing">Billing</a></li>
+      <li><a href="#support">Support</a></li>
+      <li><a href="#logs">Logs</a></li>
+      <li><a href="#permissions">Permissions</a></li>
+      <li><a href="#teams">Teams</a></li>
+      <li><a href="#notifications">Notifications</a></li>
+      <li><a href="#workflows">Workflows</a></li>
+      <li><a href="#templates">Templates</a></li>
+      <li><a href="#api-keys">API Keys</a></li>
+      <li><a href="#webhooks">Webhooks</a></li>
+      <li><a href="#audit">Audit Trail</a></li>
+      <li><a href="#backup">Backups</a></li>
+      <li><a href="#imports">Imports</a></li>
+      <li><a href="#exports">Exports</a></li>
+      <li><a href="#tags">Tags</a></li>
+      <li><a href="#categories">Categories</a></li>
+      <li><a href="#coupons">Coupons</a></li>
+      <li><a href="#shipping">Shipping</a></li>
+      <li><a href="#tax">Tax Rules</a></li>
+      <li><a href="#locales">Localization</a></li>
+      <li><a href="#help">Help Center</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main-content" role="main">
+
+  <!-- Toolbar: 50 buttons -->
+  <section aria-label="Actions Toolbar">
+    <h2>Quick Actions</h2>
+    <div class="toolbar" role="toolbar" aria-label="Bulk operations">
+      <button>Select All</button>
+      <button>Deselect All</button>
+      <button>Delete Selected</button>
+      <button>Archive Selected</button>
+      <button>Export CSV</button>
+      <button>Export PDF</button>
+      <button>Import CSV</button>
+      <button>Refresh</button>
+      <button>Print</button>
+      <button>Duplicate</button>
+      <button>Move to Folder</button>
+      <button>Add Tag</button>
+      <button>Remove Tag</button>
+      <button>Assign Owner</button>
+      <button>Change Status</button>
+      <button>Merge Records</button>
+      <button>Split Record</button>
+      <button>Lock</button>
+      <button>Unlock</button>
+      <button>Flag for Review</button>
+      <button>Approve</button>
+      <button>Reject</button>
+      <button>Send Notification</button>
+      <button>Schedule</button>
+      <button>Unschedule</button>
+      <button>Pin</button>
+      <button>Unpin</button>
+      <button>Mark as Read</button>
+      <button>Mark as Unread</button>
+      <button>Star</button>
+      <button>Unstar</button>
+      <button>Copy Link</button>
+      <button>Share</button>
+      <button>Download</button>
+      <button>Upload</button>
+      <button>Restore</button>
+      <button>Permanently Delete</button>
+      <button>Convert Type</button>
+      <button>Batch Edit</button>
+      <button>Run Automation</button>
+      <button>Generate Report</button>
+      <button>Compare</button>
+      <button>Show Diff</button>
+      <button>Revert Changes</button>
+      <button>Save Draft</button>
+      <button>Publish</button>
+      <button>Unpublish</button>
+      <button>Clone</button>
+      <button>Create Template</button>
+      <button>Bulk Assign</button>
+    </div>
+  </section>
+
+  <!-- Form section: 20 fields -->
+  <section aria-label="User Management Form">
+    <h2>Create / Edit User</h2>
+    <form>
+      <fieldset>
+        <legend>Personal Information</legend>
+        <label for="first-name">First Name</label>
+        <input type="text" id="first-name" name="first-name" autocomplete="given-name">
+        <label for="last-name">Last Name</label>
+        <input type="text" id="last-name" name="last-name" autocomplete="family-name">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" autocomplete="email">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" autocomplete="tel">
+        <label for="dob">Date of Birth</label>
+        <input type="date" id="dob" name="dob">
+      </fieldset>
+
+      <fieldset>
+        <legend>Account Settings</legend>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="new-password">
+        <label for="role-select">Role</label>
+        <select id="role-select" name="role">
+          <option value="admin">Administrator</option>
+          <option value="editor">Editor</option>
+          <option value="viewer">Viewer</option>
+          <option value="moderator">Moderator</option>
+        </select>
+        <label for="department">Department</label>
+        <select id="department" name="department">
+          <option value="eng">Engineering</option>
+          <option value="sales">Sales</option>
+          <option value="support">Support</option>
+        </select>
+        <label for="timezone">Timezone</label>
+        <select id="timezone" name="timezone">
+          <option value="utc">UTC</option>
+          <option value="est">Eastern</option>
+          <option value="pst">Pacific</option>
+        </select>
+      </fieldset>
+
+      <fieldset>
+        <legend>Profile Details</legend>
+        <label for="bio">Biography</label>
+        <textarea id="bio" name="bio" rows="3" cols="40"></textarea>
+        <label for="website">Website URL</label>
+        <input type="url" id="website" name="website">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="location">
+        <label for="avatar-url">Avatar URL</label>
+        <input type="url" id="avatar-url" name="avatar-url">
+        <label for="language">Preferred Language</label>
+        <select id="language" name="language">
+          <option value="en">English</option>
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+        </select>
+        <label for="notifications">Notification Preference</label>
+        <select id="notifications" name="notifications">
+          <option value="all">All Notifications</option>
+          <option value="important">Important Only</option>
+          <option value="none">None</option>
+        </select>
+        <label for="notes">Internal Notes</label>
+        <textarea id="notes" name="notes" rows="2" cols="40"></textarea>
+        <label for="tags-input">Tags</label>
+        <input type="text" id="tags-input" name="tags" placeholder="Comma-separated tags">
+      </fieldset>
+
+      <button type="submit">Save User</button>
+      <button type="reset">Reset Form</button>
+    </form>
+  </section>
+
+  <!-- Disclosure widgets: 10 -->
+  <section aria-label="System Configuration">
+    <h2>Configuration Panels</h2>
+    <details>
+      <summary>Email Configuration</summary>
+      <p>SMTP server settings, sender addresses, and email templates are configured here.</p>
+    </details>
+    <details>
+      <summary>Authentication Providers</summary>
+      <p>Configure SSO, LDAP, OAuth2 providers and multi-factor authentication settings.</p>
+    </details>
+    <details>
+      <summary>Storage Backends</summary>
+      <p>Local filesystem, S3, Azure Blob, and GCS storage configuration.</p>
+    </details>
+    <details>
+      <summary>Caching Layer</summary>
+      <p>Redis, Memcached, and in-memory caching configuration and invalidation rules.</p>
+    </details>
+    <details>
+      <summary>Rate Limiting</summary>
+      <p>API rate limits per endpoint, per user tier, and global throttle settings.</p>
+    </details>
+    <details>
+      <summary>Logging and Monitoring</summary>
+      <p>Log levels, retention policies, external log shipping, and alerting thresholds.</p>
+    </details>
+    <details>
+      <summary>Scheduled Tasks</summary>
+      <p>Cron jobs, background workers, and periodic maintenance task configuration.</p>
+    </details>
+    <details>
+      <summary>Feature Flags</summary>
+      <p>Toggle features on/off per environment, user segment, or percentage rollout.</p>
+    </details>
+    <details>
+      <summary>Security Policies</summary>
+      <p>Password policies, session timeouts, IP allowlists, and CORS configuration.</p>
+    </details>
+    <details>
+      <summary>Backup and Recovery</summary>
+      <p>Automated backup schedules, retention windows, and disaster recovery procedures.</p>
+    </details>
+  </section>
+
+  <!-- Data table: 50 rows, each with a link and a button -->
+  <section aria-label="User Records">
+    <h2>User Directory</h2>
+    <h3>Active Users</h3>
+    <table>
+      <caption>List of all active user accounts</caption>
+      <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Role</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td><a href="#user-1">Alice Johnson</a></td><td>alice@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>2</td><td><a href="#user-2">Bob Smith</a></td><td>bob@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>3</td><td><a href="#user-3">Carol Williams</a></td><td>carol@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>4</td><td><a href="#user-4">David Brown</a></td><td>david@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>5</td><td><a href="#user-5">Eve Davis</a></td><td>eve@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>6</td><td><a href="#user-6">Frank Miller</a></td><td>frank@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>7</td><td><a href="#user-7">Grace Wilson</a></td><td>grace@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>8</td><td><a href="#user-8">Henry Moore</a></td><td>henry@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>9</td><td><a href="#user-9">Iris Taylor</a></td><td>iris@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>10</td><td><a href="#user-10">Jack Anderson</a></td><td>jack@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>11</td><td><a href="#user-11">Karen Thomas</a></td><td>karen@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>12</td><td><a href="#user-12">Leo Jackson</a></td><td>leo@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>13</td><td><a href="#user-13">Mia White</a></td><td>mia@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>14</td><td><a href="#user-14">Noah Harris</a></td><td>noah@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>15</td><td><a href="#user-15">Olivia Martin</a></td><td>olivia@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>16</td><td><a href="#user-16">Paul Garcia</a></td><td>paul@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>17</td><td><a href="#user-17">Quinn Martinez</a></td><td>quinn@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>18</td><td><a href="#user-18">Rachel Robinson</a></td><td>rachel@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>19</td><td><a href="#user-19">Sam Clark</a></td><td>sam@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>20</td><td><a href="#user-20">Tina Rodriguez</a></td><td>tina@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>21</td><td><a href="#user-21">Ulysses Lewis</a></td><td>ulysses@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>22</td><td><a href="#user-22">Vera Lee</a></td><td>vera@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>23</td><td><a href="#user-23">Walter Walker</a></td><td>walter@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>24</td><td><a href="#user-24">Xena Hall</a></td><td>xena@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>25</td><td><a href="#user-25">Yuri Allen</a></td><td>yuri@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>26</td><td><a href="#user-26">Zara Young</a></td><td>zara@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>27</td><td><a href="#user-27">Adam King</a></td><td>adam.k@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>28</td><td><a href="#user-28">Bella Wright</a></td><td>bella@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>29</td><td><a href="#user-29">Chris Scott</a></td><td>chris@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>30</td><td><a href="#user-30">Diana Green</a></td><td>diana@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>31</td><td><a href="#user-31">Eric Adams</a></td><td>eric@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>32</td><td><a href="#user-32">Fiona Baker</a></td><td>fiona@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>33</td><td><a href="#user-33">George Nelson</a></td><td>george@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>34</td><td><a href="#user-34">Hannah Carter</a></td><td>hannah@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>35</td><td><a href="#user-35">Ian Mitchell</a></td><td>ian@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>36</td><td><a href="#user-36">Julia Perez</a></td><td>julia@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>37</td><td><a href="#user-37">Kyle Roberts</a></td><td>kyle@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>38</td><td><a href="#user-38">Laura Turner</a></td><td>laura@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>39</td><td><a href="#user-39">Mike Phillips</a></td><td>mike@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>40</td><td><a href="#user-40">Nancy Campbell</a></td><td>nancy@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>41</td><td><a href="#user-41">Oscar Parker</a></td><td>oscar@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>42</td><td><a href="#user-42">Patty Evans</a></td><td>patty@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>43</td><td><a href="#user-43">Quentin Edwards</a></td><td>quentin@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>44</td><td><a href="#user-44">Rosa Collins</a></td><td>rosa@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>45</td><td><a href="#user-45">Steve Stewart</a></td><td>steve@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+        <tr><td>46</td><td><a href="#user-46">Tara Sanchez</a></td><td>tara@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>47</td><td><a href="#user-47">Uma Morris</a></td><td>uma@example.com</td><td>Moderator</td><td><button>Edit</button></td></tr>
+        <tr><td>48</td><td><a href="#user-48">Victor Rogers</a></td><td>victor@example.com</td><td>Viewer</td><td><button>Edit</button></td></tr>
+        <tr><td>49</td><td><a href="#user-49">Wendy Reed</a></td><td>wendy@example.com</td><td>Editor</td><td><button>Edit</button></td></tr>
+        <tr><td>50</td><td><a href="#user-50">Xavier Cook</a></td><td>xavier@example.com</td><td>Admin</td><td><button>Edit</button></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Secondary navigation for additional link count -->
+  <section aria-label="Quick Links">
+    <h3>Frequently Used</h3>
+    <nav aria-label="Quick Links">
+      <ul>
+        <li><a href="#new-user">New User Wizard</a></li>
+        <li><a href="#bulk-import">Bulk Import</a></li>
+        <li><a href="#system-health">System Health</a></li>
+        <li><a href="#recent-activity">Recent Activity</a></li>
+        <li><a href="#my-tasks">My Tasks</a></li>
+      </ul>
+    </nav>
+  </section>
+
+</main>
+
+<footer role="contentinfo">
+  <p>Admin Dashboard v3.2.1 &mdash; &copy; 2026 Example Corp</p>
+  <a href="#privacy">Privacy Policy</a> |
+  <a href="#terms">Terms of Service</a> |
+  <a href="#status-page">System Status</a>
+</footer>
+
+</body>
+</html>

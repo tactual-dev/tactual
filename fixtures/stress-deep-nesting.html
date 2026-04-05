@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stress Test: Deep Nesting and Complex ARIA Hierarchy</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; color: #1a1a1a; }
+    [role="tree"] { list-style: none; padding-left: 0; border: 1px solid #ccc; border-radius: 4px; padding: 8px; }
+    [role="group"] { list-style: none; padding-left: 20px; }
+    [role="treeitem"] { padding: 2px 4px; cursor: default; }
+    [role="treeitem"][aria-expanded] { font-weight: 600; }
+    nav ul { list-style: none; padding-left: 16px; }
+    details { margin-left: 8px; }
+    .tab-list { display: flex; gap: 0; border-bottom: 2px solid #ccc; }
+    .tab-list [role="tab"] { padding: 8px 16px; border: 1px solid #ccc; border-bottom: none; background: #f5f5f5; cursor: pointer; margin-bottom: -2px; }
+    .tab-list [role="tab"][aria-selected="true"] { background: #fff; border-bottom: 2px solid #fff; }
+    [role="tabpanel"] { border: 1px solid #ccc; border-top: none; padding: 16px; }
+    dialog { padding: 20px; border: 1px solid #333; border-radius: 8px; max-width: 500px; }
+    dialog::backdrop { background: rgba(0,0,0,0.4); }
+    .accordion-item { border: 1px solid #ddd; margin-bottom: -1px; }
+    .accordion-item summary { padding: 10px; cursor: pointer; background: #f9f9f9; font-weight: 600; }
+    .accordion-content { padding: 10px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+    section { margin-bottom: 32px; }
+  </style>
+</head>
+<body>
+
+<header role="banner">
+  <h1>Complex Hierarchy Test Page</h1>
+</header>
+
+<main role="main">
+
+  <!-- 1. Tree view: 4 levels deep, 20+ items -->
+  <section aria-label="File Browser">
+    <h2>File Browser (Tree View)</h2>
+    <ul role="tree" aria-label="Project files">
+      <li role="treeitem" aria-expanded="true" aria-label="src">
+        src/
+        <ul role="group">
+          <li role="treeitem" aria-expanded="true" aria-label="components">
+            components/
+            <ul role="group">
+              <li role="treeitem" aria-expanded="true" aria-label="forms">
+                forms/
+                <ul role="group">
+                  <li role="treeitem">LoginForm.tsx</li>
+                  <li role="treeitem">RegisterForm.tsx</li>
+                  <li role="treeitem">SearchForm.tsx</li>
+                </ul>
+              </li>
+              <li role="treeitem" aria-expanded="false" aria-label="layout">
+                layout/
+                <ul role="group">
+                  <li role="treeitem">Header.tsx</li>
+                  <li role="treeitem">Footer.tsx</li>
+                  <li role="treeitem">Sidebar.tsx</li>
+                </ul>
+              </li>
+              <li role="treeitem" aria-expanded="false" aria-label="widgets">
+                widgets/
+                <ul role="group">
+                  <li role="treeitem">Chart.tsx</li>
+                  <li role="treeitem">Table.tsx</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li role="treeitem" aria-expanded="true" aria-label="utils">
+            utils/
+            <ul role="group">
+              <li role="treeitem" aria-expanded="false" aria-label="helpers">
+                helpers/
+                <ul role="group">
+                  <li role="treeitem">format.ts</li>
+                  <li role="treeitem">validate.ts</li>
+                </ul>
+              </li>
+              <li role="treeitem">api.ts</li>
+              <li role="treeitem">constants.ts</li>
+            </ul>
+          </li>
+          <li role="treeitem">index.ts</li>
+          <li role="treeitem">App.tsx</li>
+        </ul>
+      </li>
+      <li role="treeitem" aria-expanded="false" aria-label="public">
+        public/
+        <ul role="group">
+          <li role="treeitem">index.html</li>
+          <li role="treeitem">favicon.ico</li>
+        </ul>
+      </li>
+      <li role="treeitem">package.json</li>
+      <li role="treeitem">tsconfig.json</li>
+    </ul>
+  </section>
+
+  <!-- 2. Nested navigation: nav > ul > li > details > ul > li > a (3+ levels) -->
+  <section aria-label="Documentation Navigation">
+    <h2>Documentation</h2>
+    <h3>Browse Topics</h3>
+    <nav aria-label="Documentation topics">
+      <ul>
+        <li>
+          <details open>
+            <summary>Getting Started</summary>
+            <ul>
+              <li>
+                <details open>
+                  <summary>Installation</summary>
+                  <ul>
+                    <li><a href="#install-npm">npm Install</a></li>
+                    <li><a href="#install-yarn">Yarn Install</a></li>
+                    <li><a href="#install-pnpm">pnpm Install</a></li>
+                  </ul>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary>Configuration</summary>
+                  <ul>
+                    <li><a href="#config-basic">Basic Config</a></li>
+                    <li><a href="#config-advanced">Advanced Config</a></li>
+                  </ul>
+                </details>
+              </li>
+              <li><a href="#quickstart">Quickstart Guide</a></li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>API Reference</summary>
+            <ul>
+              <li>
+                <details>
+                  <summary>Core API</summary>
+                  <ul>
+                    <li><a href="#api-analyze">analyze()</a></li>
+                    <li><a href="#api-report">report()</a></li>
+                    <li><a href="#api-diff">diff()</a></li>
+                  </ul>
+                </details>
+              </li>
+              <li>
+                <details>
+                  <summary>Plugin API</summary>
+                  <ul>
+                    <li><a href="#plugin-create">createPlugin()</a></li>
+                    <li><a href="#plugin-register">registerPlugin()</a></li>
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Guides</summary>
+            <ul>
+              <li><a href="#guide-ci">CI Integration</a></li>
+              <li><a href="#guide-custom">Custom Rules</a></li>
+              <li><a href="#guide-migration">Migration Guide</a></li>
+            </ul>
+          </details>
+        </li>
+      </ul>
+    </nav>
+  </section>
+
+  <!-- 3. Nested dialogs: dialog > form > dialog -->
+  <section aria-label="Dialog Nesting Test">
+    <h2>Multi-Layer Dialogs</h2>
+    <h3>Nested Dialog Test</h3>
+    <button id="open-outer-dialog">Open Settings</button>
+
+    <dialog id="outer-dialog" aria-labelledby="outer-dialog-title">
+      <h4 id="outer-dialog-title">Account Settings</h4>
+      <p>Manage your account preferences below.</p>
+      <form method="dialog">
+        <label for="display-name">Display Name</label>
+        <input type="text" id="display-name" name="display-name">
+
+        <label for="theme-select">Theme</label>
+        <select id="theme-select" name="theme">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="system">System</option>
+        </select>
+
+        <p>Need to delete your account?</p>
+        <button type="button" id="open-inner-dialog">Delete Account...</button>
+
+        <dialog id="inner-dialog" aria-labelledby="inner-dialog-title">
+          <h5 id="inner-dialog-title">Confirm Account Deletion</h5>
+          <p>This action is permanent and cannot be undone.</p>
+          <form method="dialog">
+            <label for="confirm-email">Type your email to confirm</label>
+            <input type="email" id="confirm-email" name="confirm-email" required>
+            <div>
+              <button value="cancel">Cancel</button>
+              <button value="confirm">Delete Permanently</button>
+            </div>
+          </form>
+        </dialog>
+
+        <div>
+          <button value="cancel">Cancel</button>
+          <button value="save">Save Settings</button>
+        </div>
+      </form>
+    </dialog>
+  </section>
+
+  <!-- 4. Nested tabs: tab panel containing another tab interface -->
+  <section aria-label="Nested Tabs Test">
+    <h2>Dashboard Panels</h2>
+    <h3>Analytics</h3>
+
+    <!-- Outer tab set -->
+    <div role="tablist" aria-label="Dashboard sections">
+      <button role="tab" id="tab-overview" aria-selected="true" aria-controls="panel-overview">Overview</button>
+      <button role="tab" id="tab-metrics" aria-selected="false" aria-controls="panel-metrics">Metrics</button>
+      <button role="tab" id="tab-reports" aria-selected="false" aria-controls="panel-reports">Reports</button>
+    </div>
+
+    <div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
+      <h4>Overview</h4>
+      <p>Summary statistics for the current period.</p>
+
+      <!-- Inner tab set (nested inside outer tab panel) -->
+      <div role="tablist" aria-label="Overview time range">
+        <button role="tab" id="tab-today" aria-selected="true" aria-controls="panel-today">Today</button>
+        <button role="tab" id="tab-week" aria-selected="false" aria-controls="panel-week">This Week</button>
+        <button role="tab" id="tab-month" aria-selected="false" aria-controls="panel-month">This Month</button>
+      </div>
+
+      <div role="tabpanel" id="panel-today" aria-labelledby="tab-today">
+        <p>Today's data: 1,234 visits, 56 conversions, 4.5% rate.</p>
+      </div>
+      <div role="tabpanel" id="panel-week" aria-labelledby="tab-week" hidden>
+        <p>This week's data: 8,765 visits, 321 conversions, 3.7% rate.</p>
+      </div>
+      <div role="tabpanel" id="panel-month" aria-labelledby="tab-month" hidden>
+        <p>This month's data: 34,567 visits, 1,234 conversions, 3.6% rate.</p>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="panel-metrics" aria-labelledby="tab-metrics" hidden>
+      <h4>Detailed Metrics</h4>
+
+      <!-- Another nested tab set -->
+      <div role="tablist" aria-label="Metric categories">
+        <button role="tab" id="tab-traffic" aria-selected="true" aria-controls="panel-traffic">Traffic</button>
+        <button role="tab" id="tab-engagement" aria-selected="false" aria-controls="panel-engagement">Engagement</button>
+      </div>
+
+      <div role="tabpanel" id="panel-traffic" aria-labelledby="tab-traffic">
+        <p>Traffic breakdown by source, medium, and campaign.</p>
+      </div>
+      <div role="tabpanel" id="panel-engagement" aria-labelledby="tab-engagement" hidden>
+        <p>Engagement metrics: time on page, scroll depth, interactions.</p>
+      </div>
+    </div>
+
+    <div role="tabpanel" id="panel-reports" aria-labelledby="tab-reports" hidden>
+      <h4>Generated Reports</h4>
+      <p>Download or schedule automated reports.</p>
+    </div>
+  </section>
+
+  <!-- 5. Accordion containing a table with expandable rows -->
+  <section aria-label="Data Explorer">
+    <h2>Data Explorer</h2>
+    <h3>Server Regions</h3>
+
+    <details class="accordion-item" open>
+      <summary>North America</summary>
+      <div class="accordion-content">
+        <table>
+          <caption>North American server status</caption>
+          <thead>
+            <tr>
+              <th scope="col">Server</th>
+              <th scope="col">Status</th>
+              <th scope="col">Load</th>
+              <th scope="col">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>us-east-1</td>
+              <td>Online</td>
+              <td>72%</td>
+              <td>
+                <details>
+                  <summary>Expand</summary>
+                  <p>CPU: 68%, Memory: 4.2GB/8GB, Uptime: 42 days</p>
+                </details>
+              </td>
+            </tr>
+            <tr>
+              <td>us-west-2</td>
+              <td>Online</td>
+              <td>45%</td>
+              <td>
+                <details>
+                  <summary>Expand</summary>
+                  <p>CPU: 41%, Memory: 3.1GB/8GB, Uptime: 28 days</p>
+                </details>
+              </td>
+            </tr>
+            <tr>
+              <td>ca-central-1</td>
+              <td>Degraded</td>
+              <td>89%</td>
+              <td>
+                <details>
+                  <summary>Expand</summary>
+                  <p>CPU: 92%, Memory: 7.4GB/8GB, Uptime: 3 days. Alert: high load.</p>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details class="accordion-item">
+      <summary>Europe</summary>
+      <div class="accordion-content">
+        <table>
+          <caption>European server status</caption>
+          <thead>
+            <tr>
+              <th scope="col">Server</th>
+              <th scope="col">Status</th>
+              <th scope="col">Load</th>
+              <th scope="col">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>eu-west-1</td>
+              <td>Online</td>
+              <td>55%</td>
+              <td>
+                <details>
+                  <summary>Expand</summary>
+                  <p>CPU: 50%, Memory: 3.8GB/8GB, Uptime: 60 days</p>
+                </details>
+              </td>
+            </tr>
+            <tr>
+              <td>eu-central-1</td>
+              <td>Online</td>
+              <td>62%</td>
+              <td>
+                <details>
+                  <summary>Expand</summary>
+                  <p>CPU: 58%, Memory: 4.0GB/8GB, Uptime: 15 days</p>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <details class="accordion-item">
+      <summary>Asia Pacific</summary>
+      <div class="accordion-content">
+        <table>
+          <caption>Asia Pacific server status</caption>
+          <thead>
+            <tr>
+              <th scope="col">Server</th>
+              <th scope="col">Status</th>
+              <th scope="col">Load</th>
+              <th scope="col">Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ap-southeast-1</td>
+              <td>Online</td>
+              <td>38%</td>
+              <td>
+                <details>
+                  <summary>Expand</summary>
+                  <p>CPU: 35%, Memory: 2.9GB/8GB, Uptime: 90 days</p>
+                </details>
+              </td>
+            </tr>
+            <tr>
+              <td>ap-northeast-1</td>
+              <td>Online</td>
+              <td>51%</td>
+              <td>
+                <details>
+                  <summary>Expand</summary>
+                  <p>CPU: 48%, Memory: 3.5GB/8GB, Uptime: 22 days</p>
+                </details>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </section>
+
+  <!-- 6. Deep heading hierarchy -->
+  <section aria-label="Deep Heading Test">
+    <h2>Documentation Structure</h2>
+    <p>Testing heading depth through all six levels.</p>
+    <h3>Chapter 1: Introduction</h3>
+    <p>Opening material covering fundamentals.</p>
+    <h4>1.1 Background</h4>
+    <p>Historical context and motivation for the project.</p>
+    <h5>1.1.1 Prior Art</h5>
+    <p>Related work and existing solutions in the field.</p>
+  </section>
+
+</main>
+
+<footer role="contentinfo">
+  <p>&copy; 2026 Nesting Stress Test</p>
+</footer>
+
+</body>
+</html>

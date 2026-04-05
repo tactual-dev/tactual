@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stress Test: Special Characters in Target Names</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 24px; color: #1a1a1a; }
+    button, a { margin: 4px; }
+    section { margin-bottom: 24px; padding: 16px; border: 1px solid #ddd; border-radius: 4px; }
+    .field-group { margin: 8px 0; }
+    label { display: block; margin-bottom: 4px; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<header role="banner">
+  <h1>Special Character Stress Test</h1>
+</header>
+
+<main role="main">
+
+  <!-- Pipe character in aria-label -->
+  <section aria-label="Pipe characters">
+    <h2>Pipe Separator Tests</h2>
+    <button aria-label="Save | Draft">Save or Draft</button>
+    <button aria-label="Status: Active | Inactive | Pending">Multi-pipe label</button>
+    <a href="#section-a" aria-label="Section A | Overview">Section A link</a>
+  </section>
+
+  <!-- Quotes in aria-label -->
+  <section aria-label="Quote characters">
+    <h2>Quotation Mark Tests</h2>
+    <button aria-label='Click "here" to submit'>Button with double quotes</button>
+    <button aria-label="It's a &quot;test&quot; value">Button with mixed quotes</button>
+    <a href="#quote-test" aria-label='Navigate to "Settings" page'>Link with quoted word</a>
+  </section>
+
+  <!-- Angle brackets in aria-label -->
+  <section aria-label="Angle bracket characters">
+    <h2>Angle Bracket Tests</h2>
+    <button aria-label="Value &lt;5">Less-than value</button>
+    <button aria-label="Range: 10 &lt; x &lt; 20">Range with angle brackets</button>
+    <button aria-label="Use &lt;Ctrl&gt;+S to save">Keyboard shortcut label</button>
+  </section>
+
+  <!-- Newlines in link text -->
+  <section aria-label="Newline and whitespace">
+    <h2>Newline and Whitespace Tests</h2>
+    <a href="#multiline">First Line<br>Second Line</a>
+    <a href="#tabs">Text	with	tabs</a>
+    <a href="#spaces">Text     with     extra     spaces</a>
+  </section>
+
+  <!-- Emoji in text content -->
+  <section aria-label="Emoji content">
+    <h2>Emoji Tests</h2>
+    <a href="#submit-rocket">Submit &#x1F680;</a>
+    <button>Delete &#x1F5D1;&#xFE0F;</button>
+    <button>Save &#x2705; Changes</button>
+    <a href="#warning">&#x26A0;&#xFE0F; Warning: Check Settings</a>
+    <button aria-label="Star rating: &#x2B50;&#x2B50;&#x2B50;">Rate this</button>
+  </section>
+
+  <!-- Very long heading text (200+ characters) -->
+  <section aria-label="Long text">
+    <h2>This Is an Extremely Long Heading That Exceeds Two Hundred Characters in Length to Test How the Accessibility Analyzer Handles Very Long Target Names That Might Appear in Real-World Applications Where Content Authors Write Verbose Descriptive Headings</h2>
+    <p>Content after the long heading.</p>
+    <button aria-label="This is a button with an extremely long aria-label that exceeds one hundred characters to test truncation behavior in reports and formatters that may have column width limits">Long label button</button>
+  </section>
+
+  <!-- Backslash in aria-label -->
+  <section aria-label="Backslash and path characters">
+    <h2>Backslash and Path Tests</h2>
+    <div class="field-group">
+      <label for="path-input">File Path</label>
+      <input type="text" id="path-input" aria-label="Path: C:\Users" value="C:\Users\Default">
+    </div>
+    <button aria-label="Navigate to C:\Program Files\App">Open path</button>
+    <button aria-label="Regex: \d+\.\d+">Pattern button</button>
+  </section>
+
+  <!-- Empty and whitespace-only aria-labels -->
+  <section aria-label="Empty and whitespace labels">
+    <h2>Empty and Whitespace Label Tests</h2>
+    <button aria-label="">Empty aria-label button</button>
+    <button aria-label="   ">Whitespace-only aria-label button</button>
+    <a href="#nowhere" aria-label="">Empty aria-label link</a>
+    <input type="text" aria-label="" placeholder="Input with empty label">
+    <button aria-label="&#9;&#10;&#13;">Tab-newline-return only label</button>
+  </section>
+
+  <!-- Additional edge cases -->
+  <section aria-label="Additional edge cases">
+    <h2>Other Edge Cases</h2>
+    <button aria-label="Price: $19.99 (50% off)">Special price characters</button>
+    <button aria-label="Name: O'Brien &amp; Associates">Ampersand and apostrophe</button>
+    <a href="#hash#fragment">Link with hash#fragment</a>
+    <button aria-label="Japanese: &#x65E5;&#x672C;&#x8A9E;">Unicode CJK label</button>
+    <button aria-label="Arabic: &#x0645;&#x0631;&#x062D;&#x0628;&#x0627;">RTL text label</button>
+    <button aria-label="null">Literal null string</button>
+    <button aria-label="undefined">Literal undefined string</button>
+    <button aria-label="0">Falsy zero string</button>
+    <button aria-label="false">Literal false string</button>
+  </section>
+
+</main>
+
+<footer role="contentinfo">
+  <p>&copy; 2026 Special Characters Test</p>
+</footer>
+
+</body>
+</html>

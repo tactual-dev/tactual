@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Stress Test: Minimal Structure (Worst-Case Accessibility)</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; color: #333; }
+    .page-title { font-size: 28px; font-weight: bold; padding: 16px 24px; background: #222; color: #fff; }
+    .nav-bar { background: #444; padding: 8px 24px; }
+    .nav-item { display: inline-block; color: #adf; padding: 6px 12px; cursor: pointer; text-decoration: underline; }
+    .nav-item:hover { color: #fff; }
+    .content { padding: 24px; }
+    .section-title { font-size: 20px; font-weight: bold; margin: 16px 0 8px; }
+    .btn { display: inline-block; padding: 8px 16px; background: #0066cc; color: #fff; border-radius: 4px; cursor: pointer; margin: 4px; }
+    .btn:hover { background: #0052a3; }
+    .form-field { border: 1px solid #999; padding: 8px; min-height: 20px; margin: 4px 0; background: #fff; min-width: 200px; display: inline-block; }
+    .form-label { font-weight: bold; display: block; margin-top: 8px; }
+    .card { border: 1px solid #ddd; padding: 12px; margin: 8px 0; border-radius: 4px; }
+    .card-title { font-size: 16px; font-weight: bold; }
+    .link-text { color: #0066cc; text-decoration: underline; cursor: pointer; }
+    .toolbar { background: #f0f0f0; padding: 8px; margin: 8px 0; display: flex; flex-wrap: wrap; gap: 4px; }
+    .footer-area { background: #222; color: #999; padding: 16px 24px; margin-top: 24px; }
+  </style>
+</head>
+<body>
+
+<!-- No lang attribute on html. No landmarks. No headings. No ARIA anywhere. -->
+
+<div class="page-title">Acme Admin Panel</div>
+
+<!-- Navigation built entirely with divs, no <nav>, no <ul>, no semantic links -->
+<div class="nav-bar">
+  <div class="nav-item" onclick="navigate('home')">Home</div>
+  <div class="nav-item" onclick="navigate('users')">Users</div>
+  <div class="nav-item" onclick="navigate('orders')">Orders</div>
+  <div class="nav-item" onclick="navigate('products')">Products</div>
+  <div class="nav-item" onclick="navigate('reports')">Reports</div>
+  <div class="nav-item" onclick="navigate('settings')">Settings</div>
+  <div class="nav-item" onclick="navigate('analytics')">Analytics</div>
+  <div class="nav-item" onclick="navigate('billing')">Billing</div>
+</div>
+
+<div class="content">
+
+  <!-- Section "heading" is just a styled div -->
+  <div class="section-title">Quick Actions</div>
+
+  <!-- 30+ div-buttons: no role, no tabindex, purely onclick -->
+  <div class="toolbar">
+    <div class="btn" onclick="doAction('save')">Save</div>
+    <div class="btn" onclick="doAction('delete')">Delete</div>
+    <div class="btn" onclick="doAction('archive')">Archive</div>
+    <div class="btn" onclick="doAction('export')">Export</div>
+    <div class="btn" onclick="doAction('import')">Import</div>
+    <div class="btn" onclick="doAction('refresh')">Refresh</div>
+    <div class="btn" onclick="doAction('print')">Print</div>
+    <div class="btn" onclick="doAction('share')">Share</div>
+    <div class="btn" onclick="doAction('duplicate')">Duplicate</div>
+    <div class="btn" onclick="doAction('lock')">Lock</div>
+    <div class="btn" onclick="doAction('unlock')">Unlock</div>
+    <div class="btn" onclick="doAction('approve')">Approve</div>
+    <div class="btn" onclick="doAction('reject')">Reject</div>
+    <div class="btn" onclick="doAction('flag')">Flag</div>
+    <div class="btn" onclick="doAction('unflag')">Unflag</div>
+    <div class="btn" onclick="doAction('assign')">Assign</div>
+    <div class="btn" onclick="doAction('unassign')">Unassign</div>
+    <div class="btn" onclick="doAction('merge')">Merge</div>
+    <div class="btn" onclick="doAction('split')">Split</div>
+    <div class="btn" onclick="doAction('move')">Move</div>
+    <div class="btn" onclick="doAction('copy')">Copy</div>
+    <div class="btn" onclick="doAction('paste')">Paste</div>
+    <div class="btn" onclick="doAction('undo')">Undo</div>
+    <div class="btn" onclick="doAction('redo')">Redo</div>
+    <div class="btn" onclick="doAction('search')">Search</div>
+    <div class="btn" onclick="doAction('filter')">Filter</div>
+    <div class="btn" onclick="doAction('sort')">Sort</div>
+    <div class="btn" onclick="doAction('group')">Group</div>
+    <div class="btn" onclick="doAction('tag')">Tag</div>
+    <div class="btn" onclick="doAction('notify')">Notify</div>
+    <div class="btn" onclick="doAction('schedule')">Schedule</div>
+    <div class="btn" onclick="doAction('publish')">Publish</div>
+  </div>
+
+  <!-- Form built with contenteditable divs instead of real inputs -->
+  <div class="section-title">User Form</div>
+
+  <div class="form-label">Full Name</div>
+  <div class="form-field" contenteditable="true"></div>
+
+  <div class="form-label">Email</div>
+  <div class="form-field" contenteditable="true"></div>
+
+  <div class="form-label">Phone</div>
+  <div class="form-field" contenteditable="true"></div>
+
+  <div class="form-label">Address</div>
+  <div class="form-field" contenteditable="true"></div>
+
+  <div class="form-label">City</div>
+  <div class="form-field" contenteditable="true"></div>
+
+  <div class="form-label">Notes</div>
+  <div class="form-field" contenteditable="true" style="min-height: 60px;"></div>
+
+  <div style="margin-top: 12px;">
+    <div class="btn" onclick="submitForm()">Submit</div>
+    <div class="btn" onclick="clearForm()" style="background: #666;">Clear</div>
+  </div>
+
+  <!-- Images without alt text -->
+  <div class="section-title">Product Gallery</div>
+  <div>
+    <img src="placeholder.jpg" width="120" height="80">
+    <img src="placeholder.jpg" width="120" height="80">
+    <img src="placeholder.jpg" width="120" height="80">
+    <img src="placeholder.jpg" width="120" height="80">
+    <img src="placeholder.jpg" width="120" height="80">
+  </div>
+
+  <!-- Div-based "links" that are not real anchors -->
+  <div class="section-title">Recent Items</div>
+  <div class="card">
+    <div class="card-title">Order #10042</div>
+    <div>Status: Pending</div>
+    <div class="link-text" onclick="viewOrder(10042)">View Details</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Order #10041</div>
+    <div>Status: Shipped</div>
+    <div class="link-text" onclick="viewOrder(10041)">View Details</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Order #10040</div>
+    <div>Status: Delivered</div>
+    <div class="link-text" onclick="viewOrder(10040)">View Details</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Order #10039</div>
+    <div>Status: Cancelled</div>
+    <div class="link-text" onclick="viewOrder(10039)">View Details</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Order #10038</div>
+    <div>Status: Processing</div>
+    <div class="link-text" onclick="viewOrder(10038)">View Details</div>
+  </div>
+
+  <!-- Data "table" built with divs instead of <table> -->
+  <div class="section-title">User List</div>
+  <div style="display: grid; grid-template-columns: 1fr 2fr 2fr 1fr; gap: 1px; background: #ccc; border: 1px solid #ccc;">
+    <div style="background: #f5f5f5; padding: 6px; font-weight: bold;">ID</div>
+    <div style="background: #f5f5f5; padding: 6px; font-weight: bold;">Name</div>
+    <div style="background: #f5f5f5; padding: 6px; font-weight: bold;">Email</div>
+    <div style="background: #f5f5f5; padding: 6px; font-weight: bold;">Action</div>
+
+    <div style="background: #fff; padding: 6px;">1</div>
+    <div style="background: #fff; padding: 6px;">Alice</div>
+    <div style="background: #fff; padding: 6px;">alice@test.com</div>
+    <div style="background: #fff; padding: 6px;"><div class="btn" onclick="editUser(1)" style="padding: 2px 8px; font-size: 12px;">Edit</div></div>
+
+    <div style="background: #fff; padding: 6px;">2</div>
+    <div style="background: #fff; padding: 6px;">Bob</div>
+    <div style="background: #fff; padding: 6px;">bob@test.com</div>
+    <div style="background: #fff; padding: 6px;"><div class="btn" onclick="editUser(2)" style="padding: 2px 8px; font-size: 12px;">Edit</div></div>
+
+    <div style="background: #fff; padding: 6px;">3</div>
+    <div style="background: #fff; padding: 6px;">Carol</div>
+    <div style="background: #fff; padding: 6px;">carol@test.com</div>
+    <div style="background: #fff; padding: 6px;"><div class="btn" onclick="editUser(3)" style="padding: 2px 8px; font-size: 12px;">Edit</div></div>
+  </div>
+
+</div>
+
+<!-- Footer is just a div -->
+<div class="footer-area">
+  <div>Acme Corp 2026. All rights reserved.</div>
+  <div class="link-text" onclick="navigate('privacy')">Privacy</div>
+  <div class="link-text" onclick="navigate('terms')">Terms</div>
+</div>
+
+</body>
+</html>

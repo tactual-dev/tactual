@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Filterable Example</title>
+</head>
+<body>
+  <header role="banner">
+    <h1>Filterable Example</h1>
+    <nav aria-label="Main Navigation">
+      <ul>
+        <li><a href="#products">Products</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Products</h2>
+    <button>Add to Cart</button>
+
+    <!-- Easter egg — intentionally hidden, should be excludable -->
+    <div id="easter-egg" class="easter-egg">
+      <button>Konami Code Activated!</button>
+      <a href="#secret">Secret Page</a>
+    </div>
+
+    <!-- Admin panel — internal tooling, not for end users -->
+    <div id="admin-panel" class="admin-only">
+      <h3>Admin Debug</h3>
+      <button>Clear Cache</button>
+      <button>Toggle Feature Flags</button>
+    </div>
+
+    <!-- Third-party widget -->
+    <div id="third-party-widget" class="external-widget">
+      <button>Chat with us</button>
+    </div>
+
+    <h2>Contact</h2>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email">
+    <button>Submit</button>
+  </main>
+
+  <footer role="contentinfo">
+    <a href="#privacy">Privacy Policy</a>
+  </footer>
+</body>
+</html>

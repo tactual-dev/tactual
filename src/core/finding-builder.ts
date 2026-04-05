@@ -1,0 +1,488 @@
+import type { PageState, Target, Finding } from "./types.js";
+import { severityFromScore } from "./types.js";
+import type { NavigationGraph, PathResult } from "./graph.js";
+import type { ScoreInputs } from "../scoring/index.js";
+import { computeScores } from "../scoring/index.js";
+import { computeInteropRisk } from "../scoring/interop.js";
+import { builtinRules } from "../rules/index.js";
+import type { ATProfile } from "../profiles/types.js";
+import {
+  collectEntryPoints,
+  computePathsFromEntries,
+  computeAlternatePaths,
+  findNearestHeading,
+  findNearestLandmark,
+  formatPath,
+  median,
+} from "./path-analysis.js";
+
+/**
+ * Build a scored Finding for a single target within a state.
+ */
+export function buildFinding(
+  graph: NavigationGraph,
+  state: PageState,
+  nodeId: string,
+  target: Target,
+  profile: ATProfile,
+): Finding {
+  // Structural context
+  const headings = state.targets.filter((t) => t.kind === "heading");
+  const landmarks = state.targets.filter((t) => t.kind === "landmark");
+  const controls = state.targets.filter((t) => isControlKind(t.kind));
+
+  // --- Path analysis ---
+  const entryPoints = collectEntryPoints(state, graph);
+  const paths = computePathsFromEntries(graph, entryPoints, nodeId);
+  const bestPath = paths.length > 0 ? paths[0] : null;
+  const shortestCost = bestPath?.totalCost ?? Infinity;
+  const allCosts = paths.map((p) => p.totalCost);
+  const medianCost = allCosts.length > 0 ? median(allCosts) : Infinity;
+  const linearSteps = bestPath
+    ? bestPath.edges.filter((e) => e.action === "nextItem").length
+    : 0;
+  const hasContextSwitch =
+    bestPath?.edges.some((e) => e.action === "groupEntry" || e.action === "groupExit") ?? false;
+
+  const alternatePaths = computeAlternatePaths(graph, state, nodeId, bestPath);
+
+  // --- Structural context ---
+  const nearestHeading = findNearestHeading(state, target);
+  const nearestLandmark = findNearestLandmark(state, target);
+  const controlIndex = controls.findIndex((c) => c.id === target.id);
+  const isControl = controlIndex >= 0;
+  const headingPath = paths.find((p) => p.edges.some((e) => e.action === "nextHeading"));
+  const landmarkPath = paths.find((p) => p.edges.some((e) => e.action === "groupEntry"));
+
+  // --- Extract ARIA attributes for scoring ---
+  const targetAttrs = (target as Record<string, unknown>)._attributes as string[] | undefined;
+
+  // --- Assemble score inputs ---
+  const usesSkipNav = !!headingPath || !!landmarkPath;
+  const totalTargets = state.targets.length;
+  const scoreInputs = assembleScoreInputs(
+    target, headings, landmarks, nearestHeading, nearestLandmark,
+    isControl, totalTargets, usesSkipNav, shortestCost, medianCost, linearSteps, hasContextSwitch,
+    targetAttrs,
+  );
+
+  // --- Interop risk (with ARIA APG conformance check) ---
+  const interop = computeInteropRisk(target.role, targetAttrs);
+  scoreInputs.interopRisk = interop.risk;
+
+  const scores = computeScores(scoreInputs, profile);
+
+  // --- Penalties and fixes ---
+  const { penalties, suggestedFixes } = generatePenalties(
+    target, state, graph, profile, interop,
+    linearSteps, isControl, controlIndex, headingPath, landmarkPath, headings,
+  );
+
+  // --- Format paths (truncate to keep output manageable) ---
+  const bestPathDesc = truncatePath(formatPath(graph, bestPath), 8);
+  const altPathDescs = alternatePaths
+    .slice(0, 3) // at most 3 alternate paths
+    .map((p) => truncatePath(formatPath(graph, p), 5));
+
+  // --- Confidence ---
+  let confidence = 0.8;
+  if (!nearestHeading && !nearestLandmark) confidence -= 0.1;
+  if (target.requiresBranchOpen) confidence -= 0.15;
+  if (shortestCost === Infinity) confidence -= 0.25;
+
+  return {
+    targetId: target.id,
+    selector: target.selector,
+    profile: profile.id,
+    scores,
+    severity: severityFromScore(scores.overall),
+    actionType: classifyActionType(penalties, interop, target),
+    bestPath: bestPathDesc,
+    alternatePaths: altPathDescs,
+    penalties: [...new Set(penalties)],
+    suggestedFixes: [...new Set(suggestedFixes)],
+    confidence: Math.round(Math.max(0.1, confidence) * 100) / 100,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Score input assembly
+// ---------------------------------------------------------------------------
+
+function assembleScoreInputs(
+  target: Target,
+  headings: Target[],
+  landmarks: Target[],
+  nearestHeading: Target | null,
+  nearestLandmark: Target | null,
+  isControl: boolean,
+  totalTargets: number,
+  usesSkipNavigation: boolean,
+  shortestCost: number,
+  medianCost: number,
+  linearSteps: number,
+  hasContextSwitch: boolean,
+  attributes?: string[],
+): ScoreInputs {
+  // Skip links are discoverable by definition — they're the first focusable element
+  const isSkipLink = target.kind === "link" && /skip|jump to/i.test(target.name ?? "");
+
+  return {
+    discoverability: {
+      // Landmarks, headings, and skip links are structural anchors.
+      inHeadingStructure: target.kind === "heading" || target.kind === "landmark" || isSkipLink || nearestHeading !== null,
+      headingLevel: target.kind === "heading"
+        ? target.headingLevel
+        : nearestHeading?.headingLevel,
+      inLandmark: target.kind === "landmark" || nearestLandmark !== null,
+      inControlNavigation: isControl,
+      hasAccessibleName: !!target.name && target.name.trim().length > 0,
+      hasRole: !!target.role,
+      searchDiscoverable: !!target.name && target.name.trim().length > 2,
+      hasKeyboardShortcut: (attributes ?? []).some((a) => a.includes("keyshortcuts")),
+      requiresBranchOpen: target.requiresBranchOpen,
+      branchTriggerQuality: (target as Record<string, unknown>)._branchTriggerQuality as "well-labeled" | "labeled" | "unlabeled" | undefined,
+    },
+    reachability: {
+      shortestPathCost: shortestCost === Infinity ? 50 : shortestCost,
+      medianPathCost: medianCost === Infinity ? 50 : medianCost,
+      unrelatedItemsOnPath: linearSteps,
+      involvesContextSwitch: hasContextSwitch,
+      requiresBranchOpen: target.requiresBranchOpen,
+      branchTriggerQuality: (target as Record<string, unknown>)._branchTriggerQuality as "well-labeled" | "labeled" | "unlabeled" | undefined,
+      totalTargets,
+      usesSkipNavigation,
+    },
+    operability: deriveOperability(target),
+    recovery: deriveRecovery(target, headings, landmarks, attributes),
+    interopRisk: 0,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Penalty generation
+// ---------------------------------------------------------------------------
+
+function generatePenalties(
+  target: Target,
+  state: PageState,
+  graph: NavigationGraph,
+  profile: ATProfile,
+  interop: { risk: number; issues: string[] },
+  linearSteps: number,
+  isControl: boolean,
+  controlIndex: number,
+  headingPath: PathResult | undefined,
+  landmarkPath: PathResult | undefined,
+  headings: Target[],
+): { penalties: string[]; suggestedFixes: string[] } {
+  // Rule-based penalties
+  const ruleResults = builtinRules.map((rule) =>
+    rule.evaluate({ target, state, graph, profile: profile.id }),
+  );
+  const penalties = ruleResults.flatMap((r) => r.penalties);
+  const suggestedFixes = ruleResults.flatMap((r) => r.suggestedFixes);
+
+  // Interop risk
+  if (interop.risk > 0) {
+    for (const issue of interop.issues) {
+      penalties.push(`Interop risk: ${issue}`);
+    }
+    if (interop.risk >= 8) {
+      suggestedFixes.push(
+        `Consider using a more widely supported pattern instead of role="${target.role}"`,
+      );
+    }
+  }
+
+  // Graph-derived penalties
+  if (linearSteps > 8) {
+    penalties.push(`${linearSteps} sequential items must be traversed on the best path`);
+    suggestedFixes.push("Add skip navigation or restructure content to reduce linear traversal");
+  }
+
+  if (isControl && controlIndex > 10) {
+    penalties.push(`${controlIndex} controls precede this target in control navigation`);
+    suggestedFixes.push("Move this control earlier in the DOM or add a heading anchor nearby");
+  }
+
+  // Skip-link exemption: a "skip to content" link IS the skip mechanism.
+  // It doesn't need heading/landmark reachability — its purpose is being first-in-tab-order.
+  // Don't penalize elements that ARE the navigation structure (landmarks, headings, skip links)
+  const isSkipLink = target.kind === "link" && /skip|jump to/i.test(target.name ?? "");
+  const isNavStructure = target.kind === "landmark" || target.kind === "heading" || isSkipLink;
+  if (!headingPath && !landmarkPath && headings.length > 0 && !isNavStructure) {
+    penalties.push("Target is not efficiently reachable via heading or landmark navigation");
+    suggestedFixes.push("Add a heading or landmark near this target to enable skip navigation");
+  }
+
+  if (target.requiresBranchOpen) {
+    penalties.push(
+      `Target "${target.name || target.role}" requires opening a hidden branch before it becomes reachable`,
+    );
+    suggestedFixes.push(
+      "Consider making this target discoverable without a branch open, " +
+        "or ensure the branch trigger is clearly labeled",
+    );
+  }
+
+  if (!target.name || target.name.trim() === "") {
+    penalties.push("Target has no accessible name — screen-reader users cannot identify it");
+    suggestedFixes.push("Add an aria-label, aria-labelledby, or visible text label");
+  }
+
+  // Explain low discoverability when no other penalty covers it.
+  // Without this, an LLM sees D:47 + no penalties = no guidance.
+  if (penalties.length === 0) {
+    const hasHeadingNearby = headings.length > 0;
+    const hasLandmarkNearby = !!findNearestLandmark(state, target);
+    if (!hasHeadingNearby && !hasLandmarkNearby && target.kind !== "heading" && target.kind !== "landmark") {
+      penalties.push("Low discoverability: not near any heading or landmark — screen-reader users navigating by structure will miss this target");
+      suggestedFixes.push("Add a heading nearby, or place this target inside a labeled landmark region");
+    } else if (!hasHeadingNearby) {
+      penalties.push("Low discoverability: no heading structure nearby for heading-based navigation");
+      suggestedFixes.push("Add a heading near this target to support heading navigation (71.6% of SR users start with headings)");
+    }
+  }
+
+  // Recovery explanations — make Rec scores actionable
+  const probe = (target as Record<string, unknown>)._probe as {
+    escapeRestoresFocus?: boolean;
+    focusNotTrapped?: boolean;
+    tabbable?: boolean;
+    hasPositiveTabindex?: boolean;
+    probeSucceeded?: boolean;
+  } | undefined;
+
+  if (probe?.probeSucceeded) {
+    if (probe.escapeRestoresFocus === false) {
+      penalties.push("Pressing Escape does not return focus to the trigger — focus position is lost after interaction");
+      suggestedFixes.push("Ensure Escape returns focus to the element that opened the overlay/menu");
+    }
+    if (probe.focusNotTrapped === false) {
+      penalties.push("Focus appears trapped — Tab key does not advance focus after interaction");
+      suggestedFixes.push("Ensure focus can leave the interactive region via Tab");
+    }
+    if (probe.tabbable === false) {
+      penalties.push(
+        "Element is not reachable via Tab key (tabindex=\"-1\"). " +
+        "Keyboard-only users (no screen reader) cannot reach it. " +
+        "SR users may still navigate to it via heading or landmark shortcuts.",
+      );
+      suggestedFixes.push("Remove tabindex=\"-1\", use roving tabindex pattern (tabindex=\"0\" on active item), or ensure focus is managed programmatically");
+    }
+    if (probe.hasPositiveTabindex === true) {
+      penalties.push("Element uses positive tabindex — this forces a non-standard Tab order that may confuse keyboard users");
+      suggestedFixes.push("Remove the positive tabindex value and use DOM source order to control Tab sequence");
+    }
+  } else if (target.requiresBranchOpen) {
+    penalties.push("Recovery cost: target is behind a hidden branch — dismissing may lose navigation position");
+  }
+
+  return { penalties, suggestedFixes };
+}
+
+/**
+ * Classify how an LLM should act on this finding.
+ *
+ * - "code-fix": Add/change an attribute, fix focus management, add a label.
+ *   The LLM can write a targeted code change.
+ * - "pattern-review": The ARIA pattern has inherent cross-AT limitations.
+ *   The LLM should suggest alternative patterns, not blindly "fix" the element.
+ * - "structural": Page structure issue (missing headings, deep nesting, control order).
+ *   May require component reorganization, not just an attribute change.
+ */
+function classifyActionType(
+  penalties: string[],
+  interop: { risk: number; issues: string[] },
+  target: Target,
+): "code-fix" | "pattern-review" | "structural" | undefined {
+  // No penalties = no action needed
+  if (penalties.length === 0 && interop.risk === 0) return undefined;
+
+  const penaltyText = penalties.join(" ").toLowerCase();
+
+  // Interop risk as sole or dominant penalty → pattern choice issue.
+  // Can't fix cross-AT support gaps with code changes.
+  const hasOnlyInteropPenalties = penalties.every((p) => p.toLowerCase().includes("interop risk"));
+  if (interop.risk > 0 && hasOnlyInteropPenalties) {
+    return "pattern-review";
+  }
+  if (interop.risk >= 5 && !penaltyText.includes("no accessible name")) {
+    return "pattern-review";
+  }
+
+  // Structural issues: missing headings, deep control order, no landmark
+  if (
+    penaltyText.includes("no heading structure") ||
+    penaltyText.includes("controls precede") ||
+    penaltyText.includes("not efficiently reachable via heading") ||
+    penaltyText.includes("sequential items must be traversed")
+  ) {
+    // If the target also has a code-level issue (no name, focus problem), prefer code-fix
+    if (penaltyText.includes("no accessible name") || penaltyText.includes("focus")) {
+      return "code-fix";
+    }
+    return "structural";
+  }
+
+  // Hidden branch with interop risk → pattern review (menu/dialog pattern choice)
+  if (target.requiresBranchOpen && interop.risk >= 3) {
+    return "pattern-review";
+  }
+
+  // Default: direct code fix (missing name, focus issues, branch labeling)
+  return "code-fix";
+}
+
+function isControlKind(kind: string): boolean {
+  return kind === "button" || kind === "link" || kind === "formField" ||
+         kind === "menuTrigger" || kind === "tab" || kind === "search";
+}
+
+// ---------------------------------------------------------------------------
+// Operability derivation
+// ---------------------------------------------------------------------------
+
+/** Roles that are natively interactive and keyboard-operable */
+const INTERACTIVE_ROLES = new Set([
+  "button", "link", "textbox", "searchbox", "checkbox", "radio",
+  "slider", "spinbutton", "switch", "combobox", "listbox",
+  "menuitem", "menuitemcheckbox", "menuitemradio", "tab", "option",
+  "treeitem",
+]);
+
+/** Roles where state changes are expected and should be announced */
+const STATEFUL_ROLES = new Set([
+  "checkbox", "radio", "switch", "combobox", "listbox",
+  "tab", "menuitemcheckbox", "menuitemradio", "slider", "spinbutton",
+  "treeitem", "option",
+]);
+
+/** Roles that manage focus after activation */
+const FOCUS_MANAGING_ROLES = new Set([
+  "dialog", "alertdialog", "menu", "listbox", "combobox",
+  "tab", "tree", "grid", "treegrid",
+]);
+
+/**
+ * Derive operability signals for a target.
+ *
+ * Uses runtime keyboard probe results when available (stored in target._probe
+ * by the probes module). Falls back to role-based heuristics when no probe
+ * data exists (e.g., CLI analysis without browser, or non-interactive roles).
+ *
+ * Probe-based scoring:
+ * - roleCorrect: probe succeeded and element was focusable
+ * - keyboardCompatible: element received focus via click
+ * - stateChangesAnnounced: activation changed aria-expanded/checked/pressed
+ * - focusCorrectAfterActivation: Escape returned focus to trigger
+ *
+ * Role-based fallback (unchanged from before):
+ * - button/link/heading: operability 100
+ * - checkbox/switch: operability 75
+ * - dialog/menu: operability 75
+ * - combobox (stateful + focus-managing): operability 50
+ */
+function deriveOperability(target: Target): {
+  roleCorrect: boolean;
+  stateChangesAnnounced: boolean;
+  focusCorrectAfterActivation: boolean;
+  keyboardCompatible: boolean;
+} {
+  // Check for runtime probe results (passthrough field from probes.ts)
+  const probe = (target as Record<string, unknown>)._probe as {
+    focusable?: boolean;
+    activatable?: boolean;
+    escapeRestoresFocus?: boolean;
+    focusNotTrapped?: boolean;
+    stateChanged?: boolean;
+    tabbable?: boolean;
+    hasPositiveTabindex?: boolean;
+    probeSucceeded?: boolean;
+  } | undefined;
+
+  if (probe?.probeSucceeded) {
+    const role = target.role?.toLowerCase() ?? "";
+    const isStateful = STATEFUL_ROLES.has(role);
+    const managesFocus = FOCUS_MANAGING_ROLES.has(role);
+
+    return {
+      roleCorrect: !!target.role && !(probe.hasPositiveTabindex ?? false),
+      keyboardCompatible: (probe.focusable ?? false) && (probe.tabbable ?? true),
+      // Only penalize missing state changes on roles that SHOULD change state.
+      // A plain button not toggling aria-expanded is correct behavior, not a bug.
+      stateChangesAnnounced: isStateful ? (probe.stateChanged ?? false) : true,
+      // Only penalize focus management on roles that SHOULD manage focus.
+      // A search button doesn't need Escape-to-return behavior.
+      focusCorrectAfterActivation: managesFocus ? (probe.escapeRestoresFocus ?? false) : true,
+    };
+  }
+
+  // Fallback: role-based inference
+  const role = target.role?.toLowerCase() ?? "";
+  const isInteractive = INTERACTIVE_ROLES.has(role);
+  const isStateful = STATEFUL_ROLES.has(role);
+  const managesFocus = FOCUS_MANAGING_ROLES.has(role);
+
+  return {
+    roleCorrect: !!role,
+    keyboardCompatible: isInteractive || !isControlKind(target.kind),
+    stateChangesAnnounced: !isStateful,
+    focusCorrectAfterActivation: !managesFocus,
+  };
+}
+
+/**
+ * Derive recovery signals for a target.
+ *
+ * Uses probe data when available: escapeRestoresFocus and focusNotTrapped
+ * are direct runtime observations. Falls back to structural heuristics.
+ */
+function deriveRecovery(
+  target: Target,
+  headings: Target[],
+  landmarks: Target[],
+  attributes?: string[],
+): {
+  canDismiss: boolean;
+  focusReturnsLogically: boolean;
+  canRelocateContext: boolean;
+  branchesPredictable: boolean;
+} {
+  const probe = (target as Record<string, unknown>)._probe as {
+    escapeRestoresFocus?: boolean;
+    focusNotTrapped?: boolean;
+    probeSucceeded?: boolean;
+  } | undefined;
+
+  // Keyboard shortcut boosts recovery: user can always return via the shortcut
+  const hasShortcut = (attributes ?? []).some((a) => a.includes("keyshortcuts"));
+
+  if (probe?.probeSucceeded) {
+    return {
+      canDismiss: probe.escapeRestoresFocus ?? !target.requiresBranchOpen,
+      focusReturnsLogically: (probe.escapeRestoresFocus ?? false) || hasShortcut,
+      canRelocateContext: headings.length > 0 || landmarks.length > 0 || hasShortcut,
+      branchesPredictable: (probe.focusNotTrapped ?? true) && !target.requiresBranchOpen,
+    };
+  }
+
+  return {
+    canDismiss: !target.requiresBranchOpen || hasShortcut,
+    focusReturnsLogically: true,
+    canRelocateContext: headings.length > 0 || landmarks.length > 0 || hasShortcut,
+    branchesPredictable: !target.requiresBranchOpen,
+  };
+}
+
+/**
+ * Truncate a path description to a maximum number of steps.
+ * Adds a "... (N more steps)" suffix if truncated.
+ */
+function truncatePath(path: string[], maxSteps: number): string[] {
+  if (path.length <= maxSteps) return path;
+  const truncated = path.slice(0, maxSteps);
+  truncated.push(`... (${path.length - maxSteps} more steps)`);
+  return truncated;
+}
