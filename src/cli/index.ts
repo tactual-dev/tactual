@@ -42,6 +42,8 @@ program
   .option("--exclude-selector <selectors...>", "CSS selectors to exclude from capture")
   .option("--focus <landmarks...>", "Only analyze targets within these landmarks")
   .option("--suppress <codes...>", "Suppress these diagnostic codes")
+  // Analysis
+  .option("--probe", "Run keyboard probes on interactive targets (adds 30-60s but detects focus/keyboard issues)")
   // Display
   .option("--top <n>", "Only show the worst N findings")
   .option("--min-severity <level>", "Minimum severity to report (severe|high|moderate|acceptable|strong)")
@@ -68,6 +70,7 @@ program
         excludeSelector?: string[];
         focus?: string[];
         suppress?: string[];
+        probe?: boolean;
         top?: string;
         minSeverity?: string;
         quiet?: boolean;
@@ -160,10 +163,13 @@ program
           excludeSelectors: merged.excludeSelectors,
         });
 
-        // Run keyboard probes on interactive targets
-        const { probeTargets } = await import("../playwright/probes.js");
-        const probedTargets = await probeTargets(page, rawState.targets);
-        const state = { ...rawState, targets: probedTargets };
+        // Keyboard probes — opt-in via --probe flag (adds 30-60s)
+        let targets = rawState.targets;
+        if (opts.probe) {
+          const { probeTargets } = await import("../playwright/probes.js");
+          targets = await probeTargets(page, rawState.targets);
+        }
+        const state = { ...rawState, targets };
 
         const snapshotText = await page.ariaSnapshot().catch(() => "");
 
