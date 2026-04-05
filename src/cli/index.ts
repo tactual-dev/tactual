@@ -108,6 +108,22 @@ program
         process.exit(1);
       }
 
+      // Progress indicator
+      const startTime = Date.now();
+      const isTTY = process.stderr.isTTY;
+      let dots = 0;
+      const progress = isTTY ? setInterval(() => {
+        dots = (dots + 1) % 4;
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(0);
+        process.stderr.write(`\r  Analyzing ${url}${".".repeat(dots)}${" ".repeat(3 - dots)} (${elapsed}s)`);
+      }, 500) : null;
+      const stopProgress = () => {
+        if (progress) {
+          clearInterval(progress);
+          process.stderr.write("\r" + " ".repeat(80) + "\r");
+        }
+      };
+
       let browser;
       try {
         const pw = await import("playwright");
@@ -165,17 +181,7 @@ program
             maxTotalTargets: maxTargets,
           });
           states = exploreResult.states;
-          console.error(
-            `Exploration complete: ${exploreResult.branchesExplored} branches, ` +
-              `${exploreResult.actionsPerformed} actions, ` +
-              `${exploreResult.skippedUnsafe} unsafe skipped`,
-          );
         }
-
-        const totalTargets = states.reduce((sum, s) => sum + s.targets.length, 0);
-        console.error(
-          `Captured ${totalTargets} targets across ${states.length} states. Analyzing...`,
-        );
 
         const result = analyze(states, profile, {
           name: url,
@@ -185,7 +191,14 @@ program
         });
 
 
+        stopProgress();
+        const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
         const output = formatReport(result, opts.format as ReportFormat);
+
+        // For console format, append timing
+        if (opts.format === "console" && isTTY) {
+          console.error(`  ${"\x1b[90m"}Completed in ${elapsed}s${"\x1b[0m"}`);
+        }
 
         if (opts.output) {
           const fs = await import("fs/promises");
@@ -210,6 +223,7 @@ program
           );
         }
       } catch (err) {
+        stopProgress();
         if (
           err instanceof Error &&
           (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))

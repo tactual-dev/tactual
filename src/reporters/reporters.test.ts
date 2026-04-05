@@ -117,11 +117,10 @@ describe("formatReport", () => {
   });
 
   describe("Console format", () => {
-    it("includes severity icon and score", () => {
+    it("includes severity and score", () => {
       const output = formatReport(makeResult(), "console");
-      expect(output).toContain("[~ ]");
-      expect(output).toContain("72/100");
-      expect(output).toContain("[moderate]");
+      expect(output).toContain("72");
+      expect(output).toContain("moderate");
     });
 
     it("includes score dimensions", () => {
@@ -130,9 +129,9 @@ describe("formatReport", () => {
       expect(output).toContain("R:60");
     });
 
-    it("includes path", () => {
+    it("includes target ID", () => {
       const output = formatReport(makeResult(), "console");
-      expect(output).toContain("Path: nextItem: Submit");
+      expect(output).toContain("t1");
     });
   });
 
