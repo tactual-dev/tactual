@@ -114,7 +114,6 @@ program
         const { captureState } = await import("../playwright/capture.js");
 
         const headless = opts.headless !== false;
-        console.error(`Launching browser${headless ? "" : " (headed)"}...`);
         browser = await pw.chromium.launch({ headless });
 
         const contextOptions: Record<string, unknown> = {};
@@ -132,7 +131,6 @@ program
         const page = await context.newPage();
 
         const timeout = parseInt(opts.timeout ?? "30000", 10);
-        console.error(`Navigating to ${urlCheck.url}...`);
         await page.goto(urlCheck.url!, {
           waitUntil: "domcontentloaded",
           timeout,
@@ -140,7 +138,6 @@ program
         // Short wait before capture — SPA convergence in captureState handles content readiness
         await page.waitForTimeout(2000);
 
-        console.error(`Capturing accessibility state...`);
         const rawState = await captureState(page, {
           device,
           provenance: "scripted",
@@ -148,7 +145,6 @@ program
         });
 
         // Run keyboard probes on interactive targets
-        console.error(`Probing ${rawState.targets.filter(t => ["button","link","menuitem","tab","combobox","menu","dialog","checkbox","radio","switch","slider","listbox"].includes(t.role?.toLowerCase() ?? "")).length} interactive targets...`);
         const { probeTargets } = await import("../playwright/probes.js");
         const probedTargets = await probeTargets(page, rawState.targets);
         const state = { ...rawState, targets: probedTargets };
@@ -162,17 +158,11 @@ program
           const depth = parseInt(opts.exploreDepth ?? "3", 10);
           const budget = parseInt(opts.exploreBudget ?? "50", 10);
           const maxTargets = parseInt(opts.exploreMaxTargets ?? "2000", 10);
-          console.error(`Exploring hidden branches (depth=${depth}, budget=${budget})...`);
           const exploreResult = await exploreState(page, state, {
             device,
             maxDepth: depth,
             maxActions: budget,
             maxTotalTargets: maxTargets,
-            onStep: (step) => {
-              console.error(
-                `  [depth=${step.depth}] ${step.action}: "${step.targetName}" → ${step.newTargetsFound} new targets (${step.totalStates} states)`,
-              );
-            },
           });
           states = exploreResult.states;
           console.error(
@@ -194,20 +184,6 @@ program
           filter,
         });
 
-        // Surface diagnostics to stderr
-        for (const d of result.diagnostics) {
-          if (opts.quiet && d.level === "info") continue;
-          const prefix = d.level === "error" ? "ERROR" : d.level === "warning" ? "WARN" : "INFO";
-          console.error(`[${prefix}] ${d.message}`);
-        }
-
-        const hasErrors = result.diagnostics.some((d) => d.level === "error");
-        if (hasErrors) {
-          console.error(
-            "Analysis may be unreliable due to errors above. " +
-              "Results reflect what was captured, not necessarily the actual site.",
-          );
-        }
 
         const output = formatReport(result, opts.format as ReportFormat);
 
