@@ -13,10 +13,14 @@ It works by capturing Playwright accessibility snapshots, building a navigation 
 ## Install
 
 ```bash
+# For CLI usage
 npm install tactual playwright
+
+# For MCP server usage (AI tools)
+npm install tactual playwright @modelcontextprotocol/sdk
 ```
 
-Playwright is an optional peer dependency — required for the CLI and page analysis, not needed if you only use the library API with pre-captured states.
+Playwright and `@modelcontextprotocol/sdk` are optional peer dependencies. Playwright is required for CLI and page analysis. The MCP SDK is required to run the `tactual-mcp` server. Neither is needed if you only use the library API with pre-captured states.
 
 ## Quick start
 
@@ -94,6 +98,11 @@ tactual-mcp
 
 #### Setup by AI tool
 
+First install the required packages in your project:
+```bash
+npm install tactual playwright @modelcontextprotocol/sdk
+```
+
 **Claude Code** — add to `.mcp.json` in your project root:
 ```json
 {
@@ -163,7 +172,7 @@ Or use the reusable workflow:
 ```yaml
 jobs:
   a11y:
-    uses: tactual-dev/tactual/.github/workflows/a11y-analysis.yml@master
+    uses: tactual-dev/tactual/.github/workflows/a11y-analysis.yml@main
     with:
       url: https://your-app.com
       explore: true
