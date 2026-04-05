@@ -236,7 +236,7 @@ program
       } catch (err) {
         if (
           err instanceof Error &&
-          err.message.includes("Cannot find module")
+          (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))
         ) {
           console.error(
             "Playwright is required for analyze-url. Install it: npm install playwright",
@@ -341,7 +341,7 @@ program
         process.exit(1);
       }
     } catch (err) {
-      if (err instanceof Error && err.message.includes("Cannot find module")) {
+      if (err instanceof Error && (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))) {
         console.error("Playwright is required for benchmarks. Install it: npm install playwright");
         process.exit(1);
       }
