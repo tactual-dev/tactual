@@ -92,16 +92,50 @@ tactual-mcp
 | `save_auth` | Authenticate with a web app and save session state. Pass the output file path as `storageState` to other tools for analyzing authenticated content. |
 | `analyze_pages` | Analyze multiple pages in one call with site-level aggregation. Returns ~200 bytes per page. Use for site triage before diving into individual pages. |
 
-Configure in your MCP client:
+#### Setup by AI tool
 
+**Claude Code** — add to `.mcp.json` in your project root:
 ```json
 {
   "mcpServers": {
     "tactual": {
-      "command": "tactual-mcp"
+      "type": "stdio",
+      "command": "npx",
+      "args": ["tactual-mcp"]
     }
   }
 }
+```
+
+**GitHub Copilot** — add to `.copilot/mcp.json` or `~/.copilot/mcp-config.json`:
+```json
+{
+  "mcpServers": {
+    "tactual": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["tactual-mcp"]
+    }
+  }
+}
+```
+
+**Cursor / Windsurf / Cline** — same format in your editor's MCP config:
+```json
+{
+  "mcpServers": {
+    "tactual": {
+      "command": "npx",
+      "args": ["tactual-mcp"]
+    }
+  }
+}
+```
+
+**Direct (global install)** — if you prefer not to use npx:
+```bash
+npm install -g tactual playwright
+tactual-mcp  # starts the MCP server on stdio
 ```
 
 ### GitHub Actions
