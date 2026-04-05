@@ -35,6 +35,12 @@ New `analyze-url` flags matching MCP parameters:
 - `actionType` shown inline on findings
 - Respects `NO_COLOR` environment variable
 
+### Documentation
+
+- Per-tool MCP setup instructions for Claude Code, GitHub Copilot, Cursor, Windsurf, Cline
+- MCP SDK install requirement documented alongside Playwright
+- Branch references corrected from `master` to `main` in workflows and README
+
 ## 0.1.0 (2026-04-05)
 
 Initial release.
