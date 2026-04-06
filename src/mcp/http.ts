@@ -57,7 +57,7 @@ function jsonError(
   res.end(JSON.stringify({ jsonrpc: "2.0", error: { code, message }, id: null }));
 }
 
-export async function startHttpServer(port: number): Promise<http.Server> {
+export async function startHttpServer(port: number, host = "127.0.0.1"): Promise<http.Server> {
   const sessions = new Map<string, Session>();
 
   // Cleanup stale sessions every minute
@@ -185,9 +185,9 @@ export async function startHttpServer(port: number): Promise<http.Server> {
   });
 
   return new Promise((resolve) => {
-    httpServer.listen(port, "127.0.0.1", () => {
+    httpServer.listen(port, host, () => {
       console.error(
-        `Tactual MCP server v${VERSION} (HTTP) listening on http://127.0.0.1:${port}/mcp`,
+        `Tactual MCP server v${VERSION} (HTTP) listening on http://${host}:${port}/mcp`,
       );
       resolve(httpServer);
     });

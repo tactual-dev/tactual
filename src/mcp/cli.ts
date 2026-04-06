@@ -12,8 +12,12 @@ async function main(): Promise<void> {
       process.env.PORT ??
       "8787";
     const port = parseInt(portStr, 10);
+    const host =
+      args.find((a) => a.startsWith("--host="))?.split("=")[1] ??
+      process.env.HOST ??
+      "127.0.0.1";
     const { startHttpServer } = await import("./http.js");
-    await startHttpServer(port);
+    await startHttpServer(port, host);
   } else {
     const { startMcpServer } = await import("./index.js");
     await startMcpServer();
