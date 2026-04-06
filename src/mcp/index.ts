@@ -56,7 +56,8 @@ export function createMcpServer(): McpServer {
     {
       description:
         "Analyze a web page for screen-reader navigation cost. Returns scored findings showing " +
-        "how hard it is for AT users to discover, reach, and operate interactive targets.\n\n" +
+        "how hard it is for AT users to discover, reach, and operate interactive targets. " +
+        "Read-only — navigates to the URL in a sandboxed browser but does not modify the page.\n\n" +
         "**Recommended**: Use format='sarif' for concise, actionable output (~4KB). " +
         "SARIF auto-filters to findings that need attention (moderate and worse). " +
         "JSON/markdown include every target and can be 100x larger.\n\n" +
@@ -323,7 +324,14 @@ export function createMcpServer(): McpServer {
   server.registerTool(
     "list_profiles",
     {
-      description: "List available assistive-technology profiles for scoring",
+      description:
+        "List the assistive-technology (AT) profiles available for scoring. " +
+        "Each profile models a specific screen reader and platform — e.g., NVDA on Windows, " +
+        "VoiceOver on iOS — with its own navigation cost weights and action vocabulary. " +
+        "Returns an array of {id, name, platform, description} for each profile.\n\n" +
+        "Read-only, no parameters, static data. Call once to discover valid profile IDs, " +
+        "then pass a profile ID to analyze_url, trace_path, or analyze_pages. " +
+        "Default profile for all analysis tools is 'generic-mobile-web-sr-v0' if none is specified.",
       inputSchema: {},
     },
     async () => {
@@ -354,9 +362,12 @@ export function createMcpServer(): McpServer {
     "diff_results",
     {
       description:
-        "Compare two Tactual analysis results. Shows what improved, regressed, " +
-        "which penalties were resolved or added, and severity band changes. " +
-        "Useful for before/after comparisons when fixing accessibility issues.",
+        "Compare two Tactual analysis results (before/after). Shows what improved, regressed, " +
+        "which penalties were resolved or added, and severity band changes per target. " +
+        "Returns a JSON array of {targetId, baselineScore, candidateScore, status, penalties}.\n\n" +
+        "Read-only, no side effects. Use after fixing accessibility issues to verify improvements. " +
+        "Both inputs must be JSON strings from analyze_url (format='json'). " +
+        "Not useful for SARIF output — use analyze_url directly for before/after SARIF comparisons.",
       inputSchema: {
         baseline: z.string().describe("Baseline analysis result as JSON string"),
         candidate: z.string().describe("Candidate analysis result as JSON string"),
@@ -465,9 +476,11 @@ export function createMcpServer(): McpServer {
     {
       description:
         "Extract the top unique remediation suggestions from a Tactual analysis result, " +
-        "ranked by severity. Most useful with large JSON results where you want a prioritized " +
-        "shortlist. For SARIF results, the findings already contain fix suggestions inline — " +
-        "this tool is redundant in that case.",
+        "ranked by severity. Returns a JSON array of {targetId, severity, score, fix, penalties}.\n\n" +
+        "Read-only, no side effects. Most useful with large JSON results where you want a prioritized " +
+        "shortlist of what to fix first. For SARIF results, the findings already contain fix " +
+        "suggestions inline — this tool is redundant in that case. " +
+        "Input must be a JSON string from analyze_url (format='json').",
       inputSchema: {
         analysis: z.string().describe("Analysis result as JSON string"),
         maxSuggestions: z.number().default(10).describe("Maximum number of suggestions to return"),
@@ -536,6 +549,7 @@ export function createMcpServer(): McpServer {
         "Trace the exact screen-reader navigation path to a specific interactive target. " +
         "Returns step-by-step actions a screen-reader user would perform, with modeled " +
         "announcements, cumulative cost, and the target's role/name at each hop. " +
+        "Read-only — navigates to the URL but does not modify the page.\n\n" +
         "Use this after analyze_url to understand *why* a target scored poorly.\n\n" +
         "**For auth-gated or explored targets**: Pass statesJson from a prior analyze_url " +
         "(use includeStates=true). This skips browser launch entirely and traces against " +
@@ -823,7 +837,11 @@ export function createMcpServer(): McpServer {
         "Authenticate with a web application and save the session for subsequent analysis. " +
         "Navigates to the URL, executes login steps (click a button, fill a form, etc.), " +
         "waits for the authenticated page to load, then saves cookies and localStorage " +
-        "to a JSON file. Pass the output path as storageState to analyze_url, trace_path, " +
+        "to a JSON file. Overwrites the output file if it already exists.\n\n" +
+        "**Side effects**: Writes a storageState JSON file to disk at `outputPath`. " +
+        "Launches a headed browser that interacts with the page (clicks, fills inputs). " +
+        "Not needed for public pages — only use when content is behind authentication.\n\n" +
+        "Pass the output file path as `storageState` to analyze_url, trace_path, " +
         "or analyze_pages to analyze authenticated content.\n\n" +
         "**Steps format**: Array of actions to perform in order. Each step is an object:\n" +
         "- `{ click: 'button text or selector' }` — click a button/link\n" +
@@ -940,9 +958,12 @@ export function createMcpServer(): McpServer {
       description:
         "Analyze multiple pages and produce an aggregated site-level report. " +
         "Runs analyze_url on each URL in a single browser session and combines " +
-        "results into a site score with per-page breakdown. Use this instead of " +
-        "calling analyze_url repeatedly when you need a site-level assessment. " +
-        "Returns ~200 bytes per page plus a site-level summary.",
+        "results into a site score with per-page breakdown. " +
+        "Read-only — navigates to each URL but does not modify pages.\n\n" +
+        "Use this instead of calling analyze_url repeatedly when you need a site-level assessment. " +
+        "Returns ~200 bytes per page plus a site-level summary. " +
+        "If a single URL fails (timeout, bot protection), its entry shows the error and " +
+        "remaining URLs still complete.",
       inputSchema: {
         urls: z.array(z.string()).describe("URLs to analyze (2-20 pages)"),
         profile: z

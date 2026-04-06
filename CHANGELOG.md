@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.2.0 (2026-04-06)
+
+Streamable HTTP transport, improved tool descriptions, and GitHub Actions marketplace support.
+
+### Transport
+
+- MCP server now supports both **stdio** (default) and **Streamable HTTP** transports
+- `tactual-mcp --http` starts an HTTP server on port 8787 (configurable with `--port=N` or `PORT` env var)
+- Session-based: each client gets an isolated MCP server instance with automatic 10-minute idle cleanup
+- `GET /health` endpoint for readiness probes (returns version and active session count)
+- Full MCP Streamable HTTP spec: `POST /mcp` (requests), `GET /mcp` (SSE notifications), `DELETE /mcp` (session termination)
+- Enables listing on Smithery.ai and other hosted MCP platforms that require HTTP transport
+- Stdio transport unchanged — `npx tactual-mcp` still works exactly as before
+
+### MCP Tool Descriptions
+
+- All tool descriptions now explicitly disclose read-only/side-effect behavior
+- `list_profiles`: expanded from one-liner to full description with return format, relationship to sibling tools, and usage guidance (B → A on Glama quality scoring)
+- `diff_results`: added return format, input requirements, when-not-to-use guidance
+- `suggest_remediations`: added return format and explicit input format requirement
+- `save_auth`: added file overwrite disclosure, side-effect documentation, when-not-to-use note
+- `analyze_pages`: added error handling behavior (partial failure continues remaining URLs)
+- `analyze_url`, `trace_path`: added explicit read-only disclosure
+
+### GitHub Actions
+
+- Composite action (`action.yml`) for GitHub Actions Marketplace
+- Inputs: `url`, `profile`, `explore`, `format`, `fail-below`, `node-version`
+- Outputs: `average-score`, `result-file`
+- Auto-uploads SARIF to GitHub Code Scanning
+- Score threshold gating for CI pass/fail
+
 ## 0.1.2 (2026-04-05)
 
 Full CLI/MCP parity, performance improvements, and output polish.
