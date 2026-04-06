@@ -853,7 +853,7 @@ export function createMcpServer(): McpServer {
       inputSchema: {
         url: z.string().describe("Login page URL"),
         steps: z
-          .array(z.record(z.unknown()))
+          .array(z.record(z.string(), z.unknown()))
           .describe("Login steps to execute (see description for format)"),
         outputPath: z
           .string()

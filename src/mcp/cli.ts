@@ -12,10 +12,18 @@ async function main(): Promise<void> {
       process.env.PORT ??
       "8787";
     const port = parseInt(portStr, 10);
+    if (isNaN(port) || port < 1 || port > 65535) {
+      console.error(`Invalid port: ${portStr}. Must be 1-65535.`);
+      process.exit(1);
+    }
     const host =
       args.find((a) => a.startsWith("--host="))?.split("=")[1] ??
       process.env.HOST ??
       "127.0.0.1";
+    if (!host) {
+      console.error("Invalid --host: value cannot be empty.");
+      process.exit(1);
+    }
     const { startHttpServer } = await import("./http.js");
     await startHttpServer(port, host);
   } else {

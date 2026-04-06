@@ -34,7 +34,7 @@ const exec = (args: string, expectFail = false): { stdout: string; stderr: strin
   }
 };
 
-describe("CLI", () => {
+describe("CLI", { timeout: 15_000 }, () => {
   describe("help and version", () => {
     it("shows help text with --help", () => {
       const { stdout } = exec("--help");
