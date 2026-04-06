@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.tactual-dev/tactual",
   "title": "Tactual",
-  "description": "Screen-reader navigation cost analyzer. Models the real effort for assistive technology users to find, reach, and operate interactive web content under 5 AT profiles.",
+  "description": "Screen-reader navigation cost analyzer. Scores AT user effort to find, reach, and operate content.",
   "repository": {
     "url": "https://github.com/tactual-dev/tactual",
     "source": "github"
