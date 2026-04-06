@@ -9,7 +9,6 @@ Registry readiness, packaging fixes, and SARIF improvements.
 - Add `mcpName` and `server.json` for official MCP Registry publishing
 - Add Dockerfile and `smithery.yaml` for container-based deployment
 - Add project logo (`assets/logo.png`)
-- Remove accidental self-dependency from package.json
 
 ### Transport
 
