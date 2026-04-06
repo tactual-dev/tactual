@@ -649,7 +649,9 @@ program
       const data = JSON.parse(await fs.readFile(file, "utf-8"));
       // Handle both full AnalysisResult and summarized JSON
       const findings = data.findings ?? data.worstFindings ?? [];
-      const sorted = [...findings].sort((a: any, b: any) => (a.scores?.overall ?? a.overall ?? 100) - (b.scores?.overall ?? b.overall ?? 100));
+      const scoreOf = (f: Record<string, unknown>): number =>
+        (f.scores as Record<string, number>)?.overall ?? (f.overall as number) ?? 100;
+      const sorted = [...findings].sort((a: Record<string, unknown>, b: Record<string, unknown>) => scoreOf(a) - scoreOf(b));
       const max = parseInt(opts.max, 10);
       const seenFixes = new Set<string>();
 

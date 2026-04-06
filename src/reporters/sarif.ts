@@ -145,6 +145,7 @@ export function formatSARIF(result: AnalysisResult): string {
       properties: {
         profile: finding.profile,
         scores: finding.scores,
+        selector: finding.selector,
         bestPath: finding.bestPath,
         confidence: finding.confidence,
       },

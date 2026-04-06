@@ -31,6 +31,9 @@ index.ts (public API re-exports)
 │   ├── path-analysis.ts  ← Entry points, multi-path, structural lookups
 │   ├── finding-builder.ts← Assembles score inputs, runs rules, builds Finding
 │   ├── analyzer.ts       ← Orchestrator: states → graph → findings → result
+│   ├── config.ts         ← tactual.json / .tactualrc.json loading and merging
+│   ├── diagnostics.ts    ← Detection: bot walls, login walls, sparse content
+│   ├── filter.ts         ← Target filtering (exclude, focus, suppress, priority)
 │   └── url-validation.ts ← URL sanitization for CLI/MCP inputs
 ├── scoring/
 │   ├── index.ts          ← 5-dimension scoring engine (D/R/O/Rec/IR)
@@ -46,15 +49,20 @@ index.ts (public API re-exports)
 │   └── index.ts          ← Rule interface + 4 built-in rules
 ├── reporters/
 │   ├── json.ts, markdown.ts, console.ts, sarif.ts
+│   ├── summarize.ts      ← Summarization: stats, issue groups, score distribution
 │   └── index.ts          ← formatReport dispatcher
 ├── playwright/
 │   ├── capture.ts        ← ariaSnapshot → Target extraction
 │   ├── attach.ts         ← Flow recording on Page
 │   ├── explorer.ts       ← Bounded branch exploration
+│   ├── probes.ts         ← Runtime keyboard probes (focus, activate, Escape, Tab)
 │   └── safety.ts         ← Safe-action policy
 ├── mcp/
 │   ├── index.ts          ← MCP server with 7 tools
-│   └── cli.ts            ← tactual-mcp entry point
+│   ├── http.ts           ← Streamable HTTP transport (session-based)
+│   ├── helpers.ts        ← extractFindings, getOverallScore utilities
+│   ├── trace-helpers.ts  ← Target matching, modeled announcements
+│   └── cli.ts            ← tactual-mcp entry point (stdio or --http)
 ├── calibration/
 │   ├── index.ts          ← Public API for calibration framework
 │   ├── types.ts          ← CalibrationCase, CalibrationResult types

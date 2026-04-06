@@ -8,7 +8,7 @@ const TactualConfigSchema = z.object({
   excludeSelectors: z.array(z.string()).optional(),
   focus: z.array(z.string()).optional(),
   suppress: z.array(z.string()).optional(),
-  priority: z.record(z.enum(["critical", "normal", "low", "ignore"])).optional(),
+  priority: z.record(z.string(), z.enum(["critical", "normal", "low", "ignore"])).optional(),
   profile: z.string().optional(),
   device: z.string().optional(),
   explore: z.boolean().optional(),
@@ -40,7 +40,7 @@ export function loadConfig(configPath?: string): TactualConfig {
   } catch (err) {
     if (configPath) {
       // Explicit path — error if can't load
-      throw new Error(`Failed to load config from ${path}: ${err}`);
+      throw new Error(`Failed to load config from ${path}: ${err}`, { cause: err });
     }
     // Auto-detected — silently ignore
     return {};

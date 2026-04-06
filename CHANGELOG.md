@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.2.1 (2026-04-06)
+
+Registry readiness, packaging fixes, and SARIF improvements.
+
+### Registry & Packaging
+
+- Add `mcpName` and `server.json` for official MCP Registry publishing
+- Add Dockerfile and `smithery.yaml` for container-based deployment
+- Add project logo (`assets/logo.png`)
+- Remove accidental self-dependency from package.json
+
+### Transport
+
+- HTTP server `--host` flag and `HOST` env var (default: 127.0.0.1, Dockerfile sets 0.0.0.0)
+- Validate `--port` and `--host` values — reject invalid input instead of silently misbehaving
+
+### Analysis
+
+- SARIF output now includes Playwright locator `selector` in finding properties
+
+### Dependencies
+
+- Bump zod 3.24 → 4.3.6 (Zod 4 migration: `z.record()` takes explicit key schema)
+- Bump commander ^13 → ^14 (Node 20+ only, same as our engine requirement)
+- Bump eslint ^9 → ^10 (flat config `name` property, `@eslint/js` now separate)
+- Bump vitest ^3 → ^4
+- Bump playwright ^1.50 → ^1.59, prettier ^3.4 → ^3.8, tsup ^8.4 → ^8.5, @types/node ^22 → ^25
+
+### Docs
+
+- Document `--probe`, `--wait-for-selector`, `--wait-time`, `--storage-state`, `--summary-only` CLI flags
+- Document `--host` flag for HTTP transport
+- Document `includeStates`, `statesJson`, `storageState` params in MCP tools table
+- Add logo to README
+- Update SECURITY.md: supported versions (0.2.x), HTTP transport threat model
+- Update ARCHITECTURE.md: complete module graph (was missing ~40% of source files)
+- Add `.gitattributes` for consistent line endings across contributors
+- Expand npm keywords (`mcp-server`, `model-context-protocol`, `assistive-technology`, `sarif`)
+
 ## 0.2.0 (2026-04-06)
 
 Streamable HTTP transport, improved tool descriptions, and GitHub Actions marketplace support.

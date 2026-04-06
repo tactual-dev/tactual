@@ -1,5 +1,9 @@
 # Tactual
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/tactual-dev/tactual/main/assets/logo.png" alt="Tactual logo" width="160">
+</p>
+
 Screen-reader navigation cost analyzer. Measures how hard it is for assistive-technology users to discover, reach, and operate interactive targets on the web.
 
 ## What it does
@@ -86,14 +90,15 @@ tactual-mcp
 # Start with HTTP transport (for hosted platforms, remote clients)
 tactual-mcp --http              # listens on http://127.0.0.1:8787/mcp
 tactual-mcp --http --port=3000  # custom port (or set PORT env var)
+tactual-mcp --http --host=0.0.0.0  # bind to all interfaces (default: 127.0.0.1)
 ```
 
 **MCP tools available:**
 
 | Tool | Description |
 |---|---|
-| `analyze_url` | Analyze a web page for SR navigation cost. Default format is `sarif`. Supports `waitForSelector`, `waitTime`, `minSeverity`, `focus`, `excludeSelector`, `exclude`, `maxFindings`, `summaryOnly`, `timeout` params. Findings include Playwright locator selectors. Pass `probe: true` for deep investigation with keyboard probes (focus, activation, Escape recovery). |
-| `trace_path` | Trace the step-by-step navigation path to a specific target. Shows each action, cost, and modeled screen-reader announcement. Accepts target ID or glob pattern (e.g., `*search*`). |
+| `analyze_url` | Analyze a web page for SR navigation cost. Default format is `sarif`. Supports `waitForSelector`, `waitTime`, `minSeverity`, `focus`, `excludeSelector`, `exclude`, `maxFindings`, `summaryOnly`, `timeout`, `storageState` params. Findings include Playwright locator selectors. Pass `probe: true` for keyboard probes. Pass `includeStates: true` to get captured states for offline `trace_path`. |
+| `trace_path` | Trace the step-by-step navigation path to a specific target. Shows each action, cost, and modeled SR announcement. Accepts target ID or glob pattern (e.g., `*search*`). Pass `statesJson` from a prior `analyze_url` to skip browser launch. Supports `storageState` for authenticated pages. |
 | `list_profiles` | List available AT profiles |
 | `diff_results` | Compare two analysis results. Shows penalties resolved/added, severity changes, and status per target. |
 | `suggest_remediations` | Ranked fix suggestions by impact. Redundant for SARIF output (fixes are inline). |
@@ -161,7 +166,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Analyze accessibility
-        uses: tactual-dev/tactual@v0.2.0
+        uses: tactual-dev/tactual@v0.2.1
         with:
           url: https://your-app.com
           explore: "true"
@@ -212,6 +217,11 @@ Options:
   --config <path>                 Path to tactual.json
   --no-headless                   Headed browser (for bot-blocked sites)
   --timeout <ms>                  Page load timeout (default: 30000)
+  --probe                         Run keyboard probes (focus, activation, Escape, Tab)
+  --wait-for-selector <css>       Wait for selector before capturing (for SPAs)
+  --wait-time <ms>                Additional wait after page load
+  --storage-state <path>          Playwright storageState JSON for authenticated pages
+  --summary-only                  Return only summary stats, no individual findings
   -q, --quiet                     Suppress info diagnostics
 ```
 
@@ -347,7 +357,7 @@ Tactual includes a static snapshot of ARIA role/attribute support data derived f
 | `console` | ~8KB | Human review in terminal |
 | `markdown` | ~11KB | PRs and issue comments |
 | `json` | ~18KB | Programmatic consumption |
-| `sarif` | ~43KB | GitHub Code Scanning / CI |
+| `sarif` | ~4-40KB | GitHub Code Scanning / CI |
 
 All non-SARIF formats emit summarized output: stats, grouped issues, and worst findings (capped at 15). SARIF caps at 25 results. When output is truncated, a note appears at the top.
 
