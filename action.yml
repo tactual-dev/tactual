@@ -1,5 +1,5 @@
 name: "Tactual Accessibility Analysis"
-description: "Analyze web pages for screen-reader navigation cost. Measures how hard it is for AT users to discover, reach, and operate interactive targets."
+description: "Screen-reader navigation cost analysis. Scores how hard AT users find, reach, and operate web content."
 author: "Ben Matar"
 
 branding:
