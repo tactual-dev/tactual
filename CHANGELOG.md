@@ -7,11 +7,12 @@ Streamable HTTP transport, improved tool descriptions, and GitHub Actions market
 ### Transport
 
 - MCP server now supports both **stdio** (default) and **Streamable HTTP** transports
-- `tactual-mcp --http` starts an HTTP server on port 8787 (configurable with `--port=N` or `PORT` env var)
+- `tactual-mcp --http` starts an HTTP server on port 8787 (configurable with `--port=N` or `PORT`, `--host=ADDR` or `HOST`)
 - Session-based: each client gets an isolated MCP server instance with automatic 10-minute idle cleanup
 - `GET /health` endpoint for readiness probes (returns version and active session count)
 - Full MCP Streamable HTTP spec: `POST /mcp` (requests), `GET /mcp` (SSE notifications), `DELETE /mcp` (session termination)
 - Enables listing on Smithery.ai and other hosted MCP platforms that require HTTP transport
+- Dockerfile and `smithery.yaml` for container-based deployment (Smithery, self-hosted)
 - Stdio transport unchanged — `npx tactual-mcp` still works exactly as before
 
 ### MCP Tool Descriptions
