@@ -1,6 +1,6 @@
 {
   "name": "tactual",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Screen-reader navigation cost analyzer. Measures how hard it is for AT users to discover, reach, and operate web content.",
   "type": "module",
   "main": "./dist/index.js",

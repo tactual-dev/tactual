@@ -80,8 +80,12 @@ for (const finding of result.findings) {
 Tactual includes an MCP server for AI agent consumption:
 
 ```bash
-# Start the MCP server (stdio transport)
+# Start the MCP server (stdio transport — default)
 tactual-mcp
+
+# Start with HTTP transport (for hosted platforms, remote clients)
+tactual-mcp --http              # listens on http://127.0.0.1:8787/mcp
+tactual-mcp --http --port=3000  # custom port (or set PORT env var)
 ```
 
 **MCP tools available:**
@@ -149,7 +153,24 @@ tactual-mcp  # starts the MCP server on stdio
 
 ### GitHub Actions
 
-Add to your CI pipeline:
+Use the composite action from the GitHub Actions Marketplace:
+
+```yaml
+jobs:
+  a11y:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Analyze accessibility
+        uses: tactual-dev/tactual@v0.2.0
+        with:
+          url: https://your-app.com
+          explore: "true"
+          fail-below: "70"
+```
+
+The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Outputs `average-score` and `result-file` for downstream steps.
+
+Or use the CLI directly for more control:
 
 ```yaml
 - name: Install Tactual
@@ -165,18 +186,6 @@ Add to your CI pipeline:
   uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: results.sarif
-```
-
-Or use the reusable workflow:
-
-```yaml
-jobs:
-  a11y:
-    uses: tactual-dev/tactual/.github/workflows/a11y-analysis.yml@main
-    with:
-      url: https://your-app.com
-      explore: true
-      fail-below: 70
 ```
 
 ## Configuration

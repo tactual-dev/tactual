@@ -1,0 +1,119 @@
+name: "Tactual Accessibility Analysis"
+description: "Analyze web pages for screen-reader navigation cost. Measures how hard it is for AT users to discover, reach, and operate interactive targets."
+author: "Ben Matar"
+
+branding:
+  icon: "eye"
+  color: "blue"
+
+inputs:
+  url:
+    description: "URL to analyze"
+    required: true
+  profile:
+    description: "AT profile ID (generic-mobile-web-sr-v0, nvda-desktop-v0, jaws-desktop-v0, voiceover-ios-v0, talkback-android-v0)"
+    required: false
+    default: "generic-mobile-web-sr-v0"
+  explore:
+    description: "Explore hidden branches (menus, tabs, dialogs, disclosures)"
+    required: false
+    default: "false"
+  format:
+    description: "Output format: json, markdown, console, sarif"
+    required: false
+    default: "sarif"
+  fail-below:
+    description: "Fail if average score is below this threshold (0 to disable)"
+    required: false
+    default: "0"
+  node-version:
+    description: "Node.js version to use"
+    required: false
+    default: "22"
+
+outputs:
+  average-score:
+    description: "Average accessibility score across all targets"
+    value: ${{ steps.analysis.outputs.average-score }}
+  result-file:
+    description: "Path to the analysis result file"
+    value: ${{ steps.analysis.outputs.result-file }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Install Tactual and Playwright
+      shell: bash
+      run: |
+        npm install tactual playwright
+        npx playwright install chromium --with-deps
+
+    - name: Run analysis
+      id: analysis
+      shell: bash
+      run: |
+        EXPLORE_FLAG=""
+        if [ "${{ inputs.explore }}" = "true" ]; then
+          EXPLORE_FLAG="--explore"
+        fi
+
+        EXT="txt"
+        if [ "${{ inputs.format }}" = "sarif" ]; then EXT="sarif"; fi
+        if [ "${{ inputs.format }}" = "json" ]; then EXT="json"; fi
+        RESULT_FILE="tactual-results.${EXT}"
+
+        npx tactual analyze-url "${{ inputs.url }}" \
+          --profile "${{ inputs.profile }}" \
+          --format "${{ inputs.format }}" \
+          $EXPLORE_FLAG \
+          --output "$RESULT_FILE"
+
+        echo "result-file=${RESULT_FILE}" >> "$GITHUB_OUTPUT"
+
+        # Generate JSON for score extraction (skip if already JSON)
+        if [ "${{ inputs.format }}" != "json" ]; then
+          npx tactual analyze-url "${{ inputs.url }}" \
+            --profile "${{ inputs.profile }}" \
+            $EXPLORE_FLAG \
+            --format json \
+            --output tactual-results.json
+        fi
+
+        AVG=$(node -e "
+          const r = JSON.parse(require('fs').readFileSync('tactual-results.json','utf8'));
+          if (!r.findings || r.findings.length === 0) { console.log('0'); process.exit(0); }
+          const avg = r.findings.reduce((s,f) => s + f.scores.overall, 0) / r.findings.length;
+          console.log(Math.round(avg * 10) / 10);
+        ")
+        echo "average-score=${AVG}" >> "$GITHUB_OUTPUT"
+        echo "Average score: ${AVG}"
+
+    - name: Check score threshold
+      if: inputs.fail-below != '0'
+      shell: bash
+      run: |
+        AVG="${{ steps.analysis.outputs.average-score }}"
+        THRESHOLD="${{ inputs.fail-below }}"
+        if (( $(echo "$AVG < $THRESHOLD" | bc -l) )); then
+          echo "::error::Average score $AVG is below threshold $THRESHOLD"
+          exit 1
+        fi
+
+    - name: Upload SARIF results
+      if: inputs.format == 'sarif' && always()
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: tactual-results.sarif
+        category: tactual-a11y
+
+    - name: Upload analysis artifact
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: tactual-analysis
+        path: tactual-results.*
