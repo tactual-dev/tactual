@@ -5,3 +5,7 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 5
+    ignore:
+      # Transitive deps of @modelcontextprotocol/sdk — we can't bump these
+      - dependency-name: "hono"
+      - dependency-name: "@hono/node-server"
