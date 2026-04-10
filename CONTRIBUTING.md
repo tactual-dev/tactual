@@ -54,7 +54,7 @@ registerProfile(yourProfileV0);
 
 - `1.0` = one atomic action (single keystroke, single swipe)
 - Higher values represent actions requiring more cognitive load, multi-key combos, or mode switching
-- Test by running `tactual analyze-url` with your profile against known-good and known-bad pages
+- Test by running `npx tactual analyze-url` with your profile against known-good and known-bad pages
 
 ## Adding a Rule
 

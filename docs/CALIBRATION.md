@@ -35,7 +35,7 @@ The `fixtures/` directory has HTML files suitable for local testing. Real-world 
 ### 2. Run Tactual on each page
 
 ```bash
-tactual analyze-url https://example.com -p nvda-desktop-v0 -f json -o example-nvda.json
+npx tactual analyze-url https://example.com -p nvda-desktop-v0 -f json -o example-nvda.json
 ```
 
 This gives you Tactual's predictions to compare against.
