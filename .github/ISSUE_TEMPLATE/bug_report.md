@@ -10,7 +10,7 @@ A clear description of what the bug is.
 
 ## Steps to reproduce
 
-1. Run `tactual analyze-url ...` or call `analyze_url` MCP tool with:
+1. Run `npx tactual analyze-url ...` or call `analyze_url` MCP tool with:
 2. ...
 3. See error / incorrect output
 

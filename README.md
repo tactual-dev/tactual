@@ -17,14 +17,12 @@ It works by capturing Playwright accessibility snapshots, building a navigation 
 ## Install
 
 ```bash
-# For CLI usage
 npm install tactual playwright
-
-# For MCP server usage (AI tools)
-npm install tactual playwright @modelcontextprotocol/sdk
 ```
 
 Playwright and `@modelcontextprotocol/sdk` are optional peer dependencies. Playwright is required for CLI and page analysis. The MCP SDK is required to run the `tactual-mcp` server. Neither is needed if you only use the library API with pre-captured states.
+
+For MCP server usage, also install the SDK: `npm install @modelcontextprotocol/sdk`
 
 ## Quick start
 
@@ -32,29 +30,29 @@ Playwright and `@modelcontextprotocol/sdk` are optional peer dependencies. Playw
 
 ```bash
 # Analyze a URL (default profile: generic-mobile-web-sr-v0)
-tactual analyze-url https://example.com
+npx tactual analyze-url https://example.com
 
 # Analyze with a specific AT profile
-tactual analyze-url https://example.com --profile voiceover-ios-v0
+npx tactual analyze-url https://example.com --profile voiceover-ios-v0
 
 # Explore hidden UI (menus, tabs, dialogs, disclosures)
-tactual analyze-url https://example.com --explore
+npx tactual analyze-url https://example.com --explore
 
 # Output as JSON, Markdown, or SARIF
-tactual analyze-url https://example.com --format json --output report.json
-tactual analyze-url https://example.com --format sarif --output report.sarif
+npx tactual analyze-url https://example.com --format json --output report.json
+npx tactual analyze-url https://example.com --format sarif --output report.sarif
 
 # Compare two analysis runs
-tactual diff baseline.json candidate.json
+npx tactual diff baseline.json candidate.json
 
 # List available AT profiles
-tactual profiles
+npx tactual profiles
 
 # Run benchmark suite
-tactual benchmark
+npx tactual benchmark
 
 # Initialize a tactual.json config file
-tactual init
+npx tactual init
 ```
 
 ### Library API
@@ -85,12 +83,12 @@ Tactual includes an MCP server for AI agent consumption:
 
 ```bash
 # Start the MCP server (stdio transport — default)
-tactual-mcp
+npx tactual-mcp
 
 # Start with HTTP transport (for hosted platforms, remote clients)
-tactual-mcp --http              # listens on http://127.0.0.1:8787/mcp
-tactual-mcp --http --port=3000  # custom port (or set PORT env var)
-tactual-mcp --http --host=0.0.0.0  # bind to all interfaces (default: 127.0.0.1)
+npx tactual-mcp --http              # listens on http://127.0.0.1:8787/mcp
+npx tactual-mcp --http --port=3000  # custom port (or set PORT env var)
+npx tactual-mcp --http --host=0.0.0.0  # bind to all interfaces (default: 127.0.0.1)
 ```
 
 **MCP tools available:**
@@ -152,7 +150,7 @@ npm install tactual playwright @modelcontextprotocol/sdk
 
 **Direct (global install)** — if you prefer not to use npx:
 ```bash
-npm install -g tactual playwright
+npm install -g tactual playwright @modelcontextprotocol/sdk
 tactual-mcp  # starts the MCP server on stdio
 ```
 
