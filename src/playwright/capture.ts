@@ -271,8 +271,9 @@ interface ParsedLine {
 function parseSnapshotLine(content: string): ParsedLine | null {
   const cleaned = content.replace(/:$/, "").trim();
 
+  // Match role, optional "name", optional [attrs], optional : "value" (slider/spinbutton current value)
   const match = cleaned.match(
-    /^(\w[\w-]*?)(?:\s+"([^"]*)")?(?:\s+\[([^\]]*)\])?$/,
+    /^(\w[\w-]*?)(?:\s+"([^"]*)")?(?:\s+\[([^\]]*)\])?(?::\s+"[^"]*")?$/,
   );
   if (!match) return null;
 

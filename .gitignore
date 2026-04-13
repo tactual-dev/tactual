@@ -16,3 +16,4 @@ Thumbs.db
 *.swo
 tmp-analysis.json
 *-analysis/
+.mcpregistry_*
