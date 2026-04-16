@@ -1,5 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { isLandmarkDemoted, buildAnnouncement, type NestingContext } from "./sr-simulator.js";
+import {
+  isLandmarkDemoted,
+  buildAnnouncement,
+  buildMultiATAnnouncement,
+  detectInteropDivergence,
+  buildTranscript,
+  type NestingContext,
+} from "./sr-simulator.js";
 import type { Target } from "../core/types.js";
 
 const target = (overrides: Partial<Target> & { kind: Target["kind"]; role: string }): Target =>
@@ -187,5 +194,119 @@ describe("buildAnnouncement", () => {
   it("unmapped role falls back to raw role", () => {
     expect(buildAnnouncement(target({ kind: "button", role: "treeitem", name: "Folder" })))
       .toBe("Folder, treeitem");
+  });
+
+  it("appends aria-describedby resolved text", () => {
+    expect(buildAnnouncement(target({
+      kind: "formField", role: "textbox", name: "Email",
+      _description: "you must use a work address",
+    } as Partial<Target> & { kind: Target["kind"]; role: string }))).toBe(
+      "Email, edit, you must use a work address",
+    );
+  });
+});
+
+describe("multi-AT announcements", () => {
+  it("VoiceOver says 'text field' where NVDA/JAWS say 'edit'", () => {
+    const t = target({ kind: "formField", role: "textbox", name: "Email" });
+    expect(buildAnnouncement(t, "nvda")).toBe("Email, edit");
+    expect(buildAnnouncement(t, "jaws")).toBe("Email, edit");
+    expect(buildAnnouncement(t, "voiceover")).toBe("Email, text field");
+  });
+
+  it("VoiceOver says 'dimmed' where NVDA/JAWS say 'unavailable'", () => {
+    const t = target({
+      kind: "button", role: "button", name: "Save",
+      _attributeValues: { "aria-disabled": "true" },
+    } as Partial<Target> & { kind: Target["kind"]; role: string });
+    expect(buildAnnouncement(t, "nvda")).toBe("Save, button, unavailable");
+    expect(buildAnnouncement(t, "voiceover")).toBe("Save, button, dimmed");
+  });
+
+  it("VoiceOver omits expanded/collapsed for combobox (uses 'popup button')", () => {
+    const t = target({
+      kind: "formField", role: "combobox", name: "Country",
+      _attributeValues: { "aria-expanded": "false" },
+    } as Partial<Target> & { kind: Target["kind"]; role: string });
+    expect(buildAnnouncement(t, "nvda")).toBe("Country, combo box, collapsed");
+    expect(buildAnnouncement(t, "voiceover")).toBe("Country, popup button");
+  });
+
+  it("buildMultiATAnnouncement returns all three variants", () => {
+    const t = target({ kind: "formField", role: "textbox", name: "Email" });
+    const a = buildMultiATAnnouncement(t);
+    expect(a.nvda).toBe("Email, edit");
+    expect(a.jaws).toBe("Email, edit");
+    expect(a.voiceover).toBe("Email, text field");
+  });
+});
+
+describe("detectInteropDivergence", () => {
+  it("flags combobox with aria-expanded (VoiceOver omits state)", () => {
+    const t = target({
+      kind: "formField", role: "combobox", name: "Country",
+      _attributeValues: { "aria-expanded": "false" },
+    } as Partial<Target> & { kind: Target["kind"]; role: string });
+    const result = detectInteropDivergence(t);
+    expect(result).not.toBeNull();
+    expect(result?.description).toContain("popup button");
+  });
+
+  it("flags disabled state (NVDA/JAWS 'unavailable' vs VO 'dimmed')", () => {
+    const t = target({
+      kind: "button", role: "button", name: "Save",
+      _attributeValues: { "aria-disabled": "true" },
+    } as Partial<Target> & { kind: Target["kind"]; role: string });
+    const result = detectInteropDivergence(t);
+    expect(result).not.toBeNull();
+    expect(result?.description).toContain("dimmed");
+  });
+
+  it("flags textbox role-name divergence", () => {
+    const t = target({ kind: "formField", role: "textbox", name: "Email" });
+    const result = detectInteropDivergence(t);
+    expect(result).not.toBeNull();
+    expect(result?.description).toContain("text field");
+  });
+
+  it("returns null when announcements are identical", () => {
+    const t = target({ kind: "button", role: "button", name: "Submit" });
+    const result = detectInteropDivergence(t);
+    expect(result).toBeNull();
+  });
+});
+
+describe("buildTranscript", () => {
+  const targets: Target[] = [
+    target({ id: "t1", kind: "landmark", role: "main", name: "Main" }),
+    target({ id: "t2", kind: "heading", role: "heading", name: "Welcome", headingLevel: 1 }),
+    target({ id: "t3", kind: "link", role: "link", name: "Sign in" }),
+    target({ id: "t4", kind: "button", role: "button", name: "Search" }),
+  ];
+
+  it("produces one step per target in order", () => {
+    const transcript = buildTranscript(targets);
+    expect(transcript).toHaveLength(4);
+    expect(transcript[0].step).toBe(1);
+    expect(transcript[3].step).toBe(4);
+    expect(transcript[0].targetId).toBe("t1");
+    expect(transcript[3].targetId).toBe("t4");
+  });
+
+  it("uses NVDA announcements by default", () => {
+    const transcript = buildTranscript(targets);
+    expect(transcript[1].announcement).toBe("Welcome, heading, level 1");
+    expect(transcript[2].announcement).toBe("Sign in, link");
+  });
+
+  it("respects --at parameter", () => {
+    const t = [target({ id: "t1", kind: "formField", role: "textbox", name: "Email" })];
+    expect(buildTranscript(t, "nvda")[0].announcement).toBe("Email, edit");
+    expect(buildTranscript(t, "voiceover")[0].announcement).toBe("Email, text field");
+  });
+
+  it("preserves target kind for filtering downstream", () => {
+    const transcript = buildTranscript(targets);
+    expect(transcript.map((s) => s.kind)).toEqual(["landmark", "heading", "link", "button"]);
   });
 });

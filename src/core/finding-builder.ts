@@ -633,5 +633,17 @@ function detectStatePenalties(target: Target): { penalties: string[]; suggestedF
     );
   }
 
+  // Cross-AT announcement divergence — flags when NVDA/JAWS/VoiceOver
+  // produce materially different announcements for the same target.
+  // (Inlined here to avoid core → playwright import dependency.)
+  if (role === "combobox" && attrs["aria-expanded"] !== undefined) {
+    penalties.push(
+      "Cross-AT divergence: VoiceOver announces this combobox as 'popup button' " +
+      "without an explicit expanded/collapsed state, while NVDA/JAWS announce " +
+      "'combo box, collapsed/expanded'. Users on different platforms get " +
+      "materially different cues about whether the popup is open.",
+    );
+  }
+
   return { penalties, suggestedFixes };
 }

@@ -14,8 +14,14 @@ export { checkActionSafety, type ElementInfo, type SafetyCheck, type ActionSafet
 export {
   simulateScreenReader,
   buildAnnouncement,
+  buildMultiATAnnouncement,
+  detectInteropDivergence,
+  buildTranscript,
   isLandmarkDemoted,
+  type ATKind,
   type SimulatorReport,
   type SimulatedAnnouncement,
+  type MultiATAnnouncement,
+  type TranscriptStep,
   type NestingContext,
 } from "./sr-simulator.js";

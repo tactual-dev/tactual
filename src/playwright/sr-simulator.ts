@@ -23,70 +23,97 @@ import type { Target } from "../core/types.js";
 // NVDA announcement patterns
 // ---------------------------------------------------------------------------
 
-/**
- * How NVDA announces each ARIA role.
- *
- * Covers all roles emitted by the Tactual capture pipeline (see
- * roleToTargetKind in capture.ts). For state-bearing roles (checkbox,
- * combobox, switch, etc.), the announcement is the role text only —
- * state values are appended by buildAnnouncement().
- */
-const NVDA_ROLE_ANNOUNCEMENTS: Record<string, string> = {
-  // Landmarks
-  banner: "banner landmark",
-  navigation: "navigation landmark",
-  main: "main landmark",
-  contentinfo: "content information landmark",
-  complementary: "complementary landmark",
-  region: "landmark",
-  search: "search landmark",
-  form: "form landmark",
-  // Heading
-  heading: "heading",
-  // Controls
-  link: "link",
-  button: "button",
-  // Form fields
-  checkbox: "check box",
-  radio: "radio button",
-  textbox: "edit",
-  searchbox: "search edit",
-  combobox: "combo box",
-  listbox: "list box",
-  slider: "slider",
-  spinbutton: "spin button",
-  switch: "switch",
-  // Tabs
-  tab: "tab",
-  tabpanel: "tab panel",
-  // Dialogs
-  dialog: "dialog",
-  alertdialog: "alert dialog",
-  // Status messages
-  alert: "alert",
-  status: "status",
-  log: "log",
-  // Menus
-  menu: "menu",
-  menubar: "menu bar",
-  menuitem: "menu item",
-  menuitemcheckbox: "menu item check box",
-  menuitemradio: "menu item radio button",
-};
+/** Screen reader to simulate. */
+export type ATKind = "nvda" | "jaws" | "voiceover";
 
 /**
- * Build a state-aware NVDA announcement string for a target.
+ * How each screen reader announces each ARIA role.
  *
- * Examples:
+ * Covers all roles emitted by the Tactual capture pipeline. State info
+ * (checked, expanded, etc.) is appended by buildAnnouncement().
+ *
+ * Sources: NVDA documentation, JAWS reference, Apple VoiceOver guide,
+ * and the ARIA-AT project (https://aria-at.w3.org).
+ */
+const ROLE_ANNOUNCEMENTS: Record<ATKind, Record<string, string>> = {
+  nvda: {
+    banner: "banner landmark", navigation: "navigation landmark",
+    main: "main landmark", contentinfo: "content information landmark",
+    complementary: "complementary landmark", region: "landmark",
+    search: "search landmark", form: "form landmark",
+    heading: "heading", link: "link", button: "button",
+    checkbox: "check box", radio: "radio button",
+    textbox: "edit", searchbox: "search edit",
+    combobox: "combo box", listbox: "list box",
+    slider: "slider", spinbutton: "spin button", switch: "switch",
+    tab: "tab", tabpanel: "tab panel",
+    dialog: "dialog", alertdialog: "alert dialog",
+    alert: "alert", status: "status", log: "log",
+    menu: "menu", menubar: "menu bar", menuitem: "menu item",
+    menuitemcheckbox: "menu item check box",
+    menuitemradio: "menu item radio button",
+  },
+  jaws: {
+    // JAWS landmark phrasing matches NVDA closely.
+    banner: "banner region", navigation: "navigation region",
+    main: "main region", contentinfo: "content information region",
+    complementary: "complementary region", region: "region",
+    search: "search region", form: "form region",
+    heading: "heading", link: "link", button: "button",
+    checkbox: "check box", radio: "radio button",
+    textbox: "edit", searchbox: "search edit",
+    combobox: "combo box", listbox: "list box",
+    slider: "slider", spinbutton: "spin button", switch: "switch",
+    tab: "tab", tabpanel: "tab panel",
+    dialog: "dialog", alertdialog: "alert dialog",
+    alert: "alert", status: "status", log: "log",
+    menu: "menu", menubar: "menu bar", menuitem: "menu item",
+    menuitemcheckbox: "menu item check box",
+    menuitemradio: "menu item radio button",
+  },
+  voiceover: {
+    // VoiceOver uses different terminology — "text field" not "edit",
+    // "popup button" for collapsed combobox, etc.
+    banner: "banner", navigation: "navigation",
+    main: "main", contentinfo: "content info",
+    complementary: "complementary", region: "region",
+    search: "search", form: "form",
+    heading: "heading", link: "link", button: "button",
+    checkbox: "check box", radio: "radio button",
+    textbox: "text field", searchbox: "search text field",
+    combobox: "popup button", listbox: "list box",
+    slider: "slider", spinbutton: "stepper", switch: "switch",
+    tab: "tab", tabpanel: "tab panel",
+    dialog: "dialog", alertdialog: "alert dialog",
+    alert: "alert", status: "status", log: "log",
+    menu: "menu", menubar: "menu bar", menuitem: "menu item",
+    menuitemcheckbox: "menu item check box",
+    menuitemradio: "menu item radio button",
+  },
+};
+
+
+/**
+ * Build a state-aware screen-reader announcement string for a target.
+ *
+ * Defaults to NVDA. Pass "jaws" or "voiceover" for other ATs.
+ *
+ * Examples (NVDA):
  *   { role: "button", name: "Sign Up" }            → "Sign Up, button"
  *   { role: "checkbox", name: "Subscribe", checked } → "Subscribe, check box, checked"
  *   { role: "combobox", name: "Country", expanded=false } → "Country, combo box, collapsed"
  *   { role: "slider", name: "Volume", value: "75" }  → "Volume, slider, 75"
  *   { role: "heading", name: "Title", headingLevel: 2 } → "Title, heading, level 2"
+ *
+ * Notable cross-AT differences:
+ *   - NVDA/JAWS "edit" vs VoiceOver "text field" for textbox
+ *   - NVDA/JAWS "combo box, collapsed" vs VoiceOver "popup button" (no expanded state)
+ *   - NVDA/JAWS "unavailable" vs VoiceOver "dimmed" for disabled
  */
-export function buildAnnouncement(target: Target): string {
+export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
   const role = target.role;
-  const roleText = NVDA_ROLE_ANNOUNCEMENTS[role] ?? role;
+  const roleMap = ROLE_ANNOUNCEMENTS[at];
+  const roleText = roleMap[role] ?? role;
   const parts: string[] = [];
 
   if (target.name) parts.push(target.name);
@@ -115,10 +142,15 @@ export function buildAnnouncement(target: Target): string {
       else if (c === "mixed") parts.push("partially checked");
     }
 
-    // Expanded state (combobox, listbox, button with menu, menu, etc.)
+    // Expanded state (combobox, listbox, button with menu, menu, etc.).
+    // VoiceOver announces "popup button" for collapsed combobox via the
+    // role text, so it omits the explicit collapsed/expanded marker for
+    // combobox specifically — matches Apple's pattern.
     const exp = attrs["aria-expanded"];
-    if (exp === "true") parts.push("expanded");
-    else if (exp === "false") parts.push("collapsed");
+    if (exp !== undefined && !(at === "voiceover" && role === "combobox")) {
+      if (exp === "true") parts.push("expanded");
+      else if (exp === "false") parts.push("collapsed");
+    }
 
     // Selected state (tab, option)
     if (role === "tab" || role === "option") {
@@ -131,8 +163,11 @@ export function buildAnnouncement(target: Target): string {
       parts.push("modal");
     }
 
-    // Required, invalid, readonly, disabled states (form fields)
-    if (attrs["aria-disabled"] === "true") parts.push("unavailable");
+    // Required, invalid, readonly, disabled states.
+    // NVDA/JAWS say "unavailable", VoiceOver says "dimmed".
+    if (attrs["aria-disabled"] === "true") {
+      parts.push(at === "voiceover" ? "dimmed" : "unavailable");
+    }
     if (attrs["aria-readonly"] === "true") parts.push("read only");
     if (attrs["aria-invalid"] === "true" || attrs["aria-invalid"] === "grammar" || attrs["aria-invalid"] === "spelling") {
       parts.push("invalid entry");
@@ -152,6 +187,105 @@ export function buildAnnouncement(target: Target): string {
   }
 
   return parts.join(", ");
+}
+
+/** All three AT announcements for a single target. */
+export interface MultiATAnnouncement {
+  nvda: string;
+  jaws: string;
+  voiceover: string;
+}
+
+/** A single step in a navigation transcript. */
+export interface TranscriptStep {
+  /** Position in linear navigation order (1-indexed) */
+  step: number;
+  /** Target ID this step refers to */
+  targetId: string;
+  /** Target kind (button, link, formField, heading, landmark, etc.) */
+  kind: string;
+  /** What the screen reader announces */
+  announcement: string;
+  /** Action a user takes to reach this step */
+  action: "next-item" | "next-heading" | "next-landmark";
+}
+
+/**
+ * Build a linear navigation transcript — what a screen-reader user hears
+ * as they Tab/swipe through interactive elements in DOM order.
+ *
+ * This includes only targets that appear in the accessibility tree
+ * (interactive elements, headings, landmarks). Static text content is
+ * NOT included — Tactual doesn't capture body text.
+ */
+export function buildTranscript(targets: Target[], at: ATKind = "nvda"): TranscriptStep[] {
+  return targets.map((target, i) => ({
+    step: i + 1,
+    targetId: target.id,
+    kind: target.kind,
+    announcement: buildAnnouncement(target, at),
+    action: "next-item" as const,
+  }));
+}
+
+/** Build announcements for all three supported screen readers. */
+export function buildMultiATAnnouncement(target: Target): MultiATAnnouncement {
+  return {
+    nvda: buildAnnouncement(target, "nvda"),
+    jaws: buildAnnouncement(target, "jaws"),
+    voiceover: buildAnnouncement(target, "voiceover"),
+  };
+}
+
+/**
+ * Detect when announcements diverge across screen readers in a way that
+ * affects what the user actually hears (not just minor wording variants).
+ *
+ * Returns null when announcements are equivalent enough to not matter.
+ */
+export function detectInteropDivergence(
+  target: Target,
+): { description: string; announcements: MultiATAnnouncement } | null {
+  const a = buildMultiATAnnouncement(target);
+  const allSame = a.nvda === a.jaws && a.jaws === a.voiceover;
+  if (allSame) return null;
+
+  // Specific high-signal divergences worth flagging:
+  const role = target.role;
+  const attrs = (target as Record<string, unknown>)._attributeValues as
+    | Record<string, string> | undefined;
+
+  if (role === "combobox" && attrs?.["aria-expanded"] !== undefined) {
+    return {
+      description:
+        "VoiceOver announces this combobox as 'popup button' without an explicit " +
+        "expanded/collapsed state, while NVDA and JAWS announce 'combo box, " +
+        "collapsed/expanded'. Users on different platforms get materially " +
+        "different cues about whether the popup is open.",
+      announcements: a,
+    };
+  }
+
+  if (attrs?.["aria-disabled"] === "true") {
+    return {
+      description:
+        "Disabled state is announced as 'unavailable' by NVDA/JAWS but 'dimmed' by " +
+        "VoiceOver. The information is conveyed but the wording differs — confirm " +
+        "your accessibility documentation matches the user's experience.",
+      announcements: a,
+    };
+  }
+
+  if (role === "textbox" || role === "searchbox") {
+    return {
+      description:
+        "VoiceOver says 'text field' where NVDA/JAWS say 'edit'. Same meaning, " +
+        "different vocabulary — only matters if you train users on AT-specific terms.",
+      announcements: a,
+    };
+  }
+
+  return null;
 }
 
 // ---------------------------------------------------------------------------
