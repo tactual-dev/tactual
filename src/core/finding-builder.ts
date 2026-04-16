@@ -263,7 +263,20 @@ function generatePenalties(
     nestedFocusable?: boolean;
     focusIndicatorSuppressed?: boolean;
     probeSucceeded?: boolean;
+    ariaStateBeforeEnter?: Record<string, string>;
+    ariaStateAfterEnter?: Record<string, string>;
   } | undefined;
+
+  // Pattern-deviation detection: predict the post-Enter state via the
+  // ARIA APG state machine and compare to what the probe actually
+  // observed. Mismatches indicate broken pattern implementations.
+  if (probe?.probeSucceeded && probe.ariaStateBeforeEnter && probe.ariaStateAfterEnter) {
+    const deviation = detectPatternDeviation(target, probe.ariaStateBeforeEnter, probe.ariaStateAfterEnter);
+    if (deviation) {
+      penalties.push(deviation.message);
+      suggestedFixes.push(deviation.fix);
+    }
+  }
 
   if (probe?.probeSucceeded) {
     if (probe.escapeRestoresFocus === false) {
@@ -507,6 +520,65 @@ function truncatePath(path: string[], maxSteps: number): string[] {
   const truncated = path.slice(0, maxSteps);
   truncated.push(`... (${path.length - maxSteps} more steps)`);
   return truncated;
+}
+
+/**
+ * Detect pattern-implementation deviation by comparing the actual
+ * probe-observed state change to the ARIA APG spec's expected behavior.
+ *
+ * Mirrors a subset of the state machine in playwright/state-machine.ts
+ * (inlined here to avoid a core → playwright import dependency).
+ * Only checks patterns where the expected Enter-key behavior is clear
+ * from the APG spec.
+ */
+function detectPatternDeviation(
+  target: Target,
+  before: Record<string, string>,
+  after: Record<string, string>,
+): { message: string; fix: string } | null {
+  const role = target.role;
+  // Enter toggles aria-pressed / aria-expanded on buttons (APG toggle-button,
+  // disclosure-button patterns)
+  if (role === "button") {
+    if (before["aria-pressed"] !== undefined) {
+      const expected = before["aria-pressed"] === "true" ? "false" : "true";
+      if (after["aria-pressed"] !== expected) {
+        return {
+          message:
+            `Pattern deviation: pressing Enter on a toggle button should toggle aria-pressed ` +
+            `from "${before["aria-pressed"]}" to "${expected}" per the ARIA APG toggle-button ` +
+            `pattern, but probe observed aria-pressed="${after["aria-pressed"] ?? "(unset)"}".`,
+          fix: "Ensure the button's onClick handler toggles aria-pressed. Screen-reader users rely on this state to know whether the toggle is active.",
+        };
+      }
+    }
+    if (before["aria-expanded"] !== undefined) {
+      const expected = before["aria-expanded"] === "true" ? "false" : "true";
+      if (after["aria-expanded"] !== expected) {
+        return {
+          message:
+            `Pattern deviation: pressing Enter on a disclosure button should toggle aria-expanded ` +
+            `from "${before["aria-expanded"]}" to "${expected}" per the ARIA APG disclosure pattern, ` +
+            `but probe observed aria-expanded="${after["aria-expanded"] ?? "(unset)"}".`,
+          fix: "Ensure the button's click handler toggles aria-expanded AND shows/hides the disclosed content.",
+        };
+      }
+    }
+  }
+  // Enter toggles aria-checked on checkbox/switch (APG)
+  if ((role === "checkbox" || role === "switch") && before["aria-checked"] !== undefined) {
+    const expected = before["aria-checked"] === "true" ? "false" : "true";
+    if (after["aria-checked"] !== expected) {
+      return {
+        message:
+          `Pattern deviation: pressing Enter on a ${role} should toggle aria-checked ` +
+          `from "${before["aria-checked"]}" to "${expected}" per the ARIA APG ${role} pattern, ` +
+          `but probe observed aria-checked="${after["aria-checked"] ?? "(unset)"}".`,
+        fix: `Ensure the ${role}'s keyboard handler toggles aria-checked. Screen-reader users rely on this state.`,
+      };
+    }
+  }
+  return null;
 }
 
 /**

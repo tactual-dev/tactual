@@ -28,3 +28,10 @@ export {
   type NavigationOptions,
   type NestingContext,
 } from "./sr-simulator.js";
+export {
+  simulateAction,
+  simulateSequence,
+  type Key,
+  type ActionResult,
+  type AttributeChange,
+} from "./state-machine.js";

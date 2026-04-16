@@ -28,6 +28,11 @@ export interface ProbeResults {
   focusIndicatorSuppressed: boolean;
   /** Probe completed successfully (false = element was stale/detached) */
   probeSucceeded: boolean;
+  /** ARIA state attributes captured before the activation key was pressed */
+  ariaStateBeforeEnter?: Record<string, string>;
+  /** ARIA state attributes captured after the activation key was pressed.
+   *  Compared against simulateAction's prediction to detect pattern deviations. */
+  ariaStateAfterEnter?: Record<string, string>;
 }
 
 /** Maximum targets to probe per page (keeps total time under ~3s) */
@@ -238,14 +243,16 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
     }).catch(() => false) : false;
 
     // 3. Check pre-activation state
-    const preState = await getElementState(locator);
+    const preStateMap = await getElementStateMap(locator);
+    const preState = stateMapToString(preStateMap);
 
     // 4. Press Enter to activate
     await page.keyboard.press("Enter");
     await page.waitForTimeout(100);
 
     // 5. Check post-activation state
-    const postState = await getElementState(locator);
+    const postStateMap = await getElementStateMap(locator);
+    const postState = stateMapToString(postStateMap);
     const stateChanged = preState !== postState;
 
     // Determine if this element triggers an overlay (menu, dialog, popover).
@@ -314,6 +321,8 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
       nestedFocusable,
       focusIndicatorSuppressed,
       probeSucceeded: true,
+      ariaStateBeforeEnter: preStateMap,
+      ariaStateAfterEnter: postStateMap,
     };
   } catch {
     return fail;
@@ -321,23 +330,31 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
 }
 
 /**
- * Get the current interaction state of an element (expanded, checked, pressed, selected).
+ * Get the current interaction state of an element as a key→value map.
+ * Used both for stateChanged detection and for pattern-deviation analysis.
  */
-async function getElementState(locator: import("playwright").Locator): Promise<string> {
+async function getElementStateMap(
+  locator: import("playwright").Locator,
+): Promise<Record<string, string>> {
   try {
-    const state = await locator.evaluate((el: Element) => {
-      return [
-        el.getAttribute("aria-expanded"),
-        el.getAttribute("aria-checked"),
-        el.getAttribute("aria-pressed"),
-        el.getAttribute("aria-selected"),
-        el.getAttribute("aria-hidden"),
-        el.getAttribute("aria-disabled"),
-      ].filter(Boolean).join(",");
+    return await locator.evaluate((el: Element) => {
+      const out: Record<string, string> = {};
+      const attrs = ["aria-expanded", "aria-checked", "aria-pressed", "aria-selected", "aria-hidden", "aria-disabled"];
+      for (const a of attrs) {
+        const v = el.getAttribute(a);
+        if (v !== null) out[a] = v;
+      }
+      return out;
     });
-    return state || "none";
   } catch {
-    return "unknown";
+    return {};
   }
+}
+
+/** String form for cheap equality comparison. */
+function stateMapToString(m: Record<string, string>): string {
+  const keys = Object.keys(m).sort();
+  if (keys.length === 0) return "none";
+  return keys.map((k) => `${k}=${m[k]}`).join(",");
 }
 

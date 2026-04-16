@@ -443,4 +443,89 @@ describe("buildFinding", () => {
       expect(penalties.some((p) => p.includes("aria-disabled"))).toBe(false);
     });
   });
+
+  describe("pattern-deviation detection (probe vs APG spec)", () => {
+    function makeProbedTarget(
+      role: string, kind: Target["kind"], name: string,
+      before: Record<string, string>, after: Record<string, string>,
+      succeeded = true,
+    ): Target {
+      return makeTarget({
+        id: "probed-1", kind, role, name,
+        _attributeValues: before,
+        _probe: {
+          probeSucceeded: succeeded,
+          ariaStateBeforeEnter: before,
+          ariaStateAfterEnter: after,
+        },
+      } as Partial<Target>);
+    }
+
+    function findingFor(target: Target) {
+      const heading = makeTarget({ id: "h1", kind: "heading", role: "heading", name: "T", headingLevel: 1 });
+      const landmark = makeTarget({ id: "lm", kind: "landmark", role: "main", name: "M" });
+      const state = makeState([heading, landmark, target], { id: "s1" });
+      const graph = buildGraph([state], profile);
+      const finding = buildFinding(graph, state, `${state.id}:${target.id}`, target, profile);
+      return finding;
+    }
+
+    it("flags toggle button that doesn't toggle aria-pressed", () => {
+      const t = makeProbedTarget(
+        "button", "button", "Mute",
+        { "aria-pressed": "false" },
+        { "aria-pressed": "false" }, // bug: state didn't change
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("aria-pressed"))).toBe(true);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(true);
+    });
+
+    it("does NOT flag toggle button that correctly toggles", () => {
+      const t = makeProbedTarget(
+        "button", "button", "Mute",
+        { "aria-pressed": "false" },
+        { "aria-pressed": "true" }, // correct
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(false);
+    });
+
+    it("flags disclosure button that doesn't toggle aria-expanded", () => {
+      const t = makeProbedTarget(
+        "button", "button", "Details",
+        { "aria-expanded": "false" },
+        { "aria-expanded": "false" },
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("aria-expanded"))).toBe(true);
+    });
+
+    it("flags checkbox that doesn't toggle aria-checked", () => {
+      const t = makeProbedTarget(
+        "checkbox", "formField", "Subscribe",
+        { "aria-checked": "false" },
+        { "aria-checked": "false" },
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(true);
+      expect(finding.penalties.some((p) => p.includes("aria-checked"))).toBe(true);
+    });
+
+    it("does NOT flag a checkbox that correctly toggles", () => {
+      const t = makeProbedTarget(
+        "checkbox", "formField", "Subscribe",
+        { "aria-checked": "false" },
+        { "aria-checked": "true" },
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(false);
+    });
+
+    it("does NOT flag plain button (no aria-pressed/expanded)", () => {
+      const t = makeProbedTarget("button", "button", "Submit", {}, {});
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(false);
+    });
+  });
 });
