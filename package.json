@@ -47,6 +47,7 @@
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
+    "calibrate": "node scripts/aria-at-calibrate.mjs",
     "prepack": "npm run build"
   },
   "publishConfig": {

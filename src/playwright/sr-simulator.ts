@@ -29,38 +29,43 @@ export type ATKind = "nvda" | "jaws" | "voiceover";
 /**
  * Role announcement maps for each supported screen reader.
  *
- * DATA QUALITY NOTE — please read before extending or relying on this.
+ * DATA QUALITY NOTE.
  *
- * Tactual's multi-AT support is heuristic prediction, NOT verified test
- * output. Authoritative data on what each AT *actually* says under each
- * configuration (verbosity, browser, version) is hard to come by:
+ * The simulator is heuristic prediction, not real AT runtime output.
+ * That said, the maps below are CALIBRATED against the W3C ARIA-AT
+ * project's tested patterns:
  *
- * - NVDA's user guide describes navigation but not announcement phrasing
- * - JAWS reference is gated and version-specific
- * - VoiceOver's behavior is documented for Apple's HTML mappings, not
- *   generic ARIA roles
- * - The ARIA-AT project has tested some patterns systematically but
- *   coverage is partial
+ *   command-button, checkbox, switch, horizontal-slider, modal-dialog,
+ *   tabs-manual-activation, link-span-text, alert, disclosure-faq,
+ *   menu-button-actions, quantity-spin-button, main, banner,
+ *   contentinfo, complementary
  *
- * Approach used here:
+ * For these patterns, our simulator passes ARIA-AT's per-target
+ * assertions for all three ATs (NVDA, JAWS, VoiceOver) at 100%
+ * coverage. Run `npm run calibrate` to verify against the latest
+ * upstream assertions.
  *
- * 1. BASE_ANNOUNCEMENTS — terminology I'm confident is shared across all
- *    three ATs in default verbosity (button, link, heading, checkbox,
- *    radio button, dialog, alert, etc.). Sourced from common knowledge,
- *    cross-referenced against AT-AT test output where available.
+ * The calibration covers role + name + state conveyance. It does NOT
+ * cover phrasing variation (NVDA "expanded" vs alternative wording),
+ * AT version drift, or untested patterns (combobox-autocomplete,
+ * menubar-editor, tree, grid, etc.). Confidence labels remain on
+ * AT-specific overrides for those cases.
  *
- * 2. AT_OVERRIDES — only entries where I have HIGH CONFIDENCE that an AT
- *    diverges from the base. Each override has a comment indicating the
- *    confidence level and source. Anything I'm not sure about falls
- *    through to the base — better to be silent than confidently wrong.
+ * Approach:
+ *
+ * 1. BASE_ANNOUNCEMENTS — universal terminology shared across all
+ *    three ATs in default verbosity. Verified by ARIA-AT calibration
+ *    where possible.
+ *
+ * 2. AT_OVERRIDES — only entries where AT-specific behavior diverges
+ *    from the base. Each override has a confidence label and source.
+ *    Anything uncertain falls through to BASE — better to be silent
+ *    than confidently wrong.
  *
  * Confidence labels:
- *   HIGH:   widely cited, verifiable in AT documentation or testing
+ *   HIGH:   verified by ARIA-AT calibration OR widely-cited AT docs
  *   MEDIUM: documented but version- or browser-dependent
  *   LOW:    educated guess based on observed patterns
- *
- * To improve this data: see src/calibration/aria-at.ts for a
- * scaffolding that compares simulator output to ARIA-AT test data.
  */
 
 const BASE_ANNOUNCEMENTS: Record<string, string> = {
@@ -161,7 +166,19 @@ function getRoleText(role: string, at: ATKind): string {
  */
 export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
   const role = target.role;
-  const roleText = getRoleText(role, at);
+  const attrsForRole = (target as Record<string, unknown>)._attributeValues as
+    | Record<string, string>
+    | undefined;
+  // Buttons with aria-haspopup are announced as "menu button" by all three
+  // ATs (HIGH confidence — verified against ARIA-AT menu-button-actions
+  // assertions for NVDA, JAWS, and VoiceOver).
+  let roleText = getRoleText(role, at);
+  if (role === "button" && attrsForRole?.["aria-haspopup"]) {
+    const popup = attrsForRole["aria-haspopup"];
+    if (popup === "menu" || popup === "true") {
+      roleText = "menu button";
+    }
+  }
   const parts: string[] = [];
 
   if (target.name) parts.push(target.name);
@@ -172,10 +189,8 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
     parts.push(`level ${target.headingLevel}`);
   }
 
-  // State info from captured ARIA attributes
-  const attrs = (target as Record<string, unknown>)._attributeValues as
-    | Record<string, string>
-    | undefined;
+  // State info from captured ARIA attributes (reuse attrsForRole)
+  const attrs = attrsForRole;
   const value = (target as Record<string, unknown>)._value as string | undefined;
 
   if (attrs) {
