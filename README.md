@@ -133,6 +133,8 @@ npx tactual transcript https://example.com --at voiceover
 
 The simulator is heuristic prediction, not real screen-reader output. It runs in milliseconds, cross-platform, no OS focus stealing.
 
+**Data quality.** The role and state phrasing maps are based on AT documentation and common knowledge, not verified test recordings. The simulator labels each AT-specific override with confidence (HIGH/MEDIUM/LOW) and falls through to a shared base when uncertain rather than inventing differences. To verify against ground truth, see `src/calibration/aria-at.ts` — a scaffolding for comparing simulator output to recordings from the [W3C ARIA-AT project](https://aria-at.w3.org).
+
 ### MCP Server
 
 Tactual includes an MCP server for AI agent consumption:
