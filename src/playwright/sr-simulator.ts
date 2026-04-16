@@ -26,11 +26,13 @@ import type { Target } from "../core/types.js";
 /**
  * How NVDA announces each ARIA role.
  *
- * Partial mapping — roles not listed here (treeitem, gridcell,
- * rowheader, columnheader, tooltip, etc.) fall back to the raw ARIA
- * role name, which may differ from what NVDA actually says.
+ * The simulator currently iterates only `landmark` and `heading` target
+ * kinds, so only those roles are reachable. The map is intentionally
+ * scoped to those roles. If the simulator is expanded to other kinds
+ * (button, link, formField, etc.), add their announcements here.
  */
 const NVDA_ROLE_ANNOUNCEMENTS: Record<string, string> = {
+  // Landmarks
   banner: "banner landmark",
   navigation: "navigation landmark",
   main: "main landmark",
@@ -39,30 +41,8 @@ const NVDA_ROLE_ANNOUNCEMENTS: Record<string, string> = {
   region: "landmark",
   search: "search landmark",
   form: "form landmark",
+  // Heading (only one role for this kind)
   heading: "heading",
-  link: "link",
-  button: "button",
-  checkbox: "check box",
-  radio: "radio button",
-  textbox: "edit",
-  combobox: "combo box",
-  listbox: "list box",
-  slider: "slider",
-  spinbutton: "spin button",
-  switch: "switch",
-  tab: "tab",
-  tabpanel: "tab panel",
-  dialog: "dialog",
-  alertdialog: "alert dialog",
-  alert: "alert",
-  status: "status",
-  menu: "menu",
-  menubar: "menu bar",
-  menuitem: "menu item",
-  menuitemcheckbox: "menu item check box",
-  menuitemradio: "menu item radio button",
-  separator: "separator",
-  progressbar: "progress bar",
 };
 
 // ---------------------------------------------------------------------------
@@ -138,7 +118,7 @@ export interface SimulatorReport {
  * This checks whether `<header>` and `<footer>` elements are inside
  * sectioning content (`<section>`, `<article>`, `<aside>`, `<nav>`).
  */
-async function getLandmarkContexts(page: Page): Promise<Map<string, NestingContext>> {
+async function getLandmarkContexts(page: Page): Promise<NestingContext[]> {
   const contexts = await page.evaluate(() => {
     const results: Array<{
       role: string;
@@ -196,14 +176,7 @@ async function getLandmarkContexts(page: Page): Promise<Map<string, NestingConte
     return results;
   });
 
-  // Use array — multiple elements can share the same role+name (e.g., two unlabeled <header>s)
-  const map = new Map<string, NestingContext>();
-  for (let i = 0; i < contexts.length; i++) {
-    const ctx = contexts[i];
-    const key = `${ctx.role}:${ctx.name}:${i}`;
-    map.set(key, ctx);
-  }
-  return map;
+  return contexts;
 }
 
 /**
@@ -269,7 +242,7 @@ export async function simulateScreenReader(
   );
 
   let demotedIndex = 0;
-  for (const [, ctx] of nestingContexts) {
+  for (const ctx of nestingContexts) {
     if (isLandmarkDemoted(ctx)) {
       let demotionReason: string;
 

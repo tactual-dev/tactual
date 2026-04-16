@@ -2,6 +2,64 @@ import { describe, it, expect } from "vitest";
 import { checkActionSafety, type ElementInfo } from "./safety.js";
 
 describe("checkActionSafety", () => {
+  describe("--allow-action override", () => {
+    it("downgrades unsafe to caution when name matches pattern", () => {
+      const result = checkActionSafety(
+        { role: "button", name: "Submit form" },
+        [/submit/i],
+      );
+      expect(result.safety).toBe("caution");
+      expect(result.reason).toContain("allowed by --allow-action pattern");
+    });
+
+    it("matches against role:name format", () => {
+      const result = checkActionSafety(
+        { role: "button", name: "Place order" },
+        [/button:place/i],
+      );
+      expect(result.safety).toBe("caution");
+    });
+
+    it("does not downgrade safe actions (no override needed)", () => {
+      const result = checkActionSafety(
+        { role: "tab", name: "Settings" },
+        [/settings/i],
+      );
+      expect(result.safety).toBe("safe");
+    });
+
+    it("does not match unrelated patterns", () => {
+      const result = checkActionSafety(
+        { role: "button", name: "Delete account" },
+        [/checkout/i],
+      );
+      expect(result.safety).toBe("unsafe");
+    });
+
+    it("matches any pattern in the array", () => {
+      const result = checkActionSafety(
+        { role: "button", name: "Send message" },
+        [/checkout/i, /send/i, /buy/i],
+      );
+      expect(result.safety).toBe("caution");
+    });
+
+    it("empty pattern array does not affect classification", () => {
+      const result = checkActionSafety(
+        { role: "button", name: "Delete item" },
+        [],
+      );
+      expect(result.safety).toBe("unsafe");
+    });
+
+    it("undefined patterns does not affect classification", () => {
+      const result = checkActionSafety(
+        { role: "button", name: "Delete item" },
+      );
+      expect(result.safety).toBe("unsafe");
+    });
+  });
+
   describe("unsafe actions", () => {
     const unsafeNames = [
       "Delete item",

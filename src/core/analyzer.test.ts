@@ -129,4 +129,45 @@ describe("analyze", () => {
     );
     expect(warning).toBeUndefined();
   });
+
+  it("promotes shared penalties to page-level diagnostic when >50% of findings share them", () => {
+    // Create a state with 12 unnamed buttons — all will share the
+    // "Target has no accessible name" penalty.
+    const targets = Array.from({ length: 12 }, (_, i) => ({
+      id: `t-button-${i}`,
+      kind: "button" as const,
+      role: "button",
+      name: "",
+      requiresBranchOpen: false,
+    }));
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    // Should emit shared-structural-issue diagnostic
+    const sharedDiag = result.diagnostics.find(
+      (d) => d.code === "shared-structural-issue",
+    );
+    expect(sharedDiag).toBeDefined();
+    expect(sharedDiag?.level).toBe("warning");
+    expect(sharedDiag?.message).toMatch(/of \d+ targets share/);
+    expect(sharedDiag?.message).toContain("page-level structural problem");
+  });
+
+  it("does NOT promote shared penalties when fewer than 10 findings", () => {
+    // 5 unnamed buttons — below the 10-finding threshold for promotion
+    const targets = Array.from({ length: 5 }, (_, i) => ({
+      id: `t-button-${i}`,
+      kind: "button" as const,
+      role: "button",
+      name: "",
+      requiresBranchOpen: false,
+    }));
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    const sharedDiag = result.diagnostics.find(
+      (d) => d.code === "shared-structural-issue",
+    );
+    expect(sharedDiag).toBeUndefined();
+  });
 });
