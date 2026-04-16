@@ -100,13 +100,63 @@ Create a JSON file following this schema:
 import { runCalibration, formatCalibrationReport } from "tactual/calibration";
 import { readFileSync } from "fs";
 
+// Load your observations
 const dataset = JSON.parse(readFileSync("my-calibration.json", "utf-8"));
+
+// Load the Tactual analysis for each page you tested.
+// Keys are URLs, values are the full JSON analysis result.
 const analyses = new Map();
-// Load each analysis result...
-analyses.set("https://example.com", JSON.parse(readFileSync("example-nvda.json", "utf-8")));
+for (const url of new Set(dataset.observations.map((o) => o.url))) {
+  const slug = new URL(url).hostname.replace(/\./g, "-");
+  const result = JSON.parse(readFileSync(`${slug}-nvda.json`, "utf-8"));
+  analyses.set(url, result);
+}
 
 const report = runCalibration(dataset, analyses);
 console.log(formatCalibrationReport(report));
+```
+
+A minimal working dataset with 2 observations:
+
+```json
+{
+  "name": "quick-check",
+  "collectedAt": "2026-04-16T12:00:00Z",
+  "observations": [
+    {
+      "url": "https://example.com",
+      "profileId": "nvda-desktop-v0",
+      "targetName": "More information...",
+      "actualStepsToReach": 4,
+      "strategyUsed": "heading",
+      "requiredStrategySwitch": false,
+      "knewTargetExisted": false,
+      "timeToDiscoverSeconds": 3,
+      "discoveryMethod": "heading-nav",
+      "couldOperate": true,
+      "couldRecover": true,
+      "difficultyRating": 2,
+      "testerId": "tester-1",
+      "timestamp": "2026-04-16T12:05:00Z"
+    },
+    {
+      "url": "https://example.com",
+      "profileId": "nvda-desktop-v0",
+      "targetName": "Search",
+      "actualStepsToReach": 12,
+      "strategyUsed": "linear",
+      "requiredStrategySwitch": true,
+      "knewTargetExisted": true,
+      "timeToDiscoverSeconds": 8,
+      "discoveryMethod": "linear-scan",
+      "couldOperate": true,
+      "couldRecover": false,
+      "difficultyRating": 4,
+      "testerId": "tester-1",
+      "timestamp": "2026-04-16T12:10:00Z"
+    }
+  ]
+}
 ```
 
 ## Reading the report

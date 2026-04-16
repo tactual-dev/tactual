@@ -204,6 +204,9 @@ async function waitForFrameworkRender(page: Page, timeout: number): Promise<void
 /**
  * Parse Playwright's aria snapshot YAML format into Targets.
  */
+/** Hard cap on targets from a single snapshot to prevent DoS on pathological pages. */
+const MAX_SNAPSHOT_TARGETS = 5000;
+
 export function parseAriaSnapshot(yaml: string): Target[] {
   const targets: Target[] = [];
   let counter = 0;
@@ -211,6 +214,7 @@ export function parseAriaSnapshot(yaml: string): Target[] {
   const lines = yaml.split("\n");
 
   for (const line of lines) {
+    if (targets.length >= MAX_SNAPSHOT_TARGETS) break;
     const trimmed = line.trim();
     if (!trimmed || !trimmed.startsWith("- ")) continue;
 

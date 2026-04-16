@@ -2,7 +2,7 @@
 
 ## Adding an AT Profile
 
-1. Create `src/profiles/your-profile.ts` implementing the `ATProfile` interface:
+1. Create `src/profiles/your-profile.ts` implementing the `ATProfile` interface (see `src/profiles/types.ts` for the full type definition and `src/profiles/generic-mobile.ts` for a complete example):
 
 ```typescript
 import type { ATProfile } from "./types.js";
