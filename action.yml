@@ -26,6 +26,10 @@ inputs:
     description: "Fail if average score is below this threshold (0 to disable)"
     required: false
     default: "0"
+  comment-on-pr:
+    description: "Post a summary comment on pull requests (requires GITHUB_TOKEN with pull-requests: write)"
+    required: false
+    default: "false"
   node-version:
     description: "Node.js version to use"
     required: false
@@ -109,6 +113,68 @@ runs:
       with:
         sarif_file: tactual-results.sarif
         category: tactual-a11y
+
+    - name: Post PR comment
+      if: inputs.comment-on-pr == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        AVG="${{ steps.analysis.outputs.average-score }}"
+        RESULT_FILE="tactual-results.json"
+
+        # Build the comment body
+        COMMENT=$(node -e "
+          const r = JSON.parse(require('fs').readFileSync('${RESULT_FILE}','utf8'));
+          const s = r.metadata || {};
+          const findings = r.findings || [];
+          const severe = findings.filter(f => f.severity === 'severe').length;
+          const high = findings.filter(f => f.severity === 'high').length;
+          const moderate = findings.filter(f => f.severity === 'moderate').length;
+          const avg = ${AVG};
+
+          let icon = '🟢';
+          if (severe > 0) icon = '🔴';
+          else if (high > 0) icon = '🟠';
+          else if (moderate > 0) icon = '🟡';
+
+          const lines = [];
+          lines.push('## ' + icon + ' Tactual: Screen-Reader Navigation Cost');
+          lines.push('');
+          lines.push('| Metric | Value |');
+          lines.push('|---|---|');
+          lines.push('| Average Score | **' + avg + '** / 100 |');
+          lines.push('| Targets | ' + (s.targetCount || findings.length) + ' |');
+          lines.push('| Profile | \`' + (s.profile || 'generic-mobile-web-sr-v0') + '\` |');
+          if (severe + high + moderate > 0) {
+            lines.push('');
+            lines.push('**Findings:** ' + severe + ' severe, ' + high + ' high, ' + moderate + ' moderate');
+          }
+          const worst = findings.slice(0, 3);
+          if (worst.length > 0) {
+            lines.push('');
+            lines.push('**Worst targets:**');
+            for (const f of worst) {
+              lines.push('- \`' + f.targetId + '\` — ' + f.scores.overall + '/100 [' + f.severity + ']');
+            }
+          }
+          lines.push('');
+          lines.push('<sub>Posted by [Tactual](https://github.com/tactual-dev/tactual) · Screen-reader navigation cost analyzer</sub>');
+          console.log(lines.join('\n'));
+        ")
+
+        # Find and update existing comment, or create new one
+        PR_NUM="${{ github.event.pull_request.number }}"
+        EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
+          --jq '.[] | select(.body | contains("Tactual: Screen-Reader Navigation Cost")) | .id' \
+          2>/dev/null | head -1)
+
+        if [ -n "$EXISTING" ]; then
+          gh api "repos/${{ github.repository }}/issues/comments/${EXISTING}" \
+            -X PATCH -f body="$COMMENT"
+        else
+          gh pr comment "$PR_NUM" --body "$COMMENT"
+        fi
 
     - name: Upload analysis artifact
       if: always()

@@ -171,9 +171,10 @@ jobs:
           url: https://your-app.com
           explore: "true"
           fail-below: "70"
+          comment-on-pr: "true"
 ```
 
-The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Outputs `average-score` and `result-file` for downstream steps.
+The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Set `comment-on-pr: "true"` to post a summary comment on pull requests (updates on re-run). Outputs `average-score` and `result-file` for downstream steps.
 
 Or use the CLI directly for more control:
 
@@ -339,6 +340,21 @@ Exploration candidates are sorted by a stable key (role + name) before iterating
 Tactual detects when SPA content has rendered before capturing the accessibility tree. Detected frameworks: React, Next.js, Vue, Nuxt, Angular, Svelte, and SvelteKit. Generic HTML5 content signals (landmarks, headings, navigation, links) are also checked. For SPAs not covered by auto-detection, use `--wait-for-selector` (CLI) or `waitForSelector` (MCP/API) to specify a CSS selector that indicates your app has hydrated.
 
 After initial framework detection, Tactual uses convergence-based polling — repeatedly snapshotting the accessibility tree until the target count stabilizes — which works regardless of framework.
+
+## Regression Tracking
+
+Compare two analysis runs to catch regressions:
+
+```bash
+# Save a baseline
+npx tactual analyze-url https://your-app.com --format json --output baseline.json
+
+# After changes, run again and diff
+npx tactual analyze-url https://your-app.com --format json --output candidate.json
+npx tactual diff baseline.json candidate.json
+```
+
+The diff shows targets that improved, regressed, or changed severity, plus penalties resolved and added. In CI, use the `comment-on-pr` action input to post results on every pull request automatically.
 
 ## Interop Risk
 
