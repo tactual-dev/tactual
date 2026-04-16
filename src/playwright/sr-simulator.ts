@@ -27,93 +27,141 @@ import type { Target } from "../core/types.js";
 export type ATKind = "nvda" | "jaws" | "voiceover";
 
 /**
- * How each screen reader announces each ARIA role.
+ * Role announcement maps for each supported screen reader.
  *
- * Covers all roles emitted by the Tactual capture pipeline. State info
- * (checked, expanded, etc.) is appended by buildAnnouncement().
+ * DATA QUALITY NOTE — please read before extending or relying on this.
  *
- * Sources: NVDA documentation, JAWS reference, Apple VoiceOver guide,
- * and the ARIA-AT project (https://aria-at.w3.org).
+ * Tactual's multi-AT support is heuristic prediction, NOT verified test
+ * output. Authoritative data on what each AT *actually* says under each
+ * configuration (verbosity, browser, version) is hard to come by:
+ *
+ * - NVDA's user guide describes navigation but not announcement phrasing
+ * - JAWS reference is gated and version-specific
+ * - VoiceOver's behavior is documented for Apple's HTML mappings, not
+ *   generic ARIA roles
+ * - The ARIA-AT project has tested some patterns systematically but
+ *   coverage is partial
+ *
+ * Approach used here:
+ *
+ * 1. BASE_ANNOUNCEMENTS — terminology I'm confident is shared across all
+ *    three ATs in default verbosity (button, link, heading, checkbox,
+ *    radio button, dialog, alert, etc.). Sourced from common knowledge,
+ *    cross-referenced against AT-AT test output where available.
+ *
+ * 2. AT_OVERRIDES — only entries where I have HIGH CONFIDENCE that an AT
+ *    diverges from the base. Each override has a comment indicating the
+ *    confidence level and source. Anything I'm not sure about falls
+ *    through to the base — better to be silent than confidently wrong.
+ *
+ * Confidence labels:
+ *   HIGH:   widely cited, verifiable in AT documentation or testing
+ *   MEDIUM: documented but version- or browser-dependent
+ *   LOW:    educated guess based on observed patterns
+ *
+ * To improve this data: see src/calibration/aria-at.ts for a
+ * scaffolding that compares simulator output to ARIA-AT test data.
  */
-const ROLE_ANNOUNCEMENTS: Record<ATKind, Record<string, string>> = {
+
+const BASE_ANNOUNCEMENTS: Record<string, string> = {
+  // Landmarks — all three ATs announce landmark role; verbosity differs
+  // (NVDA "X landmark" vs VoiceOver "X" alone vs JAWS "X region" in
+  // some configs). The base uses NVDA's "X landmark" form. AT_OVERRIDES
+  // adjusts only for verified differences.
+  banner: "banner landmark",
+  navigation: "navigation landmark",
+  main: "main landmark",
+  contentinfo: "content information landmark",
+  complementary: "complementary landmark",
+  region: "region",
+  search: "search landmark",
+  form: "form landmark",
+  // Headings, links, buttons — universal
+  heading: "heading",
+  link: "link",
+  button: "button",
+  // Form controls — phrasing mostly universal
+  checkbox: "check box",
+  radio: "radio button",
+  textbox: "edit",
+  searchbox: "search edit",
+  combobox: "combo box",
+  listbox: "list box",
+  slider: "slider",
+  spinbutton: "spin button",
+  switch: "switch",
+  // Tabs / dialogs / status — universal phrasing
+  tab: "tab",
+  tabpanel: "tab panel",
+  dialog: "dialog",
+  alertdialog: "alert dialog",
+  alert: "alert",
+  status: "status",
+  log: "log",
+  // Menus — universal
+  menu: "menu",
+  menubar: "menu bar",
+  menuitem: "menu item",
+  menuitemcheckbox: "menu item check box",
+  menuitemradio: "menu item radio button",
+};
+
+/**
+ * AT-specific overrides. Only documented differences I'm confident about.
+ * Anything missing falls through to BASE_ANNOUNCEMENTS.
+ */
+const AT_OVERRIDES: Record<ATKind, Record<string, string>> = {
   nvda: {
-    banner: "banner landmark", navigation: "navigation landmark",
-    main: "main landmark", contentinfo: "content information landmark",
-    complementary: "complementary landmark", region: "landmark",
-    search: "search landmark", form: "form landmark",
-    heading: "heading", link: "link", button: "button",
-    checkbox: "check box", radio: "radio button",
-    textbox: "edit", searchbox: "search edit",
-    combobox: "combo box", listbox: "list box",
-    slider: "slider", spinbutton: "spin button", switch: "switch",
-    tab: "tab", tabpanel: "tab panel",
-    dialog: "dialog", alertdialog: "alert dialog",
-    alert: "alert", status: "status", log: "log",
-    menu: "menu", menubar: "menu bar", menuitem: "menu item",
-    menuitemcheckbox: "menu item check box",
-    menuitemradio: "menu item radio button",
+    // No overrides — BASE is calibrated against NVDA's defaults
   },
   jaws: {
-    // JAWS landmark phrasing matches NVDA closely.
-    banner: "banner region", navigation: "navigation region",
-    main: "main region", contentinfo: "content information region",
-    complementary: "complementary region", region: "region",
-    search: "search region", form: "form region",
-    heading: "heading", link: "link", button: "button",
-    checkbox: "check box", radio: "radio button",
-    textbox: "edit", searchbox: "search edit",
-    combobox: "combo box", listbox: "list box",
-    slider: "slider", spinbutton: "spin button", switch: "switch",
-    tab: "tab", tabpanel: "tab panel",
-    dialog: "dialog", alertdialog: "alert dialog",
-    alert: "alert", status: "status", log: "log",
-    menu: "menu", menubar: "menu bar", menuitem: "menu item",
-    menuitemcheckbox: "menu item check box",
-    menuitemradio: "menu item radio button",
+    // JAWS in default verbosity announces landmarks similarly to NVDA.
+    // I previously claimed "navigation region" vs "navigation landmark" —
+    // removed: cannot verify this is consistent across JAWS versions.
+    // Falls through to BASE.
   },
   voiceover: {
-    // VoiceOver uses different terminology — "text field" not "edit",
-    // "popup button" for collapsed combobox, etc.
-    banner: "banner", navigation: "navigation",
-    main: "main", contentinfo: "content info",
-    complementary: "complementary", region: "region",
-    search: "search", form: "form",
-    heading: "heading", link: "link", button: "button",
-    checkbox: "check box", radio: "radio button",
-    textbox: "text field", searchbox: "search text field",
-    combobox: "popup button", listbox: "list box",
-    slider: "slider", spinbutton: "stepper", switch: "switch",
-    tab: "tab", tabpanel: "tab panel",
-    dialog: "dialog", alertdialog: "alert dialog",
-    alert: "alert", status: "status", log: "log",
-    menu: "menu", menubar: "menu bar", menuitem: "menu item",
-    menuitemcheckbox: "menu item check box",
-    menuitemradio: "menu item radio button",
+    // HIGH confidence — Apple's HTML/ARIA mapping is well-documented:
+    //   https://developer.apple.com/documentation/accessibility
+    // Native <input type="text"> and role="textbox" both announce as
+    // "text field" in VoiceOver.
+    textbox: "text field",
+    searchbox: "search text field",
+    // HIGH confidence — VoiceOver maps native <select> (and ARIA
+    // combobox in select-only patterns) to "popup button". For ARIA
+    // editable comboboxes the announcement may differ; this is the
+    // common case.
+    combobox: "popup button",
   },
 };
 
+/** Resolve role text for an AT, falling back to base or raw role. */
+function getRoleText(role: string, at: ATKind): string {
+  return AT_OVERRIDES[at][role] ?? BASE_ANNOUNCEMENTS[role] ?? role;
+}
+
 
 /**
- * Build a state-aware screen-reader announcement string for a target.
+ * Build a heuristic screen-reader announcement string for a target.
+ *
+ * IMPORTANT: This is best-effort prediction, not verified AT output.
+ * See the data quality note above ROLE_ANNOUNCEMENTS for what is solid
+ * vs. speculative. Anywhere this function makes a high-confidence claim
+ * about cross-AT differences (e.g., VoiceOver "text field" vs NVDA
+ * "edit"), it's because the difference is documented in the AT's
+ * own materials. Anywhere we'd be guessing, we fall through to a
+ * shared base announcement instead of inventing a difference.
  *
  * Defaults to NVDA. Pass "jaws" or "voiceover" for other ATs.
  *
  * Examples (NVDA):
  *   { role: "button", name: "Sign Up" }            → "Sign Up, button"
  *   { role: "checkbox", name: "Subscribe", checked } → "Subscribe, check box, checked"
- *   { role: "combobox", name: "Country", expanded=false } → "Country, combo box, collapsed"
- *   { role: "slider", name: "Volume", value: "75" }  → "Volume, slider, 75"
  *   { role: "heading", name: "Title", headingLevel: 2 } → "Title, heading, level 2"
- *
- * Notable cross-AT differences:
- *   - NVDA/JAWS "edit" vs VoiceOver "text field" for textbox
- *   - NVDA/JAWS "combo box, collapsed" vs VoiceOver "popup button" (no expanded state)
- *   - NVDA/JAWS "unavailable" vs VoiceOver "dimmed" for disabled
  */
 export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
   const role = target.role;
-  const roleMap = ROLE_ANNOUNCEMENTS[at];
-  const roleText = roleMap[role] ?? role;
+  const roleText = getRoleText(role, at);
   const parts: string[] = [];
 
   if (target.name) parts.push(target.name);
@@ -142,32 +190,39 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
       else if (c === "mixed") parts.push("partially checked");
     }
 
-    // Expanded state (combobox, listbox, button with menu, menu, etc.).
-    // VoiceOver announces "popup button" for collapsed combobox via the
-    // role text, so it omits the explicit collapsed/expanded marker for
-    // combobox specifically — matches Apple's pattern.
+    // Expanded/collapsed state (HIGH confidence — universal across ATs
+    // for elements that expose aria-expanded). For VoiceOver+combobox
+    // the role text "popup button" already implies state, so we skip
+    // the explicit marker to match observed behavior on native <select>.
+    // For ARIA combobox patterns this may differ; flagged in the
+    // detectInteropDivergence output as a known uncertainty.
     const exp = attrs["aria-expanded"];
     if (exp !== undefined && !(at === "voiceover" && role === "combobox")) {
       if (exp === "true") parts.push("expanded");
       else if (exp === "false") parts.push("collapsed");
     }
 
-    // Selected state (tab, option)
+    // Selected state (HIGH confidence — universal)
     if (role === "tab" || role === "option") {
       const sel = attrs["aria-selected"];
       if (sel === "true") parts.push("selected");
     }
 
-    // Modal dialog
+    // Modal dialog (MEDIUM confidence — NVDA & JAWS document modal
+    // announcements but VoiceOver behavior varies by version. Including
+    // for all ATs as a reasonable approximation.)
     if ((role === "dialog" || role === "alertdialog") && attrs["aria-modal"] === "true") {
       parts.push("modal");
     }
 
-    // Required, invalid, readonly, disabled states.
-    // NVDA/JAWS say "unavailable", VoiceOver says "dimmed".
+    // Disabled state. NVDA "unavailable" and VoiceOver "dimmed" are
+    // both widely cited (NVDA's term: HIGH confidence; VoiceOver's
+    // "dimmed": MEDIUM confidence — documented in older Apple guides
+    // but exact wording for ARIA-disabled vs HTML-disabled may vary).
     if (attrs["aria-disabled"] === "true") {
       parts.push(at === "voiceover" ? "dimmed" : "unavailable");
     }
+    // Readonly, invalid, required (HIGH confidence — universal phrasing)
     if (attrs["aria-readonly"] === "true") parts.push("read only");
     if (attrs["aria-invalid"] === "true" || attrs["aria-invalid"] === "grammar" || attrs["aria-invalid"] === "spelling") {
       parts.push("invalid entry");
@@ -239,9 +294,15 @@ export function buildMultiATAnnouncement(target: Target): MultiATAnnouncement {
 
 /**
  * Detect when announcements diverge across screen readers in a way that
- * affects what the user actually hears (not just minor wording variants).
+ * affects what the user actually hears.
  *
- * Returns null when announcements are equivalent enough to not matter.
+ * Returns null when announcements are equivalent or when the divergence
+ * is purely cosmetic (same meaning, different wording, no impact on
+ * comprehension).
+ *
+ * CONFIDENCE: this function makes claims about specific AT differences.
+ * Each claim's confidence is documented inline. When uncertain, we
+ * label the divergence as "may differ" rather than asserting it as fact.
  */
 export function detectInteropDivergence(
   target: Target,
@@ -250,37 +311,47 @@ export function detectInteropDivergence(
   const allSame = a.nvda === a.jaws && a.jaws === a.voiceover;
   if (allSame) return null;
 
-  // Specific high-signal divergences worth flagging:
   const role = target.role;
   const attrs = (target as Record<string, unknown>)._attributeValues as
     | Record<string, string> | undefined;
 
+  // HIGH confidence (Apple's HTML mapping is well-documented):
+  // VoiceOver maps native <select> and select-only ARIA comboboxes to
+  // "popup button". For editable comboboxes this may not apply.
   if (role === "combobox" && attrs?.["aria-expanded"] !== undefined) {
     return {
       description:
-        "VoiceOver announces this combobox as 'popup button' without an explicit " +
-        "expanded/collapsed state, while NVDA and JAWS announce 'combo box, " +
-        "collapsed/expanded'. Users on different platforms get materially " +
-        "different cues about whether the popup is open.",
+        "VoiceOver announces native <select> and select-only ARIA comboboxes " +
+        "as 'popup button' (with state implicit in the role text), while " +
+        "NVDA/JAWS announce 'combo box, expanded/collapsed' explicitly. " +
+        "For editable combobox patterns VoiceOver's behavior may differ — " +
+        "verify with real testing if this control is critical.",
       announcements: a,
     };
   }
 
+  // MEDIUM confidence — VoiceOver "dimmed" is documented in Apple guides
+  // for the disabled state but the exact wording may vary by VoiceOver
+  // version and whether the disabled state comes from HTML or aria-disabled.
   if (attrs?.["aria-disabled"] === "true") {
     return {
       description:
-        "Disabled state is announced as 'unavailable' by NVDA/JAWS but 'dimmed' by " +
-        "VoiceOver. The information is conveyed but the wording differs — confirm " +
-        "your accessibility documentation matches the user's experience.",
+        "Disabled state phrasing differs across screen readers. NVDA typically " +
+        "says 'unavailable'; VoiceOver typically says 'dimmed'. The information " +
+        "is conveyed but the wording is different — only a user-experience " +
+        "concern if you document AT-specific terms (e.g., support docs).",
       announcements: a,
     };
   }
 
+  // HIGH confidence — Apple maps role="textbox" / <input type="text"> to
+  // "text field" terminology, which all VoiceOver users hear consistently.
   if (role === "textbox" || role === "searchbox") {
     return {
       description:
-        "VoiceOver says 'text field' where NVDA/JAWS say 'edit'. Same meaning, " +
-        "different vocabulary — only matters if you train users on AT-specific terms.",
+        "VoiceOver says 'text field' where NVDA and JAWS say 'edit'. " +
+        "Same control, different vocabulary — typically only matters if " +
+        "user-facing documentation refers to specific AT terms.",
       announcements: a,
     };
   }

@@ -633,15 +633,17 @@ function detectStatePenalties(target: Target): { penalties: string[]; suggestedF
     );
   }
 
-  // Cross-AT announcement divergence — flags when NVDA/JAWS/VoiceOver
-  // produce materially different announcements for the same target.
+  // Cross-AT divergence — flags when AT announcements likely diverge in
+  // a way that affects the user. Confidence labels are honest about
+  // what's verified vs heuristic. See sr-simulator.ts data quality note.
   // (Inlined here to avoid core → playwright import dependency.)
   if (role === "combobox" && attrs["aria-expanded"] !== undefined) {
     penalties.push(
-      "Cross-AT divergence: VoiceOver announces this combobox as 'popup button' " +
-      "without an explicit expanded/collapsed state, while NVDA/JAWS announce " +
-      "'combo box, collapsed/expanded'. Users on different platforms get " +
-      "materially different cues about whether the popup is open.",
+      "Cross-AT divergence (HIGH confidence for native <select>, MEDIUM for " +
+      "ARIA combobox): VoiceOver announces this combobox as 'popup button' " +
+      "with state implicit in the role text, while NVDA/JAWS announce " +
+      "'combo box, expanded/collapsed' explicitly. Verify with real testing " +
+      "if this control is on a critical path.",
     );
   }
 
