@@ -120,6 +120,17 @@ buildMultiATAnnouncement(tx);
 const transcript = buildTranscript(state.targets, "nvda");
 // → [{ step: 1, kind: "landmark", announcement: "Main, main landmark" }, ...]
 
+// Multi-target navigation modes (linear, by-heading, by-landmark, by-form-control)
+import { buildNavigationTranscript } from "tactual/playwright";
+
+// Heading-only navigation (NVDA: H key)
+const headings = buildNavigationTranscript(state.targets, { mode: "by-heading" });
+
+// Navigate from one element to another
+const path = buildNavigationTranscript(state.targets, {
+  from: "link:before-main", to: "heading:welcome", mode: "linear",
+});
+
 // Demoted landmarks (in DOM but stripped by HTML rules, e.g. <header> in <section>)
 for (const d of report.demotedLandmarks) {
   console.warn(d.demotionReason);
@@ -133,7 +144,7 @@ npx tactual transcript https://example.com --at voiceover
 
 The simulator is heuristic prediction, not real screen-reader output. It runs in milliseconds, cross-platform, no OS focus stealing.
 
-**Data quality.** The simulator's role/state phrasing maps are calibrated against the [W3C ARIA-AT project](https://aria-at.w3.org) — currently passing per-target assertions for 15 tested patterns (button, checkbox, switch, slider, dialog, tabs, link, alert, disclosure, menu button, spin button, main, banner, contentinfo, complementary) at **100% across all three ATs (NVDA, JAWS, VoiceOver)**. Run `npm run calibrate` after `npm run build` to verify against the latest upstream assertions. AT-specific overrides outside the calibrated set are labeled HIGH/MEDIUM/LOW confidence in the source — when uncertain, the simulator falls through to a shared base instead of inventing differences.
+**Data quality.** Calibrated against the [W3C ARIA-AT project](https://aria-at.w3.org): **77/77 assertions pass at 100% across all three ATs (NVDA, JAWS, VoiceOver)**, covering 36 single-target patterns (button, toggle button, all menu button variants, disclosure, accordion, checkbox/tri-state, switch, sliders, dialog, alert, links, tabs, comboboxes, radiogroups, spin button, menubar) plus 4 multi-target landmark scenarios. Run `npm run calibrate` after `npm run build` to verify against the latest upstream assertions. AT-specific overrides outside the calibrated set are labeled HIGH/MEDIUM/LOW confidence in the source.
 
 ### MCP Server
 
