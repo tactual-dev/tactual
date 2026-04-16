@@ -521,6 +521,45 @@ function truncatePath(path: string[], maxSteps: number): string[] {
 function detectStatePenalties(target: Target): { penalties: string[]; suggestedFixes: string[] } {
   const penalties: string[] = [];
   const suggestedFixes: string[] = [];
+
+  // Orphaned aria-labelledby: references at least one ID that doesn't exist.
+  // The element appears unlabeled to AT despite developer intent.
+  if ((target as Record<string, unknown>)._labelledByMissing) {
+    penalties.push(
+      "aria-labelledby references an element ID that doesn't exist — " +
+      "the element has no accessible name despite the developer's intent.",
+    );
+    suggestedFixes.push(
+      "Verify the IDs in aria-labelledby match real elements on the page. " +
+      "Missing IDs silently produce unlabeled controls.",
+    );
+  }
+
+  // Orphaned aria-describedby: similar — description silently missing.
+  if ((target as Record<string, unknown>)._descriptionMissing) {
+    penalties.push(
+      "aria-describedby references an element ID that doesn't exist — " +
+      "the description the developer attached is silently dropped.",
+    );
+    suggestedFixes.push(
+      "Verify the IDs in aria-describedby match real elements on the page.",
+    );
+  }
+
+  // Assertive live region: interrupts whatever the user is doing.
+  // Use sparingly — for status messages, errors that need immediate attention.
+  const liveRegion = (target as Record<string, unknown>)._liveRegion as string | undefined;
+  if (liveRegion === "assertive" && target.kind !== "statusMessage") {
+    penalties.push(
+      "aria-live='assertive' interrupts the user mid-action. Use only for errors " +
+      "or critical alerts; routine updates should use 'polite'.",
+    );
+    suggestedFixes.push(
+      "Change aria-live='assertive' to 'polite' unless this is an error or critical alert " +
+      "that must be heard immediately.",
+    );
+  }
+
   const attrs = (target as Record<string, unknown>)._attributeValues as
     | Record<string, string>
     | undefined;

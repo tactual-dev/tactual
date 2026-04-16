@@ -145,6 +145,12 @@ export function buildAnnouncement(target: Target): string {
     parts.push(value);
   }
 
+  // aria-describedby resolved text — NVDA reads it after the main announcement
+  const description = (target as Record<string, unknown>)._description as string | undefined;
+  if (description) {
+    parts.push(description);
+  }
+
   return parts.join(", ");
 }
 

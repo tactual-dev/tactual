@@ -56,6 +56,10 @@ export async function captureState(
     }
   }
 
+  // Enrich targets with ARIA reference data (describedby text, labelledby
+  // validity, live regions). Single DOM pass — adds ~50ms typical.
+  await enrichWithAriaReferences(page, targets);
+
   const snapshotHash = hash(snapshotYaml);
 
   // Hash interactive elements for state dedup
@@ -395,4 +399,104 @@ async function hideExcludedElements(page: Page, selectors: string[]): Promise<vo
 
 function hash(input: string): string {
   return createHash("sha256").update(input).digest("hex");
+}
+
+// ---------------------------------------------------------------------------
+// ARIA reference enrichment (describedby resolution, labelledby validity,
+// live regions). Adds Target._description, _descriptionMissing,
+// _labelledByMissing, _liveRegion.
+// ---------------------------------------------------------------------------
+
+interface AriaEnrichment {
+  role: string;
+  name: string;
+  description?: string;
+  descriptionMissing?: boolean;
+  labelledByMissing?: boolean;
+  liveRegion?: string;
+}
+
+async function enrichWithAriaReferences(page: Page, targets: Target[]): Promise<void> {
+  const enrichments = await page.evaluate(() => {
+    // DOM types not in tsconfig lib — declared via `as never` cast pattern.
+    const doc = (globalThis as unknown as { document: {
+      querySelectorAll(s: string): ArrayLike<{
+        getAttribute(n: string): string | null;
+        textContent: string | null;
+        tagName: string;
+      }>;
+      getElementById(id: string): { textContent: string | null } | null;
+    } }).document;
+    const results: Array<{
+      role: string; name: string; description?: string;
+      descriptionMissing?: boolean; labelledByMissing?: boolean; liveRegion?: string;
+    }> = [];
+
+    const elements = doc.querySelectorAll(
+      "[aria-describedby], [aria-labelledby], [aria-live]",
+    );
+
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
+      const role = (el.getAttribute("role") ?? el.tagName.toLowerCase()).trim();
+      const name = (el.getAttribute("aria-label") ?? "").trim();
+
+      const out: typeof results[number] = { role, name };
+
+      const describedBy = el.getAttribute("aria-describedby");
+      if (describedBy) {
+        const ids = describedBy.split(/\s+/).filter(Boolean);
+        const texts: string[] = [];
+        let missing = false;
+        for (const id of ids) {
+          const ref = doc.getElementById(id);
+          if (!ref) {
+            missing = true;
+          } else if (ref.textContent) {
+            texts.push(ref.textContent.trim());
+          }
+        }
+        if (texts.length > 0) out.description = texts.join(" ");
+        if (missing) out.descriptionMissing = true;
+      }
+
+      const labelledBy = el.getAttribute("aria-labelledby");
+      if (labelledBy) {
+        const ids = labelledBy.split(/\s+/).filter(Boolean);
+        const allMissing = ids.every((id) => !doc.getElementById(id));
+        const someMissing = ids.some((id) => !doc.getElementById(id));
+        if (allMissing) out.labelledByMissing = true;
+        else if (someMissing) out.labelledByMissing = true;
+      }
+
+      const live = el.getAttribute("aria-live");
+      if (live && (live === "polite" || live === "assertive")) {
+        out.liveRegion = live;
+      }
+
+      if (out.description || out.descriptionMissing || out.labelledByMissing || out.liveRegion) {
+        results.push(out);
+      }
+    }
+
+    return results;
+  }).catch(() => [] as AriaEnrichment[]);
+
+  // Match enrichments to targets by role + name (best-effort, first-fit).
+  // Multiple targets with same role+name will only match the first enrichment.
+  const used = new Set<number>();
+  for (const target of targets) {
+    const targetName = (target.name ?? "").trim();
+    const idx = enrichments.findIndex(
+      (e, i) => !used.has(i) && e.role === target.role && e.name === targetName,
+    );
+    if (idx < 0) continue;
+    used.add(idx);
+    const e = enrichments[idx];
+    const t = target as Record<string, unknown>;
+    if (e.description) t._description = e.description;
+    if (e.descriptionMissing) t._descriptionMissing = true;
+    if (e.labelledByMissing) t._labelledByMissing = true;
+    if (e.liveRegion) t._liveRegion = e.liveRegion;
+  }
 }

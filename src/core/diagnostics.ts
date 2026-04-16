@@ -20,6 +20,7 @@ export type DiagnosticCode =
   | "no-contentinfo-landmark"
   | "no-nav-landmark"
   | "no-headings"
+  | "heading-skip"
   | "no-skip-link"
   | "structural-summary"
   | "shared-structural-issue"
@@ -234,6 +235,36 @@ export function diagnoseCapture(
         "on headings for navigation (71.6% start with headings per " +
         "WebAIM 2024 survey).",
     });
+  }
+
+  // Heading hierarchy skip detection (e.g., h1 → h3, skipping h2).
+  // Breaks the user's mental model of structure.
+  const headings = state.targets.filter(
+    (t) => t.kind === "heading" && typeof t.headingLevel === "number",
+  );
+  if (headings.length >= 2) {
+    const skips: string[] = [];
+    for (let i = 1; i < headings.length; i++) {
+      const prev = headings[i - 1].headingLevel as number;
+      const curr = headings[i].headingLevel as number;
+      // A "skip" is going from level N to level N+2 or deeper.
+      // Going back up (h3 → h2) or staying flat (h2 → h2) is fine.
+      if (curr > prev + 1) {
+        skips.push(`h${prev} → h${curr} ("${headings[i].name || "(unnamed)"}")`);
+      }
+    }
+    if (skips.length > 0) {
+      const examples = skips.slice(0, 3).join(", ");
+      const more = skips.length > 3 ? ` and ${skips.length - 3} more` : "";
+      diagnostics.push({
+        level: "warning",
+        code: "heading-skip",
+        message:
+          `Heading hierarchy skips detected: ${examples}${more}. ` +
+          `This breaks screen-reader users' mental model of structure. ` +
+          `Use sequential heading levels — h1 then h2, not h1 then h3.`,
+      });
+    }
   }
 
   // No skip-to-content link
