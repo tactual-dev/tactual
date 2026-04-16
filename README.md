@@ -53,6 +53,10 @@ npx tactual analyze-url https://example.com --format sarif --output report.sarif
 # Compare two analysis runs
 npx tactual diff baseline.json candidate.json
 
+# Print what NVDA would say as you Tab through the page
+npx tactual transcript https://example.com
+npx tactual transcript https://example.com --at voiceover
+
 # List available AT profiles and scoring presets
 npx tactual profiles
 npx tactual presets
@@ -86,10 +90,13 @@ for (const finding of result.findings) {
 }
 ```
 
-**Screen-reader announcement simulator** — predict what NVDA would announce for every target on a page, with state info (checked, expanded, selected, modal, value, required, invalid, etc.):
+**Screen-reader announcement simulator** — predict what NVDA, JAWS, or VoiceOver would announce for every target, with state info (checked, expanded, selected, modal, value, required, invalid, etc.):
 
 ```typescript
-import { simulateScreenReader } from "tactual/playwright";
+import {
+  simulateScreenReader, buildAnnouncement,
+  buildMultiATAnnouncement, buildTranscript,
+} from "tactual/playwright";
 
 const report = await simulateScreenReader(page, state.targets);
 
@@ -97,13 +104,31 @@ for (const a of report.formFields) {
   console.log(a.announcement);
   // → "Subscribe, check box, checked"
   // → "Country, combo box, collapsed"
-  // → "Email, edit, invalid entry, required"
+  // → "Email, edit, invalid entry, required, you must use a work address"
 }
+
+// Compare across screen readers
+const tx = state.targets[5];
+buildAnnouncement(tx, "nvda");      // → "Country, combo box, collapsed"
+buildAnnouncement(tx, "voiceover"); // → "Country, popup button"
+
+// All three at once
+buildMultiATAnnouncement(tx);
+// → { nvda: "...", jaws: "...", voiceover: "..." }
+
+// Linear navigation transcript — what an SR user hears Tabbing through
+const transcript = buildTranscript(state.targets, "nvda");
+// → [{ step: 1, kind: "landmark", announcement: "Main, main landmark" }, ...]
 
 // Demoted landmarks (in DOM but stripped by HTML rules, e.g. <header> in <section>)
 for (const d of report.demotedLandmarks) {
   console.warn(d.demotionReason);
 }
+```
+
+Or from the CLI:
+```bash
+npx tactual transcript https://example.com --at voiceover
 ```
 
 The simulator is heuristic prediction, not real screen-reader output. It runs in milliseconds, cross-platform, no OS focus stealing.
@@ -365,6 +390,7 @@ Tactual detects and reports when analysis may be unreliable:
 | `possible-cookie-wall` | info | Cookie consent may obscure content |
 | `redirect-detected` | warning | Landed on different domain |
 | `no-headings` | warning | No heading elements found |
+| `heading-skip` | warning | Heading hierarchy skips a level (e.g., h1 → h3) |
 | `no-landmarks` | warning | No landmark regions found |
 | `no-skip-link` | warning | No skip-to-content link on pages with 5+ targets |
 | `no-main-landmark` | warning | Missing `<main>` landmark |
