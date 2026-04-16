@@ -1,13 +1,15 @@
 /**
  * Screen reader announcement simulator.
  *
- * Predicts what NVDA/VoiceOver would announce for each target based on
- * the accessibility tree AND HTML context rules that real screen readers
- * apply. This catches cases where the AT tree reports a role that the
- * SR would not actually announce (e.g., `<header>` inside `<section>`
- * loses its implicit `banner` landmark role in NVDA).
+ * Heuristic prediction of what NVDA/VoiceOver would announce for each
+ * target based on the accessibility tree AND HTML context rules that real
+ * screen readers apply. This is NOT real SR output — it infers
+ * announcements from ARIA/HTML spec rules and a partial role-to-speech
+ * mapping. It catches cases where the AT tree reports a role that the SR
+ * would not actually announce (e.g., `<header>` inside `<section>` loses
+ * its implicit `banner` landmark role in NVDA).
  *
- * Unlike the real SR integration (screen-reader.ts), this:
+ * Design:
  * - Does NOT launch a screen reader
  * - Does NOT steal OS focus
  * - Works cross-platform (Windows, macOS, Linux, CI)
@@ -21,7 +23,13 @@ import type { Target } from "../core/types.js";
 // NVDA announcement patterns
 // ---------------------------------------------------------------------------
 
-/** How NVDA announces each ARIA role */
+/**
+ * How NVDA announces each ARIA role.
+ *
+ * Partial mapping — roles not listed here (treeitem, gridcell,
+ * rowheader, columnheader, tooltip, etc.) fall back to the raw ARIA
+ * role name, which may differ from what NVDA actually says.
+ */
 const NVDA_ROLE_ANNOUNCEMENTS: Record<string, string> = {
   banner: "banner landmark",
   navigation: "navigation landmark",
@@ -260,6 +268,7 @@ export async function simulateScreenReader(
     (t) => t.kind === "landmark" && t.role === role,
   );
 
+  let demotedIndex = 0;
   for (const [, ctx] of nestingContexts) {
     if (isLandmarkDemoted(ctx)) {
       let demotionReason: string;
@@ -285,8 +294,9 @@ export async function simulateScreenReader(
         continue;
       }
 
+      demotedIndex++;
       demotedLandmarks.push({
-        targetId: `demoted-${ctx.role}`,
+        targetId: `demoted-${ctx.role}-${demotedIndex}`,
         role: ctx.role,
         name: "",
         announcement: `(not announced — ${demotionReason})`,

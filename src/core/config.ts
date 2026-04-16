@@ -3,7 +3,7 @@ import { resolve } from "path";
 import { z } from "zod";
 import type { AnalysisFilter } from "./filter.js";
 
-const TactualConfigSchema = z.object({
+export const TactualConfigSchema = z.object({
   exclude: z.array(z.string()).optional(),
   excludeSelectors: z.array(z.string()).optional(),
   focus: z.array(z.string()).optional(),

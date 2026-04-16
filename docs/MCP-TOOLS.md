@@ -112,13 +112,15 @@ Authenticate with a web app and save session state for analyzing authenticated c
 
 **Returns:** `{ saved, cookies, origins, currentUrl, message }`.
 
+**Security:** Never paste real credentials into AI prompts. Credentials in chat land in conversation logs and may be cached. Instead, run `save_auth` with placeholder values during development, or use `npx tactual save-auth` in a terminal and pass the resulting file to `storageState`.
+
 **Example:**
 ```json
 {
   "url": "https://myapp.com/login",
   "steps": [
-    { "fill": ["#email", "user@example.com"] },
-    { "fill": ["#password", "secretpassword"] },
+    { "fill": ["#email", "test@example.com"] },
+    { "fill": ["#password", "test-only-password"] },
     { "click": "Sign in" },
     { "waitForUrl": "/dashboard" }
   ]

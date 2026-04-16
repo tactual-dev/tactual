@@ -3,6 +3,7 @@ import {
   loadConfig,
   mergeConfigWithFlags,
   configToFilter,
+  TactualConfigSchema,
   type TactualConfig,
 } from "./config.js";
 import { writeFileSync, unlinkSync, mkdtempSync } from "fs";
@@ -186,14 +187,16 @@ describe("configToFilter", () => {
 import { getPreset, listPresets } from "./presets.js";
 
 describe("presets", () => {
-  it("lists all presets", () => {
+  it("lists all presets and each config validates against TactualConfigSchema", () => {
     const presets = listPresets();
     expect(presets.length).toBeGreaterThanOrEqual(4);
     for (const p of presets) {
       expect(p.id).toBeTruthy();
       expect(p.name).toBeTruthy();
       expect(p.description).toBeTruthy();
-      expect(p.config).toBeDefined();
+      // Validate each preset's config through the same Zod schema used for tactual.json.
+      // This catches typos in priority values, invalid field names, etc.
+      expect(() => TactualConfigSchema.parse(p.config)).not.toThrow();
     }
   });
 

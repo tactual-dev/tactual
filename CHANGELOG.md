@@ -1,5 +1,74 @@
 # Changelog
 
+## 0.3.0 (2026-04-16)
+
+New diagnostics, scoring presets, SR simulator, performance improvements, security hardening, and documentation overhaul.
+
+### Features
+
+- **Scoring presets** — `--preset ecommerce-checkout`, `docs-site`, `dashboard`, `form-heavy`. Named config bundles with focus filters and priority mappings for common use cases. Layers under config files and CLI flags.
+- **Skip link detection** — `no-skip-link` diagnostic warns when pages with 5+ targets lack a skip-to-content link.
+- **Landmark completeness** — `no-main-landmark`, `no-banner-landmark`, `no-contentinfo-landmark`, `no-nav-landmark` diagnostics fire when pages have some landmarks but are missing key ones.
+- **Structural summary** — `structural-summary` info diagnostic gives a one-line snapshot of page structure for machine consumption.
+- **Shared-cause deduplication** — penalties affecting >50% of findings are promoted to page-level diagnostics (`shared-structural-issue`) instead of repeating on every target.
+- **SR announcement simulator** — heuristic prediction of NVDA announcements. Detects demoted landmarks (e.g., `<header>` inside `<section>` losing its banner role) without launching a screen reader.
+- **`--allow-action`** — override the safe-action policy for specific controls during exploration (glob patterns).
+- **`--probe-budget`** — configurable max targets to probe (default: 20).
+- **Nested focusable detection** (`--probe`) — flags elements with focusable descendants causing duplicate tab stops.
+- **Focus indicator suppression** (`--probe`) — detects when CSS suppresses the focus outline without a visible alternative.
+- **Skipped elements reporting** — exploration now lists which elements were skipped by the safety policy.
+- **PR comment action** — `comment-on-pr: "true"` input posts a summary comment on pull requests. Supports multiple URLs/profiles per PR via hidden markers. Updates existing comment on re-run.
+
+### Performance
+
+- **Dijkstra with binary min-heap** — `shortestPath` and `reachableWithin` go from O(V²) to O((V+E) log V).
+- **Focus filter** — O(n²) loop replaced with Map lookup.
+- **Single-pass diagnostics** — `diagnoseCapture` results cached via `states.map()` instead of called twice.
+- **Deduplicated globToRegex** — `filter.ts` imports from `trace-helpers.ts` instead of maintaining a separate copy.
+- **Action double-run mitigation** — second analysis pass (for score extraction) uses `--summary-only`.
+
+### Bug Fixes
+
+- Slider/spinbutton value suffix parsing in ariaSnapshot capture
+- Convergence polling `prevCount` initialized to -1 (was 0, causing false convergence on empty pages)
+- P10 score calculation off-by-one
+- `escapeRestoresFocus` probe logic inverted
+- Activatable semantics: only `stateChanged` probes count, not all probes
+- Login-wall false positive from partial path match (`/oauth` matching `/login`)
+- Console reporter TTY detection
+- Browser/page leak in CLI save-auth and MCP tools
+- `checkThreshold` on empty findings
+- SARIF sort using `scores.overall` consistently
+- `modelAnnouncement` for searchbox/contentinfo roles
+- Unicode first-letter support in graph builder
+- `stateCount: 0` on graph failure (now uses actual state count)
+- Markdown reporter missing selector field
+- SR simulator targetId collision for multiple demoted landmarks of the same role
+
+### Security
+
+- MCP HTTP body size limit (1MB) and request timeout (30s)
+- Browser pool cleanup on HTTP server shutdown
+- Path traversal protection in MCP storage state
+- Wait step capped at 60s in `save_auth`
+- Storage state file permissions (0o600)
+- `save_auth` rejects unknown step types
+- Submit buttons moved to "unsafe" tier in safety policy
+- Snapshot parsing hard cap at 5,000 targets (DoS prevention for hosted MCP)
+
+### Rules
+
+- Removed `hiddenBranchRule`, `missingAccessibleNameRule`, `excessiveControlSequenceRule` — these overlapped with graph-derived penalties in finding-builder.ts, causing duplicate output. 1 built-in rule remains (`noHeadingAnchorRule`).
+
+### Documentation
+
+- `docs/MCP-TOOLS.md` — full reference for all 7 MCP tools with parameter tables, return shapes, and workflow examples
+- `docs/AGENT-RECIPES.md` — prompt templates for Claude Code, Cursor, Windsurf, Cline, GitHub Copilot. Includes CLAUDE.md snippet.
+- `docs/CALIBRATION.md` — added working end-to-end example with 2-observation dataset
+- `CONTRIBUTING.md` — link to profile types for new profile authors
+- README: scoring presets section, regression tracking section, expanded diagnostics table, "who is this for" framing, shortened MCP tools table with link to full reference
+- Scoring documentation clarified: floor-at-1 behavior in geometric mean described accurately
+
 ## 0.2.1 (2026-04-06)
 
 Registry readiness, packaging fixes, and SARIF improvements.

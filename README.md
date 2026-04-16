@@ -14,6 +14,8 @@ Tactual measures **navigation cost** — how many actions does it take a screen-
 
 It works by capturing Playwright accessibility snapshots, building a navigation graph, and scoring each target under an assistive-technology profile.
 
+Tactual is a developer tool for analyzing your own sites and staging environments. Run it locally, in CI, or via the MCP server in your editor. It is not a public scanning service.
+
 ## Install
 
 Requires Node.js 20 or later.
@@ -102,13 +104,15 @@ npx tactual-mcp --http --host=0.0.0.0  # bind to all interfaces (default: 127.0.
 
 | Tool | Description |
 |---|---|
-| `analyze_url` | Analyze a web page for SR navigation cost. Default format is `sarif`. Supports `waitForSelector`, `waitTime`, `minSeverity`, `focus`, `excludeSelector`, `exclude`, `maxFindings`, `summaryOnly`, `timeout`, `storageState` params. Findings include Playwright locator selectors. Pass `probe: true` for keyboard probes. Pass `includeStates: true` to get captured states for offline `trace_path`. |
-| `trace_path` | Trace the step-by-step navigation path to a specific target. Shows each action, cost, and modeled SR announcement. Accepts target ID or glob pattern (e.g., `*search*`). Pass `statesJson` from a prior `analyze_url` to skip browser launch. Supports `storageState` for authenticated pages. |
-| `list_profiles` | List available AT profiles |
-| `diff_results` | Compare two analysis results. Shows penalties resolved/added, severity changes, and status per target. |
-| `suggest_remediations` | Ranked fix suggestions by impact. Redundant for SARIF output (fixes are inline). |
-| `save_auth` | Authenticate with a web app and save session state. Pass the output file path as `storageState` to other tools for analyzing authenticated content. |
-| `analyze_pages` | Analyze multiple pages in one call with site-level aggregation. Returns ~200 bytes per page. Use for site triage before diving into individual pages. |
+| `analyze_url` | Analyze a page for SR navigation cost (SARIF default). Supports exploration, keyboard probes, filtering. |
+| `trace_path` | Step-by-step navigation path to a target with modeled SR announcements. |
+| `list_profiles` | List available AT profiles. |
+| `diff_results` | Compare two analysis results — improvements, regressions, severity changes. |
+| `suggest_remediations` | Ranked fix suggestions by impact. |
+| `save_auth` | Authenticate and save session state for analyzing protected content. |
+| `analyze_pages` | Multi-page site triage with aggregated stats (~200 bytes/page). |
+
+Full parameter reference: [docs/MCP-TOOLS.md](docs/MCP-TOOLS.md)
 
 #### Setup by AI tool
 
@@ -171,7 +175,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Analyze accessibility
-        uses: tactual-dev/tactual@v0.2.1
+        uses: tactual-dev/tactual@v0.3.0
         with:
           url: https://your-app.com
           explore: "true"
@@ -240,6 +244,7 @@ Create with `tactual init` or manually:
 
 ```json
 {
+  "preset": "ecommerce-checkout",
   "profile": "voiceover-ios-v0",
   "exclude": ["easter*", "admin*", "debug*"],
   "excludeSelectors": ["#easter-egg", ".admin-only", ".third-party-widget"],
@@ -283,6 +288,8 @@ Presets bundle focus filters and priority mappings for common use cases. They la
 npx tactual analyze-url https://shop.com --preset ecommerce-checkout
 npx tactual presets  # list all presets with details
 ```
+
+Presets suppress cookie banners and analytics targets by default. To override, use `--exclude` or set `priority` in `tactual.json`. Presets do not compose — only one `--preset` can be active.
 
 ## Scoring
 
@@ -333,6 +340,14 @@ Tactual detects and reports when analysis may be unreliable:
 | `redirect-detected` | warning | Landed on different domain |
 | `no-headings` | warning | No heading elements found |
 | `no-landmarks` | warning | No landmark regions found |
+| `no-skip-link` | warning | No skip-to-content link on pages with 5+ targets |
+| `no-main-landmark` | warning | Missing `<main>` landmark |
+| `no-banner-landmark` | info | Missing `<header>` / banner landmark |
+| `no-contentinfo-landmark` | info | Missing `<footer>` / contentinfo landmark |
+| `no-nav-landmark` | info | Missing `<nav>` / navigation landmark |
+| `structural-summary` | info | One-line structural overview (headings, landmarks, skip link) |
+| `shared-structural-issue` | warning | Penalty affecting >50% of targets promoted to page-level |
+| `landmark-demoted` | warning | HTML landmark exists but demoted by nesting context |
 
 ## Exploration
 

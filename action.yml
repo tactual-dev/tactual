@@ -66,30 +66,40 @@ runs:
           EXPLORE_FLAG="--explore"
         fi
 
+        FORMAT="${{ inputs.format }}"
+
+        # Primary run: produce the user's requested format
         EXT="txt"
-        if [ "${{ inputs.format }}" = "sarif" ]; then EXT="sarif"; fi
-        if [ "${{ inputs.format }}" = "json" ]; then EXT="json"; fi
+        if [ "$FORMAT" = "sarif" ]; then EXT="sarif"; fi
+        if [ "$FORMAT" = "json" ]; then EXT="json"; fi
+        if [ "$FORMAT" = "markdown" ]; then EXT="md"; fi
         RESULT_FILE="tactual-results.${EXT}"
 
         npx tactual analyze-url "${{ inputs.url }}" \
           --profile "${{ inputs.profile }}" \
-          --format "${{ inputs.format }}" \
+          --format "$FORMAT" \
           $EXPLORE_FLAG \
           --output "$RESULT_FILE"
 
         echo "result-file=${RESULT_FILE}" >> "$GITHUB_OUTPUT"
 
-        # Generate JSON for score extraction (skip if already JSON)
-        if [ "${{ inputs.format }}" != "json" ]; then
+        # Score extraction: if primary format was JSON, reuse it.
+        # Otherwise, run a fast --summary-only JSON pass for score data.
+        # TODO: add --also-json flag to eliminate this second run.
+        if [ "$FORMAT" = "json" ]; then
+          JSON_FILE="$RESULT_FILE"
+        else
+          JSON_FILE="tactual-results.json"
           npx tactual analyze-url "${{ inputs.url }}" \
             --profile "${{ inputs.profile }}" \
             $EXPLORE_FLAG \
             --format json \
-            --output tactual-results.json
+            --summary-only \
+            --output "$JSON_FILE"
         fi
 
         AVG=$(node -e "
-          const r = JSON.parse(require('fs').readFileSync('tactual-results.json','utf8'));
+          const r = JSON.parse(require('fs').readFileSync('${JSON_FILE}','utf8'));
           console.log(r.stats?.averageScore ?? 0);
         ")
         echo "average-score=${AVG}" >> "$GITHUB_OUTPUT"
@@ -121,16 +131,27 @@ runs:
         GH_TOKEN: ${{ github.token }}
       run: |
         AVG="${{ steps.analysis.outputs.average-score }}"
-        RESULT_FILE="tactual-results.json"
+        URL="${{ inputs.url }}"
+        PROFILE="${{ inputs.profile }}"
+
+        # Use summary JSON if available, fall back to full JSON
+        if [ -f "tactual-results.json" ]; then
+          JSON_FILE="tactual-results.json"
+        else
+          echo "No JSON results available for PR comment"
+          exit 0
+        fi
 
         # Build the comment body
         COMMENT=$(node -e "
-          const r = JSON.parse(require('fs').readFileSync('${RESULT_FILE}','utf8'));
-          const s = r.metadata || {};
+          const r = JSON.parse(require('fs').readFileSync('${JSON_FILE}','utf8'));
+          const s = r.stats || r.metadata || {};
+          const sc = r.severityCounts || {};
           const findings = r.findings || [];
-          const severe = findings.filter(f => f.severity === 'severe').length;
-          const high = findings.filter(f => f.severity === 'high').length;
-          const moderate = findings.filter(f => f.severity === 'moderate').length;
+          const severe = sc.severe || findings.filter(f => f.severity === 'severe').length;
+          const high = sc.high || findings.filter(f => f.severity === 'high').length;
+          const moderate = sc.moderate || findings.filter(f => f.severity === 'moderate').length;
+          const targets = s.targetCount || 0;
           const avg = ${AVG};
 
           let icon = '🟢';
@@ -139,13 +160,14 @@ runs:
           else if (moderate > 0) icon = '🟡';
 
           const lines = [];
+          lines.push('<!-- tactual-pr-comment:${URL}:${PROFILE} -->');
           lines.push('## ' + icon + ' Tactual: Screen-Reader Navigation Cost');
           lines.push('');
           lines.push('| Metric | Value |');
           lines.push('|---|---|');
           lines.push('| Average Score | **' + avg + '** / 100 |');
-          lines.push('| Targets | ' + (s.targetCount || findings.length) + ' |');
-          lines.push('| Profile | \`' + (s.profile || 'generic-mobile-web-sr-v0') + '\` |');
+          lines.push('| Targets | ' + targets + ' |');
+          lines.push('| Profile | \`${PROFILE}\` |');
           if (severe + high + moderate > 0) {
             lines.push('');
             lines.push('**Findings:** ' + severe + ' severe, ' + high + ' high, ' + moderate + ' moderate');
@@ -159,14 +181,15 @@ runs:
             }
           }
           lines.push('');
-          lines.push('<sub>Posted by [Tactual](https://github.com/tactual-dev/tactual) · Screen-reader navigation cost analyzer</sub>');
+          lines.push('<sub>Posted by [Tactual](https://github.com/tactual-dev/tactual)</sub>');
           console.log(lines.join('\n'));
         ")
 
-        # Find and update existing comment, or create new one
+        # Find existing comment for this URL+profile, or create new one
         PR_NUM="${{ github.event.pull_request.number }}"
+        MARKER="tactual-pr-comment:${URL}:${PROFILE}"
         EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
-          --jq '.[] | select(.body | contains("Tactual: Screen-Reader Navigation Cost")) | .id' \
+          --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
           2>/dev/null | head -1)
 
         if [ -n "$EXISTING" ]; then

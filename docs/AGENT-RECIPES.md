@@ -67,9 +67,11 @@ Calls `analyze_pages` for a quick site-level overview (~200 bytes per page), the
 
 ### Authenticated content
 
-> Log into https://myapp.com/login with email test@example.com and password testpass123, save the session, then analyze the dashboard.
+> Save an auth session for https://myapp.com/login, then analyze the dashboard.
 
-Calls `save_auth` with fill/click steps, then `analyze_url` with the saved `storageState`.
+The agent will call `save_auth` with fill/click steps, then `analyze_url` with the saved `storageState`.
+
+**Security:** Never paste real credentials into prompts. Credentials in chat land in conversation logs and may be cached. Instead, log in manually with `npx tactual save-auth` and pass the resulting `storageState` file to subsequent analysis runs.
 
 ### Focus on a specific area
 
