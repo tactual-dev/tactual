@@ -230,6 +230,16 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
       parts.push("modal");
     }
 
+    // Toggle button — aria-pressed state. ARIA-AT toggle-button pattern
+    // verifies "State 'pressed'" / "State 'not pressed'" announcements.
+    // HIGH confidence: NVDA, JAWS, and VoiceOver all announce pressed state.
+    if (role === "button" && attrs["aria-pressed"] !== undefined) {
+      const p = attrs["aria-pressed"];
+      if (p === "true") parts.push("pressed");
+      else if (p === "false") parts.push("not pressed");
+      else if (p === "mixed") parts.push("partially pressed");
+    }
+
     // Disabled state. NVDA "unavailable" and VoiceOver "dimmed" are
     // both widely cited (NVDA's term: HIGH confidence; VoiceOver's
     // "dimmed": MEDIUM confidence — documented in older Apple guides
@@ -296,6 +306,103 @@ export function buildTranscript(targets: Target[], at: ATKind = "nvda"): Transcr
     announcement: buildAnnouncement(target, at),
     action: "next-item" as const,
   }));
+}
+
+export type NavigationMode = "linear" | "by-landmark" | "by-heading" | "by-form-control";
+
+export interface NavigationOptions {
+  /** Navigation mode (default: linear) */
+  mode?: NavigationMode;
+  /** Starting target ID (default: first target) */
+  from?: string;
+  /** Ending target ID (default: last target) */
+  to?: string;
+  /** Screen reader to simulate (default: nvda) */
+  at?: ATKind;
+  /** Whether to include landmark boundary announcements (default: true).
+   *  When entering/leaving a landmark, NVDA/JAWS announce it explicitly. */
+  includeBoundaries?: boolean;
+}
+
+/**
+ * Build a multi-target navigation transcript — what a screen-reader user
+ * hears when navigating from one position to another using a specific
+ * navigation mode (linear arrows, by-heading, by-landmark, by-form-control).
+ *
+ * Models landmark boundary announcements: when crossing into a landmark,
+ * NVDA/JAWS announce the landmark role before the first item inside.
+ * VoiceOver behavior on landmark boundaries is similar but less verbose.
+ */
+export function buildNavigationTranscript(
+  targets: Target[],
+  options: NavigationOptions = {},
+): TranscriptStep[] {
+  const at = options.at ?? "nvda";
+  const mode = options.mode ?? "linear";
+  const includeBoundaries = options.includeBoundaries ?? true;
+
+  // Determine the slice of targets to traverse
+  const fromIdx = options.from
+    ? targets.findIndex((t) => t.id === options.from)
+    : 0;
+  const toIdx = options.to
+    ? targets.findIndex((t) => t.id === options.to)
+    : targets.length - 1;
+
+  if (fromIdx < 0 || toIdx < 0) return [];
+  const start = Math.min(fromIdx, toIdx);
+  const end = Math.max(fromIdx, toIdx);
+
+  // Filter by navigation mode
+  const isReachableInMode = (t: Target): boolean => {
+    if (mode === "linear") return true;
+    if (mode === "by-heading") return t.kind === "heading";
+    if (mode === "by-landmark") return t.kind === "landmark" || t.kind === "search";
+    if (mode === "by-form-control") {
+      return t.kind === "formField" || t.kind === "button" || t.kind === "link";
+    }
+    return false;
+  };
+
+  const steps: TranscriptStep[] = [];
+  let stepNum = 1;
+
+  // Track current landmark for boundary announcements (linear mode only —
+  // by-landmark / by-heading skip directly between landmarks/headings so
+  // boundary announcements would be redundant).
+  let currentLandmark: string | null = null;
+
+  for (let i = start; i <= end; i++) {
+    const target = targets[i];
+
+    if (mode === "linear" && includeBoundaries) {
+      // Detect landmark boundary crossings in linear mode
+      const enteringLandmark =
+        target.kind === "landmark" ? target.id : null;
+      if (enteringLandmark && enteringLandmark !== currentLandmark) {
+        // The landmark target itself announces entry — buildAnnouncement
+        // already produces "Welcome, main landmark", so no extra step.
+        currentLandmark = enteringLandmark;
+      }
+    }
+
+    if (!isReachableInMode(target)) continue;
+
+    const action: TranscriptStep["action"] =
+      mode === "by-heading" ? "next-heading" :
+      mode === "by-landmark" ? "next-landmark" :
+      "next-item";
+
+    steps.push({
+      step: stepNum++,
+      targetId: target.id,
+      kind: target.kind,
+      announcement: buildAnnouncement(target, at),
+      action,
+    });
+  }
+
+  return steps;
 }
 
 /** Build announcements for all three supported screen readers. */

@@ -5,6 +5,7 @@ import {
   buildMultiATAnnouncement,
   detectInteropDivergence,
   buildTranscript,
+  buildNavigationTranscript,
   type NestingContext,
 } from "./sr-simulator.js";
 import type { Target } from "../core/types.js";
@@ -308,5 +309,74 @@ describe("buildTranscript", () => {
   it("preserves target kind for filtering downstream", () => {
     const transcript = buildTranscript(targets);
     expect(transcript.map((s) => s.kind)).toEqual(["landmark", "heading", "link", "button"]);
+  });
+});
+
+describe("buildNavigationTranscript", () => {
+  const targets: Target[] = [
+    target({ id: "before", kind: "link", role: "link", name: "Before main" }),
+    target({ id: "main", kind: "landmark", role: "main", name: "" }),
+    target({ id: "h1", kind: "heading", role: "heading", name: "Welcome", headingLevel: 1 }),
+    target({ id: "btn", kind: "button", role: "button", name: "Sign Up" }),
+    target({ id: "h2", kind: "heading", role: "heading", name: "Features", headingLevel: 2 }),
+    target({ id: "after", kind: "link", role: "link", name: "After main" }),
+  ];
+
+  it("linear mode produces all steps from start to end", () => {
+    const transcript = buildNavigationTranscript(targets);
+    expect(transcript).toHaveLength(6);
+    expect(transcript[0].targetId).toBe("before");
+    expect(transcript[5].targetId).toBe("after");
+    expect(transcript.every((s) => s.action === "next-item")).toBe(true);
+  });
+
+  it("from/to constrains the range (inclusive)", () => {
+    const transcript = buildNavigationTranscript(targets, { from: "main", to: "btn" });
+    expect(transcript).toHaveLength(3);
+    expect(transcript.map((s) => s.targetId)).toEqual(["main", "h1", "btn"]);
+  });
+
+  it("by-heading mode emits only headings", () => {
+    const transcript = buildNavigationTranscript(targets, { mode: "by-heading" });
+    expect(transcript).toHaveLength(2);
+    expect(transcript.map((s) => s.targetId)).toEqual(["h1", "h2"]);
+    expect(transcript[0].announcement).toBe("Welcome, heading, level 1");
+    expect(transcript.every((s) => s.action === "next-heading")).toBe(true);
+  });
+
+  it("by-landmark mode emits only landmarks", () => {
+    const transcript = buildNavigationTranscript(targets, { mode: "by-landmark" });
+    expect(transcript).toHaveLength(1);
+    expect(transcript[0].targetId).toBe("main");
+    expect(transcript[0].action).toBe("next-landmark");
+  });
+
+  it("by-form-control mode emits buttons, links, form fields", () => {
+    const transcript = buildNavigationTranscript(targets, { mode: "by-form-control" });
+    expect(transcript.map((s) => s.targetId)).toEqual(["before", "btn", "after"]);
+  });
+
+  it("respects --at parameter for announcements", () => {
+    const t = [target({ id: "t1", kind: "formField", role: "textbox", name: "Email" })];
+    const nvda = buildNavigationTranscript(t, { at: "nvda" });
+    const vo = buildNavigationTranscript(t, { at: "voiceover" });
+    expect(nvda[0].announcement).toBe("Email, edit");
+    expect(vo[0].announcement).toBe("Email, text field");
+  });
+
+  it("supports navigating from a target into a landmark (ARIA-AT scenario)", () => {
+    // ARIA-AT "Navigate forwards into a main landmark" pattern
+    const transcript = buildNavigationTranscript(targets, {
+      from: "before", to: "h1", mode: "linear",
+    });
+    expect(transcript.map((s) => s.targetId)).toEqual(["before", "main", "h1"]);
+    // The main landmark and the h1 inside it both get announced
+    expect(transcript[1].announcement).toContain("main landmark");
+    expect(transcript[2].announcement).toContain("Welcome");
+    expect(transcript[2].announcement).toContain("heading");
+  });
+
+  it("returns empty when from/to don't exist", () => {
+    expect(buildNavigationTranscript(targets, { from: "nonexistent" })).toEqual([]);
   });
 });
