@@ -413,6 +413,7 @@ Tactual detects and reports when analysis may be unreliable:
 | `structural-summary` | info | One-line structural overview (headings, landmarks, skip link) |
 | `shared-structural-issue` | warning | Penalty affecting >50% of targets promoted to page-level |
 | `landmark-demoted` | warning | HTML landmark exists but demoted by nesting context |
+| `timeout-during-render` | warning | A `waitForSelector` did not appear in time during MCP capture |
 
 ## Exploration
 
@@ -523,3 +524,9 @@ All URLs are validated before navigation. Private/internal IP ranges and non-HTT
 ## License
 
 Apache-2.0
+
+### Attribution
+
+The simulator's role/state phrasing is calibrated against the [W3C ARIA-AT project](https://github.com/w3c/aria-at), which is licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/). Tactual does not bundle ARIA-AT data; the calibration script (`npm run calibrate`) fetches assertions from the upstream repository at run time. If you publish Tactual calibration results, please attribute the W3C ARIA-AT project as the source of the ground-truth assertions.
+
+ARIA role/attribute support data referenced in interop risk scoring is derived from [a11ysupport.io](https://a11ysupport.io) and the same ARIA-AT project.

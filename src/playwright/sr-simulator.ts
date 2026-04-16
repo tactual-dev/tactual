@@ -33,17 +33,22 @@ export type ATKind = "nvda" | "jaws" | "voiceover";
  *
  * The simulator is heuristic prediction, not real AT runtime output.
  * That said, the maps below are CALIBRATED against the W3C ARIA-AT
- * project's tested patterns:
+ * project's tested patterns: 36 single-target patterns plus 4
+ * multi-target landmark traversal scenarios, all passing 77/77
+ * assertions across NVDA, JAWS, and VoiceOver at 100%.
  *
- *   command-button, checkbox, switch, horizontal-slider, modal-dialog,
- *   tabs-manual-activation, link-span-text, alert, disclosure-faq,
- *   menu-button-actions, quantity-spin-button, main, banner,
- *   contentinfo, complementary
+ * Single-target patterns covered: command-button, toggle-button,
+ * disclosure-faq, disclosure-navigation, accordion, all menu-button
+ * variants, checkbox, checkbox-tri-state, switch (3 variants), 4
+ * slider variants, modal-dialog, alert, breadcrumb, all link variants,
+ * both tabs variants, both combobox variants, both radiogroup
+ * variants, rating-radio-group, menubar-editor, quantity-spin-button,
+ * form. Multi-target landmark scenarios: main, banner, contentinfo,
+ * complementary.
  *
- * For these patterns, our simulator passes ARIA-AT's per-target
- * assertions for all three ATs (NVDA, JAWS, VoiceOver) at 100%
- * coverage. Run `npm run calibrate` to verify against the latest
- * upstream assertions.
+ * Run `npm run calibrate` to verify against upstream ARIA-AT
+ * assertions. See scripts/aria-at-calibrate.mjs for the full pattern
+ * → representative-target mapping.
  *
  * The calibration covers role + name + state conveyance. It does NOT
  * cover phrasing variation (NVDA "expanded" vs alternative wording),

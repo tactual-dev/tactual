@@ -270,11 +270,13 @@ function generatePenalties(
   // Pattern-deviation detection: predict the post-Enter state via the
   // ARIA APG state machine and compare to what the probe actually
   // observed. Mismatches indicate broken pattern implementations.
+  // Returns an array — a button with both aria-pressed AND aria-expanded
+  // can have both deviations reported.
   if (probe?.probeSucceeded && probe.ariaStateBeforeEnter && probe.ariaStateAfterEnter) {
-    const deviation = detectPatternDeviation(target, probe.ariaStateBeforeEnter, probe.ariaStateAfterEnter);
-    if (deviation) {
-      penalties.push(deviation.message);
-      suggestedFixes.push(deviation.fix);
+    const deviations = detectPatternDeviation(target, probe.ariaStateBeforeEnter, probe.ariaStateAfterEnter);
+    for (const d of deviations) {
+      penalties.push(d.message);
+      suggestedFixes.push(d.fix);
     }
   }
 
@@ -535,33 +537,35 @@ function detectPatternDeviation(
   target: Target,
   before: Record<string, string>,
   after: Record<string, string>,
-): { message: string; fix: string } | null {
+): Array<{ message: string; fix: string }> {
+  const out: Array<{ message: string; fix: string }> = [];
   const role = target.role;
   // Enter toggles aria-pressed / aria-expanded on buttons (APG toggle-button,
-  // disclosure-button patterns)
+  // disclosure-button patterns). Both attributes are checked independently —
+  // a malformed button could have both, or just one.
   if (role === "button") {
     if (before["aria-pressed"] !== undefined) {
       const expected = before["aria-pressed"] === "true" ? "false" : "true";
       if (after["aria-pressed"] !== expected) {
-        return {
+        out.push({
           message:
             `Pattern deviation: pressing Enter on a toggle button should toggle aria-pressed ` +
             `from "${before["aria-pressed"]}" to "${expected}" per the ARIA APG toggle-button ` +
             `pattern, but probe observed aria-pressed="${after["aria-pressed"] ?? "(unset)"}".`,
           fix: "Ensure the button's onClick handler toggles aria-pressed. Screen-reader users rely on this state to know whether the toggle is active.",
-        };
+        });
       }
     }
     if (before["aria-expanded"] !== undefined) {
       const expected = before["aria-expanded"] === "true" ? "false" : "true";
       if (after["aria-expanded"] !== expected) {
-        return {
+        out.push({
           message:
             `Pattern deviation: pressing Enter on a disclosure button should toggle aria-expanded ` +
             `from "${before["aria-expanded"]}" to "${expected}" per the ARIA APG disclosure pattern, ` +
             `but probe observed aria-expanded="${after["aria-expanded"] ?? "(unset)"}".`,
           fix: "Ensure the button's click handler toggles aria-expanded AND shows/hides the disclosed content.",
-        };
+        });
       }
     }
   }
@@ -569,16 +573,16 @@ function detectPatternDeviation(
   if ((role === "checkbox" || role === "switch") && before["aria-checked"] !== undefined) {
     const expected = before["aria-checked"] === "true" ? "false" : "true";
     if (after["aria-checked"] !== expected) {
-      return {
+      out.push({
         message:
           `Pattern deviation: pressing Enter on a ${role} should toggle aria-checked ` +
           `from "${before["aria-checked"]}" to "${expected}" per the ARIA APG ${role} pattern, ` +
           `but probe observed aria-checked="${after["aria-checked"] ?? "(unset)"}".`,
         fix: `Ensure the ${role}'s keyboard handler toggles aria-checked. Screen-reader users rely on this state.`,
-      };
+      });
     }
   }
-  return null;
+  return out;
 }
 
 /**

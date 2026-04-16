@@ -247,9 +247,13 @@ export function createMcpServer(): McpServer {
         // SR announcement simulation — detect demoted landmarks
         const { simulateScreenReader } = await import("../playwright/sr-simulator.js");
         const srSim = await simulateScreenReader(page, targets);
-        for (const d of srSim.demotedLandmarks) {
-          captureWarnings.push(`${d.targetId}: ${d.demotionReason}`);
-        }
+        // Note: srDiagnostics use code "landmark-demoted", not the
+        // captureWarnings bucket which is for timeout-during-render.
+        const srDiagnostics = srSim.demotedLandmarks.map((d) => ({
+          level: "warning" as const,
+          code: "landmark-demoted" as const,
+          message: `${d.targetId}: ${d.demotionReason}`,
+        }));
 
         let states = [state];
 
@@ -278,6 +282,11 @@ export function createMcpServer(): McpServer {
         // Inject capture warnings as diagnostics
         for (const w of captureWarnings) {
           result.diagnostics.push({ level: "warning", code: "timeout-during-render", message: w });
+        }
+        // Inject SR simulator demoted-landmark diagnostics with the
+        // correct code (was previously bucketed as timeout-during-render).
+        if (srDiagnostics.length > 0) {
+          result.diagnostics.push(...srDiagnostics);
         }
 
         // Deduplicate findings with identical penalty signatures
