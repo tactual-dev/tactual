@@ -75,14 +75,14 @@ export function modelAnnouncement(
   action: string,
   role: string,
   name: string,
-  kind?: string,
+  headingLevel?: number,
 ): string {
   const roleAnnouncement = SR_ROLE_MAP[role] ?? role;
   const cleanName = name === "(unnamed)" ? "" : name;
 
   switch (action) {
     case "nextHeading": {
-      const level = kind === "heading" ? "" : "";
+      const level = headingLevel ? ` level ${headingLevel}` : "";
       return cleanName
         ? `${cleanName}, heading${level}`
         : `heading${level}`;
@@ -124,7 +124,7 @@ export const SR_ROLE_MAP: Record<string, string> = {
   button: "button",
   link: "link",
   textbox: "edit text",
-  searchbox: "search edit text",
+  searchbox: "search edit",
   checkbox: "checkbox",
   radio: "radio button",
   combobox: "combo box",
@@ -141,7 +141,7 @@ export const SR_ROLE_MAP: Record<string, string> = {
   navigation: "navigation",
   main: "main",
   banner: "banner",
-  contentinfo: "content info",
+  contentinfo: "content information",
   complementary: "complementary",
   region: "region",
   form: "form",

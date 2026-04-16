@@ -96,7 +96,8 @@ export interface DetailedFinding {
  * Groups findings by shared penalty patterns, keeps full detail only
  * for the worst N findings, and computes aggregate statistics.
  */
-export function summarize(result: AnalysisResult): SummarizedResult {
+export function summarize(result: AnalysisResult, options?: { maxDetailedFindings?: number }): SummarizedResult {
+  const maxDetailed = options?.maxDetailedFindings ?? MAX_DETAILED_FINDINGS;
   const findings = result.findings;
 
   // Severity counts
@@ -114,7 +115,7 @@ export function summarize(result: AnalysisResult): SummarizedResult {
   const worstScore = scores.length > 0 ? Math.min(...scores) : 0;
   const bestScore = scores.length > 0 ? Math.max(...scores) : 0;
   const p10Score = scores.length >= 5
-    ? sortedScores[Math.floor(sortedScores.length * 0.1)]
+    ? sortedScores[Math.max(0, Math.ceil(sortedScores.length * 0.1) - 1)]
     : worstScore;
   const medianScore = scores.length > 0
     ? sortedScores[Math.floor(sortedScores.length * 0.5)]
@@ -133,7 +134,7 @@ export function summarize(result: AnalysisResult): SummarizedResult {
   // Worst N with full detail
   const sorted = [...findings].sort((a, b) => a.scores.overall - b.scores.overall);
   const worstFindings: DetailedFinding[] = sorted
-    .slice(0, MAX_DETAILED_FINDINGS)
+    .slice(0, maxDetailed)
     .map(toDetailed);
 
   // Diagnostics (skip info-level and "ok")
@@ -141,11 +142,11 @@ export function summarize(result: AnalysisResult): SummarizedResult {
     .filter((d) => d.level !== "info" && d.code !== "ok")
     .map((d) => ({ level: d.level, message: d.message }));
 
-  const isTruncated = findings.length > MAX_DETAILED_FINDINGS;
+  const isTruncated = findings.length > maxDetailed;
   let truncationNote: TruncationNote | null = null;
 
   if (isTruncated) {
-    const omitted = sorted.slice(MAX_DETAILED_FINDINGS);
+    const omitted = sorted.slice(maxDetailed);
     const omittedBySeverity: Record<string, number> = {};
     for (const f of omitted) {
       omittedBySeverity[f.severity] = (omittedBySeverity[f.severity] ?? 0) + 1;
@@ -157,11 +158,11 @@ export function summarize(result: AnalysisResult): SummarizedResult {
       .join(", ");
 
     truncationNote = {
-      message: `Showing ${MAX_DETAILED_FINDINGS} of ${findings.length} findings (worst first). ${omitted.length} omitted: ${sevParts}.`,
-      shown: MAX_DETAILED_FINDINGS,
+      message: `Showing ${maxDetailed} of ${findings.length} findings (worst first). ${omitted.length} omitted: ${sevParts}.`,
+      shown: maxDetailed,
       omitted: omitted.length,
       omittedBySeverity,
-      howToSeeMore: "Fix the worst issues and re-run to surface lower-priority findings, or use minSeverity to focus on a specific band.",
+      howToSeeMore: "Fix the worst issues and re-run to surface lower-priority findings, or use --min-severity to focus on a specific band.",
     };
   }
 
@@ -209,7 +210,7 @@ function groupByIssue(findings: Finding[]): IssueGroup[] {
       const fix = f.suggestedFixes[i] ?? f.suggestedFixes[0] ?? "";
       // Normalize numbers out of the group key so "11 controls precede"
       // and "33 controls precede" land in the same group.
-      const groupKey = penalty.replace(/\d+/g, "N");
+      const groupKey = penalty.replace(/(?<=\s|^)\d+(?=\s|$)/g, "N");
       const existing = penaltyMap.get(groupKey);
       if (existing) {
         existing.findings.push(f);
@@ -241,7 +242,7 @@ function groupByIssue(findings: Finding[]): IssueGroup[] {
     // For parameterized penalties ("42 controls precede..."), strip the
     // leading number to avoid redundancy with the Nx count prefix.
     let issue = representative;
-    if (representative.match(/^\d+\s/)) {
+    if (representative.match(/^\d+\s+/)) {
       issue = representative.replace(/^\d+\s+/, "");
       // Capitalize first letter
       issue = issue.charAt(0).toUpperCase() + issue.slice(1);
@@ -255,6 +256,13 @@ function groupByIssue(findings: Finding[]): IssueGroup[] {
 }
 
 function toDetailed(f: Finding): DetailedFinding {
+  // Strip shared-cause penalties (promoted to page-level diagnostics)
+  // so individual findings show only what's unique to them
+  const sharedCause = (f as Record<string, unknown>)._sharedCause as string[] | undefined;
+  const penalties = sharedCause
+    ? f.penalties.filter((p) => !sharedCause.includes(p))
+    : f.penalties;
+
   return {
     targetId: f.targetId,
     selector: f.selector,
@@ -268,7 +276,7 @@ function toDetailed(f: Finding): DetailedFinding {
       recovery: f.scores.recovery,
       interopRisk: f.scores.interopRisk,
     },
-    penalties: f.penalties,
+    penalties: penalties.length > 0 ? penalties : ["See page-level diagnostics for shared structural issues"],
     suggestedFixes: f.suggestedFixes,
     bestPath: f.bestPath,
     confidence: f.confidence,

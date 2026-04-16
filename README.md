@@ -16,6 +16,8 @@ It works by capturing Playwright accessibility snapshots, building a navigation 
 
 ## Install
 
+Requires Node.js 20 or later.
+
 ```bash
 npm install tactual playwright
 ```
@@ -205,6 +207,7 @@ Options:
   --explore-depth <n>             Max exploration depth (default: 3)
   --explore-budget <n>            Max exploration actions (default: 50)
   --explore-max-targets <n>       Max accumulated targets before stopping (default: 2000)
+  --allow-action <patterns...>    Allow exploring controls matching these patterns (overrides safety)
   --exclude <patterns...>         Exclude targets by name/role glob
   --exclude-selector <css...>     Exclude elements by CSS selector
   --focus <landmarks...>          Only analyze within these landmarks
@@ -216,6 +219,7 @@ Options:
   --no-headless                   Headed browser (for bot-blocked sites)
   --timeout <ms>                  Page load timeout (default: 30000)
   --probe                         Run keyboard probes (focus, activation, Escape, Tab)
+  --probe-budget <n>              Max targets to probe (default: 20)
   --wait-for-selector <css>       Wait for selector before capturing (for SPAs)
   --wait-time <ms>                Additional wait after page load
   --storage-state <path>          Playwright storageState JSON for authenticated pages
@@ -279,7 +283,7 @@ Dimension weights vary by profile:
 | nvda-desktop-v0 | 0.35 | 0.25 | 0.30 | 0.10 | 0.7 |
 | jaws-desktop-v0 | 0.30 | 0.25 | 0.35 | 0.10 | 0.6 |
 
-**Composite:** Weighted geometric mean: `overall = exp(sum(w_i * ln(score_i)) / sum(w_i)) - interopRisk`. Each dimension is floored at 1 before the log to avoid log(0). This means a zero in any dimension drags the overall score down sharply -- you cannot operate what you cannot reach.
+**Composite:** Weighted geometric mean: `overall = exp(sum(w_i * ln(score_i)) / sum(w_i)) - interopRisk`. Each dimension is floored at 1 before the log to avoid log(0). A zero in any dimension eliminates that dimension's contribution to the geometric mean, significantly dragging the overall score down -- you cannot operate what you cannot reach.
 
 **Severity bands:**
 

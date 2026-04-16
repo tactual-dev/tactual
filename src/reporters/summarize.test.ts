@@ -40,7 +40,7 @@ function makeResult(
     diagnostics,
     metadata: {
       version: "0.6.0", profile: "generic-mobile-web-sr-v0",
-      duration: 1000, stateCount: 1, targetCount: findings.length,
+      duration: 1000, stateCount: 1, targetCount: findings.length, findingCount: findings.length,
       edgeCount: findings.length * 2,
     },
   };

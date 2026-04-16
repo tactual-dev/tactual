@@ -117,18 +117,49 @@ export class NavigationGraph {
   /** Nodes reachable from `startId` within `maxCost` total edge cost */
   reachableWithin(startId: string, maxCost: number): Map<string, number> {
     const costs = new Map<string, number>();
-    const queue: [string, number][] = [[startId, 0]];
     costs.set(startId, 0);
 
-    while (queue.length > 0) {
-      const [current, currentCost] = queue.shift()!;
+    // Min-heap priority queue (same pattern as shortestPath)
+    const heap: [string, number][] = [[startId, 0]];
+    const push = (item: [string, number]) => {
+      heap.push(item);
+      let i = heap.length - 1;
+      while (i > 0) {
+        const p = (i - 1) >> 1;
+        if (heap[p][1] <= heap[i][1]) break;
+        [heap[p], heap[i]] = [heap[i], heap[p]];
+        i = p;
+      }
+    };
+    const pop = (): [string, number] => {
+      const top = heap[0];
+      const last = heap.pop()!;
+      if (heap.length > 0) {
+        heap[0] = last;
+        let i = 0;
+        while (true) {
+          let s = i;
+          const l = 2 * i + 1, r = 2 * i + 2;
+          if (l < heap.length && heap[l][1] < heap[s][1]) s = l;
+          if (r < heap.length && heap[r][1] < heap[s][1]) s = r;
+          if (s === i) break;
+          [heap[s], heap[i]] = [heap[i], heap[s]];
+          i = s;
+        }
+      }
+      return top;
+    };
+
+    while (heap.length > 0) {
+      const [current, currentCost] = pop();
+      if (currentCost > (costs.get(current) ?? Infinity)) continue;
       for (const edge of this.getOutEdges(current)) {
         const newCost = currentCost + edge.cost;
         if (newCost > maxCost) continue;
         const existing = costs.get(edge.to);
         if (existing === undefined || newCost < existing) {
           costs.set(edge.to, newCost);
-          queue.push([edge.to, newCost]);
+          push([edge.to, newCost]);
         }
       }
     }
@@ -146,15 +177,45 @@ export class NavigationGraph {
     const prev = new Map<string, { nodeId: string; edge: Edge }>();
     const visited = new Set<string>();
 
-    // Simple priority queue via sorted array (adequate for expected graph sizes)
-    const pq: Array<{ id: string; cost: number }> = [];
+    // Binary min-heap priority queue for O((V + E) log V) Dijkstra
+    const heap: Array<{ id: string; cost: number }> = [];
+
+    function heapPush(item: { id: string; cost: number }) {
+      heap.push(item);
+      let i = heap.length - 1;
+      while (i > 0) {
+        const parent = (i - 1) >> 1;
+        if (heap[parent].cost <= heap[i].cost) break;
+        [heap[parent], heap[i]] = [heap[i], heap[parent]];
+        i = parent;
+      }
+    }
+
+    function heapPop(): { id: string; cost: number } {
+      const top = heap[0];
+      const last = heap.pop()!;
+      if (heap.length > 0) {
+        heap[0] = last;
+        let i = 0;
+        while (true) {
+          let smallest = i;
+          const left = 2 * i + 1;
+          const right = 2 * i + 2;
+          if (left < heap.length && heap[left].cost < heap[smallest].cost) smallest = left;
+          if (right < heap.length && heap[right].cost < heap[smallest].cost) smallest = right;
+          if (smallest === i) break;
+          [heap[smallest], heap[i]] = [heap[i], heap[smallest]];
+          i = smallest;
+        }
+      }
+      return top;
+    }
 
     dist.set(fromId, 0);
-    pq.push({ id: fromId, cost: 0 });
+    heapPush({ id: fromId, cost: 0 });
 
-    while (pq.length > 0) {
-      pq.sort((a, b) => a.cost - b.cost);
-      const { id: current, cost: currentCost } = pq.shift()!;
+    while (heap.length > 0) {
+      const { id: current, cost: currentCost } = heapPop();
 
       if (visited.has(current)) continue;
       visited.add(current);
@@ -168,7 +229,7 @@ export class NavigationGraph {
         if (existingCost === undefined || newCost < existingCost) {
           dist.set(edge.to, newCost);
           prev.set(edge.to, { nodeId: current, edge });
-          pq.push({ id: edge.to, cost: newCost });
+          heapPush({ id: edge.to, cost: newCost });
         }
       }
     }

@@ -12,6 +12,14 @@ import { collectEntryPoints, computePathsFromEntries } from "../core/path-analys
 import type { AnalysisResult, Finding } from "../core/types.js";
 import { VERSION } from "../version.js";
 
+function validateNum(value: number, flag: string): number {
+  if (isNaN(value)) {
+    console.error(`Invalid numeric value for ${flag}`);
+    process.exit(1);
+  }
+  return value;
+}
+
 const program = new Command();
 
 program
@@ -39,6 +47,7 @@ program
   .option("--explore-depth <n>", "Max exploration depth", "3")
   .option("--explore-budget <n>", "Max exploration actions", "50")
   .option("--explore-max-targets <n>", "Max accumulated targets before stopping exploration", "2000")
+  .option("--allow-action <patterns...>", "Allow exploring controls matching these name/role patterns (overrides safety policy)")
   // Filtering
   .option("--exclude <patterns...>", "Exclude targets matching these name/role patterns")
   .option("--exclude-selector <selectors...>", "CSS selectors to exclude from capture")
@@ -46,8 +55,9 @@ program
   .option("--suppress <codes...>", "Suppress these diagnostic codes")
   // Analysis
   .option("--probe", "Run keyboard probes on interactive targets (adds 30-60s but detects focus/keyboard issues)")
+  .option("--probe-budget <n>", "Maximum targets to probe (default: 20, increase for deeper keyboard testing)")
   // Display
-  .option("--top <n>", "Only show the worst N findings")
+  .option("--top <n>", "Only show the worst N findings (default: 15)")
   .option("--min-severity <level>", "Minimum severity to report (severe|high|moderate|acceptable|strong)")
   .option("-q, --quiet", "Suppress info-level diagnostics")
   // CI
@@ -72,11 +82,13 @@ program
         exploreDepth?: string;
         exploreBudget?: string;
         exploreMaxTargets?: string;
+        allowAction?: string[];
         exclude?: string[];
         excludeSelector?: string[];
         focus?: string[];
         suppress?: string[];
         probe?: boolean;
+        probeBudget?: string;
         top?: string;
         minSeverity?: string;
         quiet?: boolean;
@@ -99,10 +111,10 @@ program
         exclude: opts.exclude,
         excludeSelectors: opts.excludeSelector,
         focus: opts.focus,
-        suppress: opts.suppress as undefined,
-        threshold: opts.threshold ? parseFloat(opts.threshold) : undefined,
-        maxFindings: opts.top ? parseInt(opts.top, 10) : undefined,
-        minSeverity: opts.minSeverity as undefined,
+        suppress: opts.suppress,
+        threshold: opts.threshold ? validateNum(parseFloat(opts.threshold), "--threshold") : undefined,
+        maxFindings: opts.top ? validateNum(parseInt(opts.top, 10), "--top") : undefined,
+        minSeverity: opts.minSeverity as "severe" | "high" | "moderate" | "acceptable" | "strong" | undefined,
       });
 
       const profileId = merged.profile ?? "generic-mobile-web-sr-v0";
@@ -167,7 +179,10 @@ program
         });
         // Short wait before capture — SPA convergence in captureState handles content readiness
         await page.waitForTimeout(2000);
-        if (opts.waitForSelector) { await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => {}); }
+        if (opts.waitForSelector) {
+          const found = await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => null);
+          if (!found) process.stderr.write(`  Warning: waitForSelector "${opts.waitForSelector}" timed out\n`);
+        }
         if (opts.waitTime) { await page.waitForTimeout(parseInt(opts.waitTime, 10)); }
 
         const rawState = await captureState(page, {
@@ -180,9 +195,23 @@ program
         let targets = rawState.targets;
         if (opts.probe) {
           const { probeTargets } = await import("../playwright/probes.js");
-          targets = await probeTargets(page, rawState.targets);
+          const probeBudget = opts.probeBudget ? parseInt(opts.probeBudget, 10) : undefined;
+          targets = await probeTargets(page, rawState.targets, probeBudget);
         }
         const state = { ...rawState, targets };
+
+        // SR announcement simulation — runs automatically (instant, non-invasive)
+        // Catches landmarks that the AT tree reports but NVDA would not announce
+        // (e.g., <header> inside <section> loses its implicit banner role)
+        const { simulateScreenReader } = await import("../playwright/sr-simulator.js");
+        const srSim = await simulateScreenReader(page, targets);
+        // Store demoted landmarks as extra diagnostics for the analyzer
+        const srDiagnostics = srSim.demotedLandmarks.map((d) => ({
+          level: "warning" as const,
+          code: "landmark-demoted" as const,
+          message: `${d.targetId}: ${d.demotionReason}`,
+        }));
+
 
         const snapshotText = await page.ariaSnapshot().catch(() => "");
 
@@ -193,13 +222,28 @@ program
           const depth = parseInt(opts.exploreDepth ?? "3", 10);
           const budget = parseInt(opts.exploreBudget ?? "50", 10);
           const maxTargets = parseInt(opts.exploreMaxTargets ?? "2000", 10);
+          const allowPatterns = (opts.allowAction ?? []).map((p: string) => {
+            const escaped = p.toLowerCase().replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".");
+            return new RegExp(`^${escaped}$`, "i");
+          });
           const exploreResult = await exploreState(page, state, {
             device,
             maxDepth: depth,
             maxActions: budget,
             maxTotalTargets: maxTargets,
+            allowActionPatterns: allowPatterns.length > 0 ? allowPatterns : undefined,
           });
           states = exploreResult.states;
+          if (exploreResult.skippedElements.length > 0 && isTTY) {
+            process.stderr.write(`  Skipped ${exploreResult.skippedElements.length} unsafe element(s):\n`);
+            for (const s of exploreResult.skippedElements.slice(0, 5)) {
+              process.stderr.write(`    ${s.id} — ${s.reason}\n`);
+            }
+            if (exploreResult.skippedElements.length > 5) {
+              process.stderr.write(`    ... and ${exploreResult.skippedElements.length - 5} more\n`);
+            }
+            process.stderr.write(`  Use --allow-action "<pattern>" to override.\n`);
+          }
         }
 
         const result = analyze(states, profile, {
@@ -209,20 +253,26 @@ program
           filter,
         });
 
-        if (opts.summaryOnly) {
-          const { summarize } = await import("../reporters/summarize.js");
-          const s = summarize(result);
-          stopProgress();
-          console.log(JSON.stringify({ url, profile: s.profile, stats: s.stats, severityCounts: s.severityCounts, topIssues: s.issueGroups.slice(0, 3).map(g => ({ issue: g.issue, count: g.count, worstScore: g.worstScore })) }, null, 2));
-          return; // skip normal output
+        // Append SR simulator diagnostics (demoted landmarks)
+        if (srDiagnostics.length > 0) {
+          result.diagnostics.push(...srDiagnostics);
         }
 
         stopProgress();
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        const output = formatReport(result, opts.format as ReportFormat);
+
+        let output: string;
+        if (opts.summaryOnly) {
+          const { summarize } = await import("../reporters/summarize.js");
+          const s = summarize(result);
+          output = JSON.stringify({ url, profile: s.profile, stats: s.stats, severityCounts: s.severityCounts, diagnostics: s.diagnostics, topIssues: s.issueGroups.slice(0, 3).map(g => ({ issue: g.issue, count: g.count, worstScore: g.worstScore })) }, null, 2);
+        } else {
+          const topN = opts.top ? parseInt(opts.top, 10) : undefined;
+          output = formatReport(result, opts.format as ReportFormat, { maxDetailedFindings: topN });
+        }
 
         // For console format, append timing
-        if (opts.format === "console" && isTTY) {
+        if (opts.format === "console" && isTTY && !opts.summaryOnly) {
           console.error(`  ${"\x1b[90m"}Completed in ${elapsed}s${"\x1b[0m"}`);
         }
 
@@ -334,7 +384,8 @@ program
         await page.waitForTimeout(2000);
 
         if (opts.waitForSelector) {
-          await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => {});
+          const found = await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => null);
+          if (!found) process.stderr.write(`  Warning: waitForSelector "${opts.waitForSelector}" timed out\n`);
         }
 
         const state = await captureState(page, { provenance: "scripted" });
@@ -406,7 +457,7 @@ program
               edge.action,
               toTarget?.role ?? "unknown",
               toTarget?.name || "(unnamed)",
-              toTarget?.kind,
+              toTarget?.headingLevel,
             );
 
             const isLast = i === bestPath.edges.length - 1;
@@ -455,13 +506,14 @@ program
     const urlCheck = validateUrl(url);
     if (!urlCheck.valid) { console.error(`Invalid URL: ${urlCheck.error}`); process.exit(1); }
 
+    let browser: import("playwright").Browser | undefined;
     try {
       const pw = await import("playwright");
       const fs = await import("fs/promises");
       const pathMod = await import("path");
 
       const timeout = parseInt(opts.timeout ?? "30000", 10);
-      const browser = await pw.chromium.launch();
+      browser = await pw.chromium.launch();
       const context = await browser.newContext();
       const page = await context.newPage();
 
@@ -498,10 +550,11 @@ program
       console.log(`Auth state saved to ${resolved}`);
       console.log(`Use with: tactual analyze-url <url> --storage-state ${opts.output}`);
 
-      await browser.close();
     } catch (err) {
       console.error(`Auth failed: ${err instanceof Error ? err.message : err}`);
       process.exit(1);
+    } finally {
+      await browser?.close().catch(() => {});
     }
   });
 
@@ -554,7 +607,10 @@ program
           const page = await context.newPage();
           await page.goto(urlCheck.url!, { waitUntil: "domcontentloaded", timeout });
           await page.waitForTimeout(2000);
-          if (opts.waitForSelector) await page.waitForSelector(opts.waitForSelector, { timeout: 10000 }).catch(() => {});
+          if (opts.waitForSelector) {
+            const found = await page.waitForSelector(opts.waitForSelector, { timeout: 10000 }).catch(() => null);
+            if (!found) process.stderr.write(`  Warning: waitForSelector "${opts.waitForSelector}" timed out\n`);
+          }
           if (opts.waitTime) await page.waitForTimeout(parseInt(opts.waitTime, 10));
 
           const state = await captureState(page, { provenance: "scripted", spaWaitTimeout: 15000 });
@@ -564,7 +620,7 @@ program
           const scores = result.findings.map(f => f.scores.overall);
           const sorted = [...scores].sort((a, b) => a - b);
           const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length * 10) / 10 : 0;
-          const p10 = sorted.length >= 5 ? sorted[Math.floor(sorted.length * 0.1)] : sorted[0] ?? 0;
+          const p10 = sorted.length >= 5 ? sorted[Math.max(0, Math.ceil(sorted.length * 0.1) - 1)] : sorted[0] ?? 0;
           const median = sorted.length > 0 ? sorted[Math.floor(sorted.length * 0.5)] : 0;
           const worst = sorted[0] ?? 0;
 
@@ -588,7 +644,7 @@ program
 
       // Aggregate
       const allSorted = [...allScores].sort((a, b) => a - b);
-      const siteP10 = allSorted.length >= 5 ? allSorted[Math.floor(allSorted.length * 0.1)] : allSorted[0] ?? 0;
+      const siteP10 = allSorted.length >= 5 ? allSorted[Math.max(0, Math.ceil(allSorted.length * 0.1) - 1)] : allSorted[0] ?? 0;
       const siteMedian = allSorted.length > 0 ? allSorted[Math.floor(allSorted.length * 0.5)] : 0;
       const siteAvg = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length * 10) / 10 : 0;
 
@@ -599,7 +655,7 @@ program
         }, null, 2));
       } else {
         // Console format
-        const c = process.stdout.isTTY !== false && !process.env.NO_COLOR;
+        const c = process.stdout.isTTY === true && !process.env.NO_COLOR;
         const bold = c ? "\x1b[1m" : "";
         const dim = c ? "\x1b[2m" : "";
         const green = c ? "\x1b[32m" : "";
@@ -621,7 +677,7 @@ program
         console.log("");
 
         for (const r of pageResults) {
-          const scoreColor = r.p10 >= 90 ? green : r.p10 >= 75 ? green : r.p10 >= 60 ? yellow : red;
+          const scoreColor = r.p10 >= 75 ? green : r.p10 >= 60 ? yellow : red;
           console.log(`  ${scoreColor}P10:${r.p10}${reset}  ${dim}Med:${r.median} Avg:${r.avg}${reset}  ${r.url}`);
           if (r.topIssue) console.log(`  ${dim}       ↳ ${r.topIssue}${reset}`);
         }

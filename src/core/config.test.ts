@@ -103,11 +103,11 @@ describe("mergeConfigWithFlags", () => {
     expect(merged.exclude).toEqual(["foo", "bar"]);
   });
 
-  it("focus replaces (does not merge)", () => {
+  it("focus merges like other arrays", () => {
     const config: TactualConfig = { focus: ["main"] };
     const flags: Partial<TactualConfig> = { focus: ["nav"] };
     const merged = mergeConfigWithFlags(config, flags);
-    expect(merged.focus).toEqual(["nav"]);
+    expect(merged.focus).toEqual(["main", "nav"]);
   });
 
   it("arrays merge for excludeSelectors", () => {

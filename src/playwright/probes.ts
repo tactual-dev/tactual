@@ -22,6 +22,10 @@ export interface ProbeResults {
   tabbable: boolean;
   /** Element has positive tabindex (anti-pattern: forces non-standard Tab order) */
   hasPositiveTabindex: boolean;
+  /** Element contains a nested focusable child, creating duplicate tab stops */
+  nestedFocusable: boolean;
+  /** Focus indicator is suppressed (outline: none / 0px with no visible replacement) */
+  focusIndicatorSuppressed: boolean;
   /** Probe completed successfully (false = element was stale/detached) */
   probeSucceeded: boolean;
 }
@@ -64,6 +68,7 @@ const PROBEABLE_ROLES = new Set([
 export async function probeTargets(
   page: Page,
   targets: Target[],
+  maxTargets: number = MAX_PROBE_TARGETS,
 ): Promise<Target[]> {
   const probeable = targets.filter(
     (t) => PROBEABLE_ROLES.has(t.role?.toLowerCase() ?? ""),
@@ -77,7 +82,7 @@ export async function probeTargets(
     return bWeight - aWeight;
   });
 
-  const toProbe = prioritized.slice(0, MAX_PROBE_TARGETS);
+  const toProbe = prioritized.slice(0, maxTargets);
   const probed = new Map<string, ProbeResults>();
 
   for (const target of toProbe) {
@@ -132,7 +137,8 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
   const fail: ProbeResults = {
     focusable: false, activatable: false, escapeRestoresFocus: false,
     focusNotTrapped: false, stateChanged: false, tabbable: false,
-    hasPositiveTabindex: false, probeSucceeded: false,
+    hasPositiveTabindex: false, nestedFocusable: false,
+    focusIndicatorSuppressed: false, probeSucceeded: false,
   };
 
   try {
@@ -185,6 +191,17 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
       && parseInt(tabIndexInfo.explicit, 10) > 0
       && tabIndexInfo.positiveTabindexCount < 5;
 
+    // Check for nested focusable elements (duplicate tab stops)
+    const nestedFocusable = await locator.evaluate((el: Element) => {
+      const focusable = el.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]',
+      );
+      return Array.from(focusable).some((child) => {
+        const ti = (child as HTMLElement).tabIndex;
+        return ti >= 0 && child !== el;
+      });
+    }).catch(() => false);
+
     // Record initial focus state
     const initialActiveId = await page.evaluate(() =>
       document.activeElement?.id || document.activeElement?.tagName || "none",
@@ -206,15 +223,29 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
       document.activeElement !== document.body,
     ).catch(() => false);
 
+    // Check for suppressed focus indicator (outline: none with no visible replacement)
+    const focusIndicatorSuppressed = hasFocus ? await page.evaluate(() => {
+      const el = document.activeElement;
+      if (!el) return false;
+      const s = getComputedStyle(el);
+      const noOutline = s.outline === "none" || s.outlineWidth === "0px"
+        || s.outlineStyle === "none";
+      // Check for alternative visual indicators: box-shadow, border change, background change
+      const hasBoxShadow = s.boxShadow !== "none" && s.boxShadow !== "";
+      const hasBorder = s.borderStyle !== "none" && s.borderWidth !== "0px";
+      // If outline is suppressed AND no visible alternative, flag it
+      return noOutline && !hasBoxShadow && !hasBorder;
+    }).catch(() => false) : false;
+
     // 3. Check pre-activation state
-    const preState = await getElementState(page, locator);
+    const preState = await getElementState(locator);
 
     // 4. Press Enter to activate
     await page.keyboard.press("Enter");
     await page.waitForTimeout(100);
 
     // 5. Check post-activation state
-    const postState = await getElementState(page, locator);
+    const postState = await getElementState(locator);
     const stateChanged = preState !== postState;
 
     // Determine if this element triggers an overlay (menu, dialog, popover).
@@ -251,8 +282,12 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
         document.activeElement?.id || document.activeElement?.getAttribute("role") || "unknown",
       ).catch(() => "unknown");
 
-      escapeRestoresFocus =
-        focusAfterEscape !== focusBeforeEscape || focusAfterEscape === initialActiveId;
+      // Focus is "restored" if it moved away from the overlay element
+      // AND either returned to the trigger or landed on a known element (not body/unknown)
+      const leftOverlay = focusAfterEscape !== focusBeforeEscape;
+      const landedOnTrigger = focusAfterEscape === initialActiveId;
+      const landedSomewhere = focusAfterEscape !== "unknown" && focusAfterEscape !== "BODY";
+      escapeRestoresFocus = leftOverlay && (landedOnTrigger || landedSomewhere);
 
       // 9. Tab to check for focus traps
       await page.keyboard.press("Tab");
@@ -270,12 +305,14 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
 
     return {
       focusable: hasFocus,
-      activatable: stateChanged || hasFocus,
+      activatable: stateChanged,
       escapeRestoresFocus,
       focusNotTrapped,
       stateChanged,
       tabbable,
       hasPositiveTabindex,
+      nestedFocusable,
+      focusIndicatorSuppressed,
       probeSucceeded: true,
     };
   } catch {
@@ -286,7 +323,7 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
 /**
  * Get the current interaction state of an element (expanded, checked, pressed, selected).
  */
-async function getElementState(_page: Page, locator: import("playwright").Locator): Promise<string> {
+async function getElementState(locator: import("playwright").Locator): Promise<string> {
   try {
     const state = await locator.evaluate((el: Element) => {
       return [
@@ -295,6 +332,7 @@ async function getElementState(_page: Page, locator: import("playwright").Locato
         el.getAttribute("aria-pressed"),
         el.getAttribute("aria-selected"),
         el.getAttribute("aria-hidden"),
+        el.getAttribute("aria-disabled"),
       ].filter(Boolean).join(",");
     });
     return state || "none";

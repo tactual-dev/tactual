@@ -1,5 +1,5 @@
 name: "Tactual Accessibility Analysis"
-description: "Screen-reader navigation cost analysis. Scores how hard AT users find, reach, and operate web content."
+description: "Screen-reader navigation cost analysis. Scores how hard it is for AT users to find, reach, and operate web content."
 author: "Ben Matar"
 
 branding:
@@ -50,7 +50,7 @@ runs:
     - name: Install Tactual and Playwright
       shell: bash
       run: |
-        npm install tactual playwright
+        npm install tactual@0.3.0 playwright
         npx playwright install chromium --with-deps
 
     - name: Run analysis
@@ -86,9 +86,7 @@ runs:
 
         AVG=$(node -e "
           const r = JSON.parse(require('fs').readFileSync('tactual-results.json','utf8'));
-          if (!r.findings || r.findings.length === 0) { console.log('0'); process.exit(0); }
-          const avg = r.findings.reduce((s,f) => s + f.scores.overall, 0) / r.findings.length;
-          console.log(Math.round(avg * 10) / 10);
+          console.log(r.stats?.averageScore ?? 0);
         ")
         echo "average-score=${AVG}" >> "$GITHUB_OUTPUT"
         echo "Average score: ${AVG}"
@@ -99,7 +97,8 @@ runs:
       run: |
         AVG="${{ steps.analysis.outputs.average-score }}"
         THRESHOLD="${{ inputs.fail-below }}"
-        if (( $(echo "$AVG < $THRESHOLD" | bc -l) )); then
+        BELOW=$(node -e "console.log(Number('$AVG') < Number('$THRESHOLD') ? '1' : '0')")
+        if [ "$BELOW" = "1" ]; then
           echo "::error::Average score $AVG is below threshold $THRESHOLD"
           exit 1
         fi

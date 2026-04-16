@@ -19,7 +19,7 @@ import { randomUUID } from "node:crypto";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { createMcpServer } from "./index.js";
+import { createMcpServer, closeSharedBrowser } from "./index.js";
 import { VERSION } from "../version.js";
 
 interface Session {
@@ -30,20 +30,33 @@ interface Session {
 
 const SESSION_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
+const MAX_BODY_SIZE = 1024 * 1024; // 1 MB
+
+const BODY_TIMEOUT_MS = 30_000; // 30 seconds
+
 function parseBody(req: http.IncomingMessage): Promise<unknown> {
   return new Promise((resolve, reject) => {
     let data = "";
+    const timer = setTimeout(() => {
+      req.destroy();
+      reject(new Error("Request body timeout"));
+    }, BODY_TIMEOUT_MS);
     req.on("data", (chunk: Buffer) => {
       data += chunk.toString();
+      if (data.length > MAX_BODY_SIZE) {
+        req.destroy();
+        reject(new Error("Request body too large"));
+      }
     });
     req.on("end", () => {
+      clearTimeout(timer);
       try {
         resolve(JSON.parse(data));
       } catch (e) {
         reject(e);
       }
     });
-    req.on("error", reject);
+    req.on("error", (e) => { clearTimeout(timer); reject(e); });
   });
 }
 
@@ -65,8 +78,8 @@ export async function startHttpServer(port: number, host = "127.0.0.1"): Promise
     const now = Date.now();
     for (const [id, session] of sessions) {
       if (now - session.lastActivity > SESSION_TTL_MS) {
-        session.transport.close();
-        session.server.close();
+        try { session.transport.close(); } catch { /* ignore */ }
+        try { session.server.close(); } catch { /* ignore */ }
         sessions.delete(id);
       }
     }
@@ -171,8 +184,8 @@ export async function startHttpServer(port: number, host = "127.0.0.1"): Promise
       const sessionId = req.headers["mcp-session-id"] as string | undefined;
       if (sessionId && sessions.has(sessionId)) {
         const session = sessions.get(sessionId)!;
-        await session.transport.close();
-        await session.server.close();
+        try { await session.transport.close(); } catch { /* ignore */ }
+        try { await session.server.close(); } catch { /* ignore */ }
         sessions.delete(sessionId);
         res.writeHead(204).end();
         return;
@@ -182,6 +195,17 @@ export async function startHttpServer(port: number, host = "127.0.0.1"): Promise
     }
 
     res.writeHead(405).end();
+  });
+
+  // Close browser pool and sessions on server shutdown
+  httpServer.on("close", () => {
+    clearInterval(cleanup);
+    for (const [, session] of sessions) {
+      try { session.transport.close(); } catch { /* ignore */ }
+      try { session.server.close(); } catch { /* ignore */ }
+    }
+    sessions.clear();
+    closeSharedBrowser();
   });
 
   return new Promise((resolve) => {

@@ -32,8 +32,27 @@ export interface SafetyCheck {
 
 /**
  * Determine whether an interactive element is safe to activate during exploration.
+ * If allowPatterns is provided, elements matching any pattern are downgraded
+ * from "unsafe" to "caution" (explorable), letting users opt into testing
+ * specific controls like checkout buttons or form submissions.
  */
-export function checkActionSafety(element: ElementInfo): SafetyCheck {
+export function checkActionSafety(element: ElementInfo, allowPatterns?: RegExp[]): SafetyCheck {
+  const result = classifyAction(element);
+
+  // If classified as unsafe but matches an allow pattern, downgrade to caution
+  if (result.safety === "unsafe" && allowPatterns && allowPatterns.length > 0) {
+    const id = `${element.role ?? ""}:${element.name ?? ""}`.toLowerCase();
+    for (const pattern of allowPatterns) {
+      if (pattern.test(id) || pattern.test(element.name ?? "")) {
+        return { safety: "caution", reason: `${result.reason} (allowed by --allow-action pattern)` };
+      }
+    }
+  }
+
+  return result;
+}
+
+function classifyAction(element: ElementInfo): SafetyCheck {
   const name = (element.name ?? "").toLowerCase();
   const role = (element.role ?? "").toLowerCase();
   const type = (element.type ?? "").toLowerCase();
@@ -47,7 +66,7 @@ export function checkActionSafety(element: ElementInfo): SafetyCheck {
 
   // Block form submissions (unless it's a search)
   if (type === "submit" && !isSearchRelated(name, element)) {
-    return { safety: "caution", reason: "Submit button — may trigger irreversible action" };
+    return { safety: "unsafe", reason: "Submit button — may trigger irreversible server-side action" };
   }
 
   // Safe roles: these are navigational / state-revealing
@@ -77,7 +96,6 @@ export function checkActionSafety(element: ElementInfo): SafetyCheck {
         return { safety: "safe", reason: `Button name suggests safe action: "${element.name}"` };
       }
     }
-    // Default: caution for unlabeled or ambiguous buttons
     return {
       safety: name ? "caution" : "unsafe",
       reason: name ? "Ambiguous button action" : "Unlabeled button — unknown action",

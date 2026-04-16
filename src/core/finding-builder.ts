@@ -1,5 +1,5 @@
 import type { PageState, Target, Finding } from "./types.js";
-import { severityFromScore } from "./types.js";
+import { severityFromScore, CONTROL_KINDS } from "./types.js";
 import type { NavigationGraph, PathResult } from "./graph.js";
 import type { ScoreInputs } from "../scoring/index.js";
 import { computeScores } from "../scoring/index.js";
@@ -85,10 +85,14 @@ export function buildFinding(
     .map((p) => truncatePath(formatPath(graph, p), 5));
 
   // --- Confidence ---
+  // Base 0.8 with penalties for uncertain analysis contexts.
+  // Current max deduction: 0.1 + 0.15 + 0.25 = 0.5 → worst case 0.3.
+  // Floor of 0.1 ensures future penalties can't drive confidence to zero.
   let confidence = 0.8;
-  if (!nearestHeading && !nearestLandmark) confidence -= 0.1;
-  if (target.requiresBranchOpen) confidence -= 0.15;
-  if (shortestCost === Infinity) confidence -= 0.25;
+  if (!nearestHeading && !nearestLandmark) confidence -= 0.1;  // no structural context
+  if (target.requiresBranchOpen) confidence -= 0.15;           // hidden branch may not be explored
+  if (shortestCost === Infinity) confidence -= 0.25;           // unreachable target
+  confidence = Math.max(0.1, confidence);
 
   return {
     targetId: target.id,
@@ -101,7 +105,7 @@ export function buildFinding(
     alternatePaths: altPathDescs,
     penalties: [...new Set(penalties)],
     suggestedFixes: [...new Set(suggestedFixes)],
-    confidence: Math.round(Math.max(0.1, confidence) * 100) / 100,
+    confidence: Math.round(confidence * 100) / 100,
   };
 }
 
@@ -251,6 +255,8 @@ function generatePenalties(
     focusNotTrapped?: boolean;
     tabbable?: boolean;
     hasPositiveTabindex?: boolean;
+    nestedFocusable?: boolean;
+    focusIndicatorSuppressed?: boolean;
     probeSucceeded?: boolean;
   } | undefined;
 
@@ -274,6 +280,14 @@ function generatePenalties(
     if (probe.hasPositiveTabindex === true) {
       penalties.push("Element uses positive tabindex — this forces a non-standard Tab order that may confuse keyboard users");
       suggestedFixes.push("Remove the positive tabindex value and use DOM source order to control Tab sequence");
+    }
+    if (probe.nestedFocusable === true) {
+      penalties.push("This element contains a nested focusable child, causing duplicate tab stops — keyboard users must Tab through the same control twice");
+      suggestedFixes.push("Remove tabindex from the inner element, or use tabindex=\"-1\" on the outer element if only the inner one should be focusable");
+    }
+    if (probe.focusIndicatorSuppressed === true) {
+      penalties.push("Focus indicator is not visible — sighted keyboard users cannot see which element is focused");
+      suggestedFixes.push("Ensure a visible focus indicator via outline, box-shadow, or border change. Do not set outline:none without providing an alternative");
     }
   } else if (target.requiresBranchOpen) {
     penalties.push("Recovery cost: target is behind a hidden branch — dismissing may lose navigation position");
@@ -336,8 +350,7 @@ function classifyActionType(
 }
 
 function isControlKind(kind: string): boolean {
-  return kind === "button" || kind === "link" || kind === "formField" ||
-         kind === "menuTrigger" || kind === "tab" || kind === "search";
+  return CONTROL_KINDS.has(kind);
 }
 
 // ---------------------------------------------------------------------------
@@ -425,6 +438,10 @@ function deriveOperability(target: Target): {
   const isStateful = STATEFUL_ROLES.has(role);
   const managesFocus = FOCUS_MANAGING_ROLES.has(role);
 
+  // Without probe data, assume the worst for complex roles:
+  // - Stateful roles (combobox, checkbox) are assumed NOT to announce state changes
+  // - Focus-managing roles (dialog, menu) are assumed NOT to handle focus correctly
+  // The probe path provides ground truth; this is the conservative fallback.
   return {
     roleCorrect: !!role,
     keyboardCompatible: isInteractive || !isControlKind(target.kind),

@@ -111,7 +111,7 @@ async function waitForConvergence(
   snapshotDepth?: number,
 ): Promise<{ targets: Target[]; yaml: string }> {
   const start = Date.now();
-  let prevCount = 0;
+  let prevCount = -1;
   let stableRounds = 0;
   let bestTargets: Target[] = [];
   let bestYaml = "";

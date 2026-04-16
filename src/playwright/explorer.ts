@@ -24,6 +24,8 @@ export interface ExploreOptions extends CaptureOptions {
   maxTotalTargets?: number;
   /** Whether to explore external links (default: false) */
   followExternalLinks?: boolean;
+  /** Patterns that override safety policy — matching "unsafe" elements become explorable */
+  allowActionPatterns?: RegExp[];
   /** Callback fired after each exploration step */
   onStep?: (step: ExplorationStep) => void;
 }
@@ -45,6 +47,8 @@ export interface ExploreResult {
   actionsPerformed: number;
   /** Branches skipped due to safety policy */
   skippedUnsafe: number;
+  /** Elements skipped by the safety policy (role:name + reason). Use --allow-action to override. */
+  skippedElements: Array<{ id: string; reason: string }>;
   /** Branches skipped due to budget limits */
   skippedBudget: number;
 }
@@ -102,6 +106,7 @@ export async function explore(
   let actionsPerformed = 0;
   let branchesExplored = 0;
   let skippedUnsafe = 0;
+  const skippedElements: Array<{ id: string; reason: string }> = [];
   let skippedBudget = 0;
 
   async function exploreAt(depth: number): Promise<void> {
@@ -134,16 +139,20 @@ export async function explore(
         break;
       }
 
-      // Safety check
+      // Safety check (allow patterns override unsafe → caution)
       const safety = checkActionSafety({
         role: el.role,
         name: el.name,
         expanded: el.expanded,
         hasPopup: el.hasPopup,
-      });
+      }, options.allowActionPatterns);
 
       if (safety.safety === "unsafe") {
         skippedUnsafe++;
+        const elId = `${el.role}:${el.name || "(unnamed)"}`;
+        if (!skippedElements.some((s) => s.id === elId)) {
+          skippedElements.push({ id: elId, reason: safety.reason });
+        }
         continue;
       }
 
@@ -227,6 +236,7 @@ export async function explore(
     branchesExplored,
     actionsPerformed,
     skippedUnsafe,
+    skippedElements,
     skippedBudget,
   };
 }
@@ -320,7 +330,6 @@ async function activateElement(
       .waitFor({ state: "visible", timeout: 1000 })
       .catch(() => {});
   }
-  void page;
 }
 
 async function restoreState(page: Page, el: ExplorableElement): Promise<void> {

@@ -99,6 +99,16 @@ export function formatSARIF(result: AnalysisResult): string {
       defaultConfiguration: { level: "note" },
       helpUri: "https://github.com/tactual-dev/tactual",
     },
+    {
+      id: "tactual/truncation-note",
+      name: "TruncationNote",
+      shortDescription: { text: "Output was truncated to limit size" },
+      fullDescription: {
+        text: "More findings exist than shown. Fix the worst issues and re-run, or use minSeverity to filter.",
+      },
+      defaultConfiguration: { level: "note" },
+      helpUri: "https://github.com/tactual-dev/tactual",
+    },
   ];
 
   const results: SarifResult[] = [];
@@ -112,7 +122,7 @@ export function formatSARIF(result: AnalysisResult): string {
 
     const messageParts = [
       `Score: ${finding.scores.overall}/100 (${severity})`,
-      `D:${finding.scores.discoverability} R:${finding.scores.reachability} O:${finding.scores.operability} Rec:${finding.scores.recovery}`,
+      `D:${finding.scores.discoverability} R:${finding.scores.reachability} O:${finding.scores.operability} Rec:${finding.scores.recovery} IR:${finding.scores.interopRisk}`,
     ];
 
     if (finding.penalties.length > 0) {
@@ -152,8 +162,12 @@ export function formatSARIF(result: AnalysisResult): string {
     });
   }
 
-  // Cap results to keep output LLM-friendly. Results are already
-  // worst-first (findings are sorted by score ascending before formatting).
+  // Sort worst-first and cap to keep output LLM-friendly
+  results.sort((a, b) => {
+    const scoreA = (a.properties as Record<string, Record<string, number>>)?.scores?.overall ?? 100;
+    const scoreB = (b.properties as Record<string, Record<string, number>>)?.scores?.overall ?? 100;
+    return scoreA - scoreB;
+  });
   const totalActionable = results.length;
   const truncated = results.length > MAX_SARIF_RESULTS;
   const capped = truncated ? results.slice(0, MAX_SARIF_RESULTS) : results;
@@ -168,7 +182,7 @@ export function formatSARIF(result: AnalysisResult): string {
     const sevSummary = Object.entries(sevCounts).map(([l, c]) => `${c} ${l}`).join(", ");
 
     capped.unshift({
-      ruleId: "tactual/moderate",
+      ruleId: "tactual/truncation-note",
       level: "note",
       message: {
         text: `[Truncated] Showing ${MAX_SARIF_RESULTS} of ${totalActionable} findings (worst first). ` +

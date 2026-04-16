@@ -1,8 +1,8 @@
 import type { AnalysisResult } from "../core/types.js";
 import { summarize, type IssueGroup, type DetailedFinding } from "./summarize.js";
 
-export function formatMarkdown(result: AnalysisResult): string {
-  const s = summarize(result);
+export function formatMarkdown(result: AnalysisResult, options?: { maxDetailedFindings?: number }): string {
+  const s = summarize(result, options);
   const lines: string[] = [];
 
   lines.push(`# Tactual Analysis: ${s.name}`);
@@ -79,6 +79,7 @@ function formatIssueGroup(lines: string[], g: IssueGroup): void {
 
 function formatDetailedFinding(lines: string[], f: DetailedFinding): void {
   lines.push(`### ${f.targetId} — ${f.overall}/100 [${f.severity}]`);
+  if (f.selector) lines.push(`\`${f.selector}\``);
   lines.push("");
   lines.push(`D:${f.scores.discoverability} R:${f.scores.reachability} O:${f.scores.operability} Rec:${f.scores.recovery} IR:${f.scores.interopRisk}`);
   lines.push("");

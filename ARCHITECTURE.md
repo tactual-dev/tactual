@@ -17,7 +17,7 @@ Diagnostics ← Capture Analysis        Scoring Engine + Interop Data
              ↓
     Reporters (JSON / Markdown / Console / SARIF)
              ↓
-    [Optional] Virtual SR Validation via @guidepup/virtual-screen-reader
+    [Auto] SR Announcement Simulation via sr-simulator (detects demoted landmarks)
 ```
 
 ## Module Dependency Graph
@@ -46,7 +46,7 @@ index.ts (public API re-exports)
 │   ├── nvda-desktop.ts     ← nvda-desktop-v0
 │   └── jaws-desktop.ts     ← jaws-desktop-v0
 ├── rules/
-│   └── index.ts          ← Rule interface + 4 built-in rules
+│   └── index.ts          ← Rule interface + built-in rules
 ├── reporters/
 │   ├── json.ts, markdown.ts, console.ts, sarif.ts
 │   ├── summarize.ts      ← Summarization: stats, issue groups, score distribution
@@ -56,7 +56,8 @@ index.ts (public API re-exports)
 │   ├── attach.ts         ← Flow recording on Page
 │   ├── explorer.ts       ← Bounded branch exploration
 │   ├── probes.ts         ← Runtime keyboard probes (focus, activate, Escape, Tab)
-│   └── safety.ts         ← Safe-action policy
+│   ├── sr-simulator.ts   ← SR announcement simulation (detects demoted landmarks)
+│   └── safety.ts         ← Safe-action policy (with --allow-action override)
 ├── mcp/
 │   ├── index.ts          ← MCP server with 7 tools
 │   ├── http.ts           ← Streamable HTTP transport (session-based)
@@ -85,7 +86,7 @@ Rather than a monorepo with 7 packages, Tactual is one npm package with sub-path
 The NavigationGraph is profile-agnostic in structure. Profiles determine edge costs during graph building (graph-builder.ts). This means the same page produces different graphs under different profiles, which is correct — VoiceOver and TalkBack have different navigation costs.
 
 ### Scoring is vector-first, composite-second
-Each target gets a 5-dimension score vector (Discoverability, Reachability, Operability, Recovery, Interop Risk). The composite "overall" score is a weighted geometric mean minus interop penalty. The geometric mean ensures a near-zero in any dimension drags the overall down sharply -- you cannot operate what you cannot reach. The vector is always surfaced alongside the composite to prevent gaming a single number.
+Each target gets a 5-dimension score vector (Discoverability, Reachability, Operability, Recovery, Interop Risk). The composite "overall" score is a weighted geometric mean minus interop penalty. The geometric mean ensures a near-zero in any dimension eliminates that dimension's contribution, significantly dragging the overall down -- you cannot operate what you cannot reach. The vector is always surfaced alongside the composite to prevent gaming a single number.
 
 ### Safe-action policy is keyword-based
 The explorer's safety policy (safety.ts) classifies elements by name/role patterns. This is a best-effort heuristic — it cannot detect semantic deception (a destructive button labeled "Show details"). Explorer should only be run against trusted environments.
@@ -111,18 +112,20 @@ Multiplicative factors from a base of 40. Each structural signal is a factor > 1
 | Accessible name | x1.20 | x0.60 |
 | Role clarity | x1.10 | x0.75 |
 | Search discoverable | x1.08 | x0.95 |
-| Hidden branch | x0.65 | -- |
+| Hidden branch (well-labeled trigger) | x0.85 | -- |
+| Hidden branch (labeled trigger) | x0.75 | -- |
+| Hidden branch (unlabeled trigger) | x0.55 | -- |
 
 ### Reachability (0-100)
 
-Exponential decay from 100: `100 * exp(-k * cost)` where `k = 0.04 * costSensitivity` (profile-specific). Plus:
+Exponential decay from 100: `100 * exp(-k * max(0, cost - 1))` where `k = 0.04 * costSensitivity` (profile-specific). The `- 1` offset gives single-step targets a perfect reachability score. Plus:
 
 - **Efficiency bonus**: page size normalization (`efficiency * 30`, where efficiency = `1 - cost/totalTargets`)
 - **Skip nav bonus**: +10 if best path uses heading/landmark navigation
 - **Robustness penalty**: if median cost >> best path (ratio > 2), penalty up to -15
 - **Unrelated content tax**: -1.5 per item beyond 5
 - **Context switch**: -5
-- **Hidden branch**: -12
+- **Hidden branch**: -4 (well-labeled trigger), -8 (labeled), -14 (unlabeled)
 
 ### Operability (0-100, runtime probes with role-based fallback)
 

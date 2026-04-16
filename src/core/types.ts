@@ -51,6 +51,9 @@ export const TargetKind = z.enum([
 // eslint-disable-next-line no-redeclare
 export type TargetKind = z.infer<typeof TargetKind>;
 
+/** Kinds that participate in control/Tab navigation (shared between graph-builder and finding-builder) */
+export const CONTROL_KINDS: ReadonlySet<string> = new Set(["button", "link", "formField", "menuTrigger", "tab", "search"]);
+
 export const TargetSchema = z.object({
   id: z.string(),
   kind: TargetKind,
@@ -62,7 +65,7 @@ export const TargetSchema = z.object({
   /** Whether the target is only reachable after opening a hidden branch */
   requiresBranchOpen: z.boolean().default(false),
   /** The heading level if kind === "heading" */
-  headingLevel: z.number().optional(),
+  headingLevel: z.number().min(1).max(6).optional(),
 }).passthrough();
 
 export type Target = z.infer<typeof TargetSchema>;
@@ -219,6 +222,7 @@ export const AnalysisResultSchema = z.object({
     duration: z.number(),
     stateCount: z.number(),
     targetCount: z.number(),
+    findingCount: z.number(),
     edgeCount: z.number(),
     matchingTargets: z.number().optional(),
   }).passthrough(),

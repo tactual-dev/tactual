@@ -133,7 +133,7 @@ export interface CalibrationReport {
   /** Mean absolute error between predicted path cost and actual steps */
   reachabilityMAE: number;
   /** Pearson correlation between predicted cost and actual steps */
-  reachabilityCorrrelation: number;
+  reachabilityCorrelation: number;
 
   // --- Aggregate severity ---
   /** Fraction of targets where predicted severity matches ground truth */

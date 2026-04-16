@@ -37,6 +37,7 @@ function makeResult(findings: Finding[]): AnalysisResult {
     findings,
     metadata: {
       targetCount: findings.length,
+      findingCount: findings.length,
       matchingTargets: findings.length,
       stateCount: 1,
       edgeCount: 0,

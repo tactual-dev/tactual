@@ -88,6 +88,7 @@ function makeResult(findings: Finding[], state?: PageState): AnalysisResult {
       duration: 100,
       stateCount: 1,
       targetCount: findings.length,
+      findingCount: findings.length,
       edgeCount: 0,
     },
   };

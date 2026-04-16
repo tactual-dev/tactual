@@ -6,15 +6,21 @@ import { formatSARIF } from "./sarif.js";
 
 export type ReportFormat = "json" | "markdown" | "console" | "sarif";
 
-export function formatReport(result: AnalysisResult, format: ReportFormat): string {
+export interface ReportOptions {
+  maxDetailedFindings?: number;
+}
+
+export function formatReport(result: AnalysisResult, format: ReportFormat, options?: ReportOptions): string {
   switch (format) {
     case "json":
-      return formatJSON(result);
+      return formatJSON(result, options);
     case "markdown":
-      return formatMarkdown(result);
+      return formatMarkdown(result, options);
     case "console":
-      return formatConsole(result);
+      return formatConsole(result, options);
     case "sarif":
       return formatSARIF(result);
+    default:
+      throw new Error(`Unknown report format: ${format as string}`);
   }
 }

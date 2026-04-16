@@ -285,7 +285,7 @@ export function runCalibration(
     observationCount: results.length,
     results,
     reachabilityMAE,
-    reachabilityCorrrelation: pearsonCorrelation(predictedCosts, actualSteps),
+    reachabilityCorrelation: pearsonCorrelation(predictedCosts, actualSteps),
     severityAccuracy,
     severityConfusion,
     overallScoreMAE,
@@ -313,7 +313,7 @@ export function formatCalibrationReport(report: CalibrationReport): string {
   lines.push(`Overall Score Bias: ${report.overallScoreBias > 0 ? "+" : ""}${report.overallScoreBias.toFixed(1)} (positive = too optimistic)`);
   lines.push(`Severity Accuracy: ${(report.severityAccuracy * 100).toFixed(0)}%`);
   lines.push(`Reachability MAE: ${report.reachabilityMAE.toFixed(1)} steps`);
-  lines.push(`Reachability Correlation: ${report.reachabilityCorrrelation.toFixed(3)}`);
+  lines.push(`Reachability Correlation: ${report.reachabilityCorrelation.toFixed(3)}`);
   lines.push("");
 
   lines.push("## Dimension Bias");

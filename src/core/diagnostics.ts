@@ -15,7 +15,15 @@ export type DiagnosticCode =
   | "empty-page"
   | "sparse-content"
   | "no-landmarks"
+  | "no-main-landmark"
+  | "no-banner-landmark"
+  | "no-contentinfo-landmark"
+  | "no-nav-landmark"
   | "no-headings"
+  | "no-skip-link"
+  | "structural-summary"
+  | "shared-structural-issue"
+  | "landmark-demoted"
   | "possible-login-wall"
   | "possible-cookie-wall"
   | "redirect-detected"
@@ -65,7 +73,7 @@ export function diagnoseCapture(
   snapshotText: string,
 ): CaptureDiagnostic[] {
   const diagnostics: CaptureDiagnostic[] = [];
-  const targetNames = state.targets.map((t) => t.name.toLowerCase()).join(" ");
+  const targetNames = state.targets.map((t) => (t.name ?? "").toLowerCase()).join(" ");
   const fullText = (snapshotText + " " + targetNames).toLowerCase();
 
   // Empty page — no targets at all
@@ -228,6 +236,107 @@ export function diagnoseCapture(
     });
   }
 
+  // No skip-to-content link
+  if (
+    state.targets.length >= 5 &&
+    !state.targets.some(
+      (t) => t.kind === "link" && /skip|jump to/i.test(t.name ?? ""),
+    )
+  ) {
+    diagnostics.push({
+      level: "warning",
+      code: "no-skip-link",
+      message:
+        "No skip-to-content link found. Keyboard and screen-reader users " +
+        "must Tab through all navigation elements to reach the main content. " +
+        "A skip link is the single most impactful fix for navigation cost.",
+    });
+  }
+
+  // Landmark completeness — specific missing landmark checks
+  // Only fire when page has SOME landmarks (pages with zero landmarks
+  // already get the "no-landmarks" warning above)
+  if (state.targets.length >= 5) {
+    const landmarkRoles = new Set(
+      state.targets
+        .filter((t) => t.kind === "landmark")
+        .map((t) => t.role),
+    );
+
+    if (landmarkRoles.size > 0) {
+      if (!landmarkRoles.has("main")) {
+        diagnostics.push({
+          level: "warning",
+          code: "no-main-landmark",
+          message:
+            "No <main> landmark found. Screen-reader users cannot jump " +
+            "directly to the primary content area.",
+        });
+      }
+      if (!landmarkRoles.has("banner")) {
+        diagnostics.push({
+          level: "info",
+          code: "no-banner-landmark",
+          message:
+            "No <header> / banner landmark found. Adding <header> helps " +
+            "screen-reader users locate the site header.",
+        });
+      }
+      if (!landmarkRoles.has("contentinfo")) {
+        diagnostics.push({
+          level: "info",
+          code: "no-contentinfo-landmark",
+          message:
+            "No <footer> / contentinfo landmark found. Adding <footer> " +
+            "helps screen-reader users locate site-wide links.",
+        });
+      }
+      if (!landmarkRoles.has("navigation")) {
+        diagnostics.push({
+          level: "info",
+          code: "no-nav-landmark",
+          message:
+            "No <nav> landmark found. Wrapping navigation links in <nav> " +
+            "enables screen-reader users to jump to or skip navigation.",
+        });
+      }
+    }
+  }
+
+  // Structural summary — always emitted as info for machine/LLM consumption
+  if (state.targets.length >= 5) {
+    const headingCount = state.targets.filter(
+      (t) => t.kind === "heading",
+    ).length;
+    const landmarkRoles = [
+      ...new Set(
+        state.targets
+          .filter((t) => t.kind === "landmark")
+          .map((t) => t.role),
+      ),
+    ];
+    const hasSkipLink = state.targets.some(
+      (t) => t.kind === "link" && /skip|jump to/i.test(t.name ?? ""),
+    );
+    const expected = ["main", "banner", "contentinfo", "navigation"];
+    const present = expected.filter((l) => landmarkRoles.includes(l));
+    const missing = expected.filter((l) => !landmarkRoles.includes(l));
+
+    const parts: string[] = [
+      `${headingCount} heading${headingCount !== 1 ? "s" : ""}`,
+      `landmarks: ${present.length > 0 ? present.join(", ") : "none"}`,
+      ...(missing.length > 0 ? [`missing: ${missing.join(", ")}`] : []),
+      `skip link: ${hasSkipLink ? "yes" : "no"}`,
+      `${state.targets.length} total targets`,
+    ];
+
+    diagnostics.push({
+      level: "info",
+      code: "structural-summary",
+      message: `Structural overview: ${parts.join(" \u00B7 ")}`,
+    });
+  }
+
   // All clear
   if (diagnostics.length === 0) {
     diagnostics.push({
@@ -253,7 +362,11 @@ function detectLoginRedirect(requestedUrl: string, actualUrl: string): boolean {
 
     const loginPaths = ["/login", "/signin", "/sign-in", "/auth", "/authenticate", "/sso"];
     const actualPath = actual.pathname.toLowerCase();
-    return loginPaths.some((lp) => actualPath.startsWith(lp));
+    // Require exact match or path boundary (/ or ?) to avoid false positives
+    // like /login-help or /authentication-docs
+    return loginPaths.some((lp) =>
+      actualPath === lp || actualPath.startsWith(lp + "/") || actualPath.startsWith(lp + "?"),
+    );
   } catch {
     return false;
   }

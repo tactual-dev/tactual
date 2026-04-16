@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: tactual-dev/tactual
-          ref: main
+          ref: v0.3.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -89,11 +89,11 @@ jobs:
         run: |
           AVG=$(node -e "
             const r = JSON.parse(require('fs').readFileSync('results.json','utf8'));
-            const avg = r.findings.reduce((s,f) => s + f.scores.overall, 0) / r.findings.length;
-            console.log(Math.round(avg * 10) / 10);
+            console.log(r.stats?.averageScore ?? 0);
           ")
           echo "Average score: $AVG"
-          if (( $(echo "$AVG < ${{ inputs.fail-below }}" | bc -l) )); then
+          BELOW=$(node -e "console.log(Number('$AVG') < Number('${{ inputs.fail-below }}') ? '1' : '0')")
+          if [ "$BELOW" = "1" ]; then
             echo "::error::Average score $AVG is below threshold ${{ inputs.fail-below }}"
             exit 1
           fi

@@ -68,9 +68,9 @@ describe("checkActionSafety", () => {
       expect(result.safety).toBe("caution");
     });
 
-    it("flags non-search submit buttons", () => {
+    it("flags non-search submit buttons as unsafe", () => {
       const result = checkActionSafety({ role: "button", name: "Apply", type: "submit" });
-      expect(result.safety).toBe("caution");
+      expect(result.safety).toBe("unsafe");
     });
 
     it("allows search submit buttons", () => {

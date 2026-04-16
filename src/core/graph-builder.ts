@@ -1,6 +1,6 @@
 import { NavigationGraph } from "./graph.js";
 import type { PageState, Target, Edge } from "./types.js";
-import { computeStateSignature } from "./types.js";
+import { computeStateSignature, CONTROL_KINDS } from "./types.js";
 import type { ATProfile } from "../profiles/types.js";
 
 /**
@@ -145,15 +145,7 @@ function generateIntraStateEdges(
   generateSkipEdges(graph, state, links, "nextLink", profile, eid);
 
   // Control navigation: nextControl jumps between interactive elements
-  const controls = targets.filter(
-    (t) =>
-      t.kind === "button" ||
-      t.kind === "link" ||
-      t.kind === "formField" ||
-      t.kind === "menuTrigger" ||
-      t.kind === "tab" ||
-      t.kind === "search",
-  );
+  const controls = targets.filter((t) => CONTROL_KINDS.has(t.kind));
   generateSkipEdges(graph, state, controls, "nextControl", profile, eid);
 
   // State entry to each heading (heading navigation from top)
@@ -254,7 +246,7 @@ function generateFirstLetterEdges(
   const byLetter = new Map<string, Target[]>();
   for (const item of menuItems) {
     const firstChar = (item.name ?? "")[0]?.toLowerCase();
-    if (!firstChar || !/[a-z]/.test(firstChar)) continue;
+    if (!firstChar || !/\p{L}/u.test(firstChar)) continue;
     const group = byLetter.get(firstChar) ?? [];
     group.push(item);
     byLetter.set(firstChar, group);

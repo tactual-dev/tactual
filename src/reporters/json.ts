@@ -15,7 +15,7 @@ import { summarize } from "./summarize.js";
  * This keeps JSON output under ~20KB for most pages, making it
  * usable in LLM context windows.
  */
-export function formatJSON(result: AnalysisResult): string {
-  const summary = summarize(result);
+export function formatJSON(result: AnalysisResult, options?: { maxDetailedFindings?: number }): string {
+  const summary = summarize(result, options);
   return JSON.stringify(summary, null, 2);
 }

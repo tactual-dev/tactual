@@ -53,6 +53,7 @@ function makeResult(overrides: Partial<AnalysisResult> = {}): AnalysisResult {
       duration: 100,
       stateCount: 1,
       targetCount: 1,
+      findingCount: 1,
       edgeCount: 5,
     },
     ...overrides,
