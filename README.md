@@ -173,6 +173,9 @@ Use the composite action from the GitHub Actions Marketplace:
 jobs:
   a11y:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # for SARIF upload
+      pull-requests: write     # for comment-on-pr
     steps:
       - name: Analyze accessibility
         uses: tactual-dev/tactual@v0.3.0
@@ -183,7 +186,7 @@ jobs:
           comment-on-pr: "true"
 ```
 
-The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Set `comment-on-pr: "true"` to post a summary comment on pull requests (updates on re-run). Outputs `average-score` and `result-file` for downstream steps.
+The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Set `comment-on-pr: "true"` to post a summary comment on pull requests (updates on re-run). Outputs `average-score` and `result-file` for downstream steps. Action version tracks Tactual version — bump the `uses:` line to pick up patches.
 
 Or use the CLI directly for more control:
 

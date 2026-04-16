@@ -57,6 +57,10 @@ New diagnostics, scoring presets, SR simulator, performance improvements, securi
 - Submit buttons moved to "unsafe" tier in safety policy
 - Snapshot parsing hard cap at 5,000 targets (DoS prevention for hosted MCP)
 
+### Scoring Drift
+
+Score outputs may differ from v0.2.x on unchanged pages due to bug fixes in probe logic (`escapeRestoresFocus` inversion), activatable semantics, and P10 calculation. Regenerate baselines after upgrading.
+
 ### Rules
 
 - Removed `hiddenBranchRule`, `missingAccessibleNameRule`, `excessiveControlSequenceRule` — these overlapped with graph-derived penalties in finding-builder.ts, causing duplicate output. 1 built-in rule remains (`noHeadingAnchorRule`).
