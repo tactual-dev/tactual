@@ -770,8 +770,8 @@ program
   .action(async (baseline: string, candidate: string, opts: { format: string }) => {
     const fs = await import("fs/promises");
     try {
-      const baseData = JSON.parse(await fs.readFile(baseline, "utf-8")) as AnalysisResult;
-      const candData = JSON.parse(await fs.readFile(candidate, "utf-8")) as AnalysisResult;
+      const baseData = JSON.parse(await fs.readFile(baseline, "utf-8")) as Record<string, unknown>;
+      const candData = JSON.parse(await fs.readFile(candidate, "utf-8")) as Record<string, unknown>;
       const diff = computeDiff(baseData, candData);
       console.log(formatDiff(diff, opts.format as ReportFormat));
     } catch (err) {
@@ -898,9 +898,39 @@ interface DiffResult {
   unchanged: number;
 }
 
-function computeDiff(baseline: AnalysisResult, candidate: AnalysisResult): DiffResult {
-  const baseMap = new Map(baseline.findings.map((f) => [f.targetId, f]));
-  const candMap = new Map(candidate.findings.map((f) => [f.targetId, f]));
+/**
+ * Extract findings from either a full AnalysisResult or a SummarizedResult (JSON reporter output).
+ * Returns a Map of targetId → { scores: { overall }, severity, penalties, targetId }.
+ */
+function extractFindings(data: Record<string, unknown>): Map<string, Finding> {
+  // Full AnalysisResult has findings[]
+  if (Array.isArray(data.findings) && data.findings.length > 0 && data.findings[0]?.scores) {
+    return new Map((data as AnalysisResult).findings.map((f) => [f.targetId, f]));
+  }
+  // SummarizedResult (from JSON reporter) has worstFindings[] with a flat score shape
+  if (Array.isArray((data as Record<string, unknown>).worstFindings)) {
+    const wf = (data as Record<string, unknown>).worstFindings as Array<{
+      targetId: string; overall: number; severity: string; scores: Record<string, number>;
+      penalties: string[]; suggestedFixes: string[];
+    }>;
+    return new Map(wf.map((f) => [f.targetId, {
+      targetId: f.targetId,
+      severity: f.severity,
+      scores: { overall: f.overall, discoverability: f.scores.discoverability ?? 0, reachability: f.scores.reachability ?? 0, operability: f.scores.operability ?? 0, recovery: f.scores.recovery ?? 0, interopRisk: f.scores.interopRisk ?? 0 },
+      penalties: f.penalties,
+      suggestedFixes: f.suggestedFixes ?? [],
+      bestPath: [],
+      alternatePaths: [],
+      profile: "",
+      confidence: 1,
+    } as unknown as Finding]));
+  }
+  return new Map();
+}
+
+function computeDiff(baseline: Record<string, unknown>, candidate: Record<string, unknown>): DiffResult {
+  const baseMap = extractFindings(baseline);
+  const candMap = extractFindings(candidate);
   const allIds = new Set([...baseMap.keys(), ...candMap.keys()]);
 
   const entries: DiffEntry[] = [];
