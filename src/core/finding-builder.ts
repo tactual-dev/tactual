@@ -235,6 +235,11 @@ function generatePenalties(
     suggestedFixes.push("Add an aria-label, aria-labelledby, or visible text label");
   }
 
+  // State-aware penalties (from captured ARIA attribute values)
+  const stateResults = detectStatePenalties(target);
+  penalties.push(...stateResults.penalties);
+  suggestedFixes.push(...stateResults.suggestedFixes);
+
   // Explain low discoverability when no other penalty covers it.
   // Without this, an LLM sees D:47 + no penalties = no guidance.
   if (penalties.length === 0) {
@@ -502,4 +507,92 @@ function truncatePath(path: string[], maxSteps: number): string[] {
   const truncated = path.slice(0, maxSteps);
   truncated.push(`... (${path.length - maxSteps} more steps)`);
   return truncated;
+}
+
+/**
+ * State-aware penalties from captured ARIA attribute values.
+ *
+ * These checks complement rule-based penalties by reading the
+ * Target._attributeValues map populated during snapshot parsing.
+ * Each penalty represents something a screen-reader user would
+ * notice when navigating — confusing announcements, missing state
+ * info, disabled-but-discoverable controls, etc.
+ */
+function detectStatePenalties(target: Target): { penalties: string[]; suggestedFixes: string[] } {
+  const penalties: string[] = [];
+  const suggestedFixes: string[] = [];
+  const attrs = (target as Record<string, unknown>)._attributeValues as
+    | Record<string, string>
+    | undefined;
+  if (!attrs) return { penalties, suggestedFixes };
+
+  const role = target.role;
+  const name = (target.name ?? "").toLowerCase();
+
+  // Label-state mismatch: button labeled "expand"/"collapse"/etc. while
+  // aria-expanded is set. NVDA reads both, producing confusing announcements
+  // like "Collapse, expanded" — technically correct but reads as a contradiction.
+  const expanded = attrs["aria-expanded"];
+  if (
+    expanded !== undefined &&
+    (role === "button" || role === "link") &&
+    /\b(expand|collapse|show|hide|open|close)\b/.test(name)
+  ) {
+    penalties.push(
+      `Label-state mismatch: button labeled "${target.name}" with aria-expanded=${expanded} ` +
+      `produces a confusing announcement (e.g., "Collapse, expanded"). The label describes ` +
+      `the action; the state describes the current condition.`,
+    );
+    suggestedFixes.push(
+      "Use a state-neutral label (e.g., 'Toggle operation details') and let aria-expanded " +
+      "convey state, or swap the label dynamically: 'Show details' when collapsed, 'Hide details' when expanded.",
+    );
+  }
+
+  // Disabled-but-discoverable: form fields and controls that are in the AT
+  // tree but disabled. NVDA announces them, users tab to them, can't interact.
+  const isDisabled = attrs["aria-disabled"] === "true";
+  const isFormControl =
+    role === "textbox" || role === "searchbox" || role === "combobox" ||
+    role === "listbox" || role === "spinbutton" || role === "slider" ||
+    role === "checkbox" || role === "radio" || role === "switch";
+  if (isDisabled && (isFormControl || role === "button" || role === "link")) {
+    penalties.push(
+      `Control is in the accessibility tree but disabled (aria-disabled=true). ` +
+      `Screen-reader users will navigate to it and hear "unavailable" but cannot interact.`,
+    );
+    suggestedFixes.push(
+      "If the control should be hidden until enabled, add aria-hidden='true' and remove " +
+      "from tab order. If it must be visible, ensure surrounding context explains why " +
+      "it is disabled (e.g., 'Click \"Try it out\" to enable these fields').",
+    );
+  }
+
+  // Tab missing aria-selected: required for tab pattern, NVDA can't announce
+  // which tab is current without it.
+  if (role === "tab" && attrs["aria-selected"] === undefined) {
+    penalties.push(
+      "Tab missing aria-selected — screen-reader users cannot tell which tab is currently active.",
+    );
+    suggestedFixes.push(
+      "Add aria-selected='true' to the active tab and aria-selected='false' to the others.",
+    );
+  }
+
+  // Combobox/listbox/menu missing aria-expanded: NVDA can't announce whether
+  // the popup is open or closed.
+  if (
+    (role === "combobox" || role === "listbox" || role === "menu") &&
+    attrs["aria-expanded"] === undefined
+  ) {
+    penalties.push(
+      `${role} missing aria-expanded — screen-reader users cannot tell if the popup is open or closed.`,
+    );
+    suggestedFixes.push(
+      `Add aria-expanded='true' when the ${role} is open and 'false' when closed. ` +
+      "Update on toggle.",
+    );
+  }
+
+  return { penalties, suggestedFixes };
 }
