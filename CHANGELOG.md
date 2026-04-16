@@ -11,7 +11,7 @@ New diagnostics, scoring presets, SR simulator, performance improvements, securi
 - **Landmark completeness** — `no-main-landmark`, `no-banner-landmark`, `no-contentinfo-landmark`, `no-nav-landmark` diagnostics fire when pages have some landmarks but are missing key ones.
 - **Structural summary** — `structural-summary` info diagnostic gives a one-line snapshot of page structure for machine consumption.
 - **Shared-cause deduplication** — penalties affecting >50% of findings are promoted to page-level diagnostics (`shared-structural-issue`) instead of repeating on every target.
-- **SR announcement simulator** — heuristic prediction of NVDA announcements. Detects demoted landmarks (e.g., `<header>` inside `<section>` losing its banner role) without launching a screen reader.
+- **SR announcement simulator** — heuristic prediction of NVDA announcements for all target kinds (landmarks, headings, controls, form fields, dialogs, status messages, menus, tabs). State-aware: emits "Subscribe, check box, checked", "Country, combo box, collapsed", "Volume, slider, 75", "Email, edit, invalid entry, required", etc. based on captured ARIA attributes. Also detects demoted landmarks (e.g., `<header>` inside `<section>` losing its banner role) without launching a screen reader. Exported from `tactual/playwright` for library consumers.
 - **`--allow-action`** — override the safe-action policy for specific controls during exploration (glob patterns).
 - **`--probe-budget`** — configurable max targets to probe (default: 20).
 - **Nested focusable detection** (`--probe`) — flags elements with focusable descendants causing duplicate tab stops.

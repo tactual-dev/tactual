@@ -86,6 +86,28 @@ for (const finding of result.findings) {
 }
 ```
 
+**Screen-reader announcement simulator** — predict what NVDA would announce for every target on a page, with state info (checked, expanded, selected, modal, value, required, invalid, etc.):
+
+```typescript
+import { simulateScreenReader } from "tactual/playwright";
+
+const report = await simulateScreenReader(page, state.targets);
+
+for (const a of report.formFields) {
+  console.log(a.announcement);
+  // → "Subscribe, check box, checked"
+  // → "Country, combo box, collapsed"
+  // → "Email, edit, invalid entry, required"
+}
+
+// Demoted landmarks (in DOM but stripped by HTML rules, e.g. <header> in <section>)
+for (const d of report.demotedLandmarks) {
+  console.warn(d.demotionReason);
+}
+```
+
+The simulator is heuristic prediction, not real screen-reader output. It runs in milliseconds, cross-platform, no OS focus stealing.
+
 ### MCP Server
 
 Tactual includes an MCP server for AI agent consumption:

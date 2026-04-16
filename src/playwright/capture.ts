@@ -258,6 +258,12 @@ export function parseAriaSnapshot(yaml: string): Target[] {
       requiresBranchOpen: false,
       // Store raw ARIA attributes for interop risk calibration and feature detection
       ...(parsed.attributes && parsed.attributes.length > 0 ? { _attributes: parsed.attributes } : {}),
+      // State values for the SR simulator (e.g., aria-expanded=false, aria-checked=true)
+      ...(parsed.attributeValues && Object.keys(parsed.attributeValues).length > 0
+        ? { _attributeValues: parsed.attributeValues }
+        : {}),
+      // Slider/spinbutton/progressbar value (from trailing `: "75"` in ariaSnapshot)
+      ...(parsed.value ? { _value: parsed.value } : {}),
     } as Target);
   }
 
@@ -268,8 +274,13 @@ interface ParsedLine {
   role: string;
   name?: string;
   level?: number;
-  /** Raw ARIA attribute names from the snapshot (e.g., ["selected", "expanded=false"]) */
+  /** Slider/spinbutton/progressbar trailing `: "value"` (e.g., "75") */
+  value?: string;
+  /** Raw ARIA attribute names from the snapshot (e.g., ["aria-checked", "aria-expanded"]) */
   attributes?: string[];
+  /** ARIA attribute values from the snapshot (e.g., { "aria-expanded": "false" }).
+   *  Bare tokens like [checked] are recorded with value "true". */
+  attributeValues?: Record<string, string>;
 }
 
 function parseSnapshotLine(content: string): ParsedLine | null {
@@ -277,27 +288,35 @@ function parseSnapshotLine(content: string): ParsedLine | null {
 
   // Match role, optional "name", optional [attrs], optional : "value" (slider/spinbutton current value)
   const match = cleaned.match(
-    /^(\w[\w-]*?)(?:\s+"([^"]*)")?(?:\s+\[([^\]]*)\])?(?::\s+"[^"]*")?$/,
+    /^(\w[\w-]*?)(?:\s+"([^"]*)")?(?:\s+\[([^\]]*)\])?(?::\s+"([^"]*)")?$/,
   );
   if (!match) return null;
 
   const role = match[1];
   const name = match[2];
   const attrs = match[3];
+  const value = match[4];
 
   let level: number | undefined;
   const attributes: string[] = [];
+  const attributeValues: Record<string, string> = {};
   if (attrs) {
     const levelMatch = attrs.match(/level=(\d+)/);
     if (levelMatch) level = parseInt(levelMatch[1], 10);
     // Extract all attribute tokens (e.g., "selected", "expanded=false", "haspopup=menu")
     for (const token of attrs.split(/\s+/)) {
-      const attrName = token.split("=")[0].trim();
-      if (attrName) attributes.push(`aria-${attrName}`);
+      const eqIdx = token.indexOf("=");
+      const attrName = (eqIdx >= 0 ? token.slice(0, eqIdx) : token).trim();
+      const attrVal = eqIdx >= 0 ? token.slice(eqIdx + 1).trim() : "true";
+      if (attrName) {
+        const ariaKey = `aria-${attrName}`;
+        attributes.push(ariaKey);
+        attributeValues[ariaKey] = attrVal;
+      }
     }
   }
 
-  return { role, name, level, attributes };
+  return { role, name, level, value, attributes, attributeValues };
 }
 
 function roleToTargetKind(role: string): TargetKind | null {

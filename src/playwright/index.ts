@@ -11,3 +11,11 @@ export { captureState, parseAriaSnapshot, type CaptureOptions } from "./capture.
 export { attachToFlow, type AttachOptions, type FlowRecorder } from "./attach.js";
 export { explore, type ExploreOptions, type ExploreResult, type ExplorationStep } from "./explorer.js";
 export { checkActionSafety, type ElementInfo, type SafetyCheck, type ActionSafety } from "./safety.js";
+export {
+  simulateScreenReader,
+  buildAnnouncement,
+  isLandmarkDemoted,
+  type SimulatorReport,
+  type SimulatedAnnouncement,
+  type NestingContext,
+} from "./sr-simulator.js";

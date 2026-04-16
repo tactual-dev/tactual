@@ -26,10 +26,10 @@ import type { Target } from "../core/types.js";
 /**
  * How NVDA announces each ARIA role.
  *
- * The simulator currently iterates only `landmark` and `heading` target
- * kinds, so only those roles are reachable. The map is intentionally
- * scoped to those roles. If the simulator is expanded to other kinds
- * (button, link, formField, etc.), add their announcements here.
+ * Covers all roles emitted by the Tactual capture pipeline (see
+ * roleToTargetKind in capture.ts). For state-bearing roles (checkbox,
+ * combobox, switch, etc.), the announcement is the role text only —
+ * state values are appended by buildAnnouncement().
  */
 const NVDA_ROLE_ANNOUNCEMENTS: Record<string, string> = {
   // Landmarks
@@ -41,9 +41,112 @@ const NVDA_ROLE_ANNOUNCEMENTS: Record<string, string> = {
   region: "landmark",
   search: "search landmark",
   form: "form landmark",
-  // Heading (only one role for this kind)
+  // Heading
   heading: "heading",
+  // Controls
+  link: "link",
+  button: "button",
+  // Form fields
+  checkbox: "check box",
+  radio: "radio button",
+  textbox: "edit",
+  searchbox: "search edit",
+  combobox: "combo box",
+  listbox: "list box",
+  slider: "slider",
+  spinbutton: "spin button",
+  switch: "switch",
+  // Tabs
+  tab: "tab",
+  tabpanel: "tab panel",
+  // Dialogs
+  dialog: "dialog",
+  alertdialog: "alert dialog",
+  // Status messages
+  alert: "alert",
+  status: "status",
+  log: "log",
+  // Menus
+  menu: "menu",
+  menubar: "menu bar",
+  menuitem: "menu item",
+  menuitemcheckbox: "menu item check box",
+  menuitemradio: "menu item radio button",
 };
+
+/**
+ * Build a state-aware NVDA announcement string for a target.
+ *
+ * Examples:
+ *   { role: "button", name: "Sign Up" }            → "Sign Up, button"
+ *   { role: "checkbox", name: "Subscribe", checked } → "Subscribe, check box, checked"
+ *   { role: "combobox", name: "Country", expanded=false } → "Country, combo box, collapsed"
+ *   { role: "slider", name: "Volume", value: "75" }  → "Volume, slider, 75"
+ *   { role: "heading", name: "Title", headingLevel: 2 } → "Title, heading, level 2"
+ */
+export function buildAnnouncement(target: Target): string {
+  const role = target.role;
+  const roleText = NVDA_ROLE_ANNOUNCEMENTS[role] ?? role;
+  const parts: string[] = [];
+
+  if (target.name) parts.push(target.name);
+  parts.push(roleText);
+
+  // Heading level (NVDA: "Title, heading, level 2")
+  if (target.kind === "heading" && target.headingLevel) {
+    parts.push(`level ${target.headingLevel}`);
+  }
+
+  // State info from captured ARIA attributes
+  const attrs = (target as Record<string, unknown>)._attributeValues as
+    | Record<string, string>
+    | undefined;
+  const value = (target as Record<string, unknown>)._value as string | undefined;
+
+  if (attrs) {
+    // Checked state (checkbox, radio, switch, menuitemcheckbox, menuitemradio)
+    if (
+      role === "checkbox" || role === "radio" || role === "switch" ||
+      role === "menuitemcheckbox" || role === "menuitemradio"
+    ) {
+      const c = attrs["aria-checked"];
+      if (c === "true") parts.push("checked");
+      else if (c === "false") parts.push("not checked");
+      else if (c === "mixed") parts.push("partially checked");
+    }
+
+    // Expanded state (combobox, listbox, button with menu, menu, etc.)
+    const exp = attrs["aria-expanded"];
+    if (exp === "true") parts.push("expanded");
+    else if (exp === "false") parts.push("collapsed");
+
+    // Selected state (tab, option)
+    if (role === "tab" || role === "option") {
+      const sel = attrs["aria-selected"];
+      if (sel === "true") parts.push("selected");
+    }
+
+    // Modal dialog
+    if ((role === "dialog" || role === "alertdialog") && attrs["aria-modal"] === "true") {
+      parts.push("modal");
+    }
+
+    // Required, invalid, readonly, disabled states (form fields)
+    if (attrs["aria-disabled"] === "true") parts.push("unavailable");
+    if (attrs["aria-readonly"] === "true") parts.push("read only");
+    if (attrs["aria-invalid"] === "true" || attrs["aria-invalid"] === "grammar" || attrs["aria-invalid"] === "spelling") {
+      parts.push("invalid entry");
+    }
+    if (attrs["aria-required"] === "true") parts.push("required");
+  }
+
+  // Slider/spinbutton/progressbar value
+  if (value && (role === "slider" || role === "spinbutton" || role === "progressbar")) {
+    parts.push(value);
+  }
+
+  return parts.join(", ");
+}
 
 // ---------------------------------------------------------------------------
 // Context rules — when landmarks get demoted
@@ -107,6 +210,18 @@ export interface SimulatorReport {
   landmarks: SimulatedAnnouncement[];
   /** All heading targets with their simulated announcements */
   headings: SimulatedAnnouncement[];
+  /** Buttons and links */
+  controls: SimulatedAnnouncement[];
+  /** Form fields (textbox, checkbox, radio, combobox, etc.) */
+  formFields: SimulatedAnnouncement[];
+  /** Dialogs and alert dialogs */
+  dialogs: SimulatedAnnouncement[];
+  /** Status messages, alerts, logs */
+  statusMessages: SimulatedAnnouncement[];
+  /** Menus and menu items */
+  menus: SimulatedAnnouncement[];
+  /** Tabs and tab panels */
+  tabs: SimulatedAnnouncement[];
   /** Landmarks that the AT tree reports but NVDA would NOT announce */
   demotedLandmarks: SimulatedAnnouncement[];
   /** Total targets analyzed */
@@ -118,6 +233,20 @@ export interface SimulatorReport {
  * This checks whether `<header>` and `<footer>` elements are inside
  * sectioning content (`<section>`, `<article>`, `<aside>`, `<nav>`).
  */
+// The page.evaluate callbacks run in the browser, where DOM globals
+// are available. Our tsconfig doesn't include DOM in lib, so we
+// declare a minimal Element/Document surface to satisfy type-checking.
+// (Runtime behavior is unchanged — the browser provides real DOM.)
+interface MinimalEl {
+  tagName: string;
+  parentElement: MinimalEl | null;
+  getAttribute(name: string): string | null;
+}
+interface MinimalDocument {
+  querySelectorAll(selector: string): ArrayLike<MinimalEl>;
+}
+declare const document: MinimalDocument;
+
 async function getLandmarkContexts(page: Page): Promise<NestingContext[]> {
   const contexts = await page.evaluate(() => {
     const results: Array<{
@@ -183,7 +312,9 @@ async function getLandmarkContexts(page: Page): Promise<NestingContext[]> {
  * Simulate screen reader announcements and detect demoted landmarks.
  *
  * Two functions:
- * 1. Predicts what NVDA would announce for each target
+ * 1. Predicts what NVDA would announce for each target, including
+ *    state info (checked, expanded, selected, modal, value, etc.)
+ *    when captured ARIA attributes are present
  * 2. Explains WHY expected landmarks are missing — checks the DOM for
  *    elements like `<header>` that exist but are demoted by HTML context
  *    rules (e.g., nested inside `<section>`)
@@ -196,40 +327,54 @@ export async function simulateScreenReader(
 
   const landmarks: SimulatedAnnouncement[] = [];
   const headings: SimulatedAnnouncement[] = [];
+  const controls: SimulatedAnnouncement[] = [];
+  const formFields: SimulatedAnnouncement[] = [];
+  const dialogs: SimulatedAnnouncement[] = [];
+  const statusMessages: SimulatedAnnouncement[] = [];
+  const menus: SimulatedAnnouncement[] = [];
+  const tabs: SimulatedAnnouncement[] = [];
   const demotedLandmarks: SimulatedAnnouncement[] = [];
 
   // --- Simulate announcements for existing targets ---
+  const announce = (target: Target): SimulatedAnnouncement => ({
+    targetId: target.id,
+    role: target.role,
+    name: target.name,
+    announcement: buildAnnouncement(target),
+    landmarkExposed: true,
+    demoted: false,
+  });
+
   for (const target of targets) {
-    if (target.kind === "landmark") {
-      const roleAnnouncement = NVDA_ROLE_ANNOUNCEMENTS[target.role] || target.role;
-      const announcement = target.name
-        ? `${target.name}, ${roleAnnouncement}`
-        : roleAnnouncement;
-
-      landmarks.push({
-        targetId: target.id,
-        role: target.role,
-        name: target.name,
-        announcement,
-        landmarkExposed: true,
-        demoted: false,
-      });
-    }
-
-    if (target.kind === "heading") {
-      const level = target.headingLevel ?? 2;
-      const announcement = target.name
-        ? `${target.name}, heading, level ${level}`
-        : `heading, level ${level}`;
-
-      headings.push({
-        targetId: target.id,
-        role: "heading",
-        name: target.name,
-        announcement,
-        landmarkExposed: true,
-        demoted: false,
-      });
+    switch (target.kind) {
+      case "landmark":
+      case "search":
+        landmarks.push(announce(target));
+        break;
+      case "heading":
+        headings.push(announce(target));
+        break;
+      case "button":
+      case "link":
+        controls.push(announce(target));
+        break;
+      case "formField":
+        formFields.push(announce(target));
+        break;
+      case "dialog":
+        dialogs.push(announce(target));
+        break;
+      case "statusMessage":
+        statusMessages.push(announce(target));
+        break;
+      case "menuTrigger":
+      case "menuItem":
+        menus.push(announce(target));
+        break;
+      case "tab":
+      case "tabPanel":
+        tabs.push(announce(target));
+        break;
     }
   }
 
@@ -283,6 +428,12 @@ export async function simulateScreenReader(
   return {
     landmarks,
     headings,
+    controls,
+    formFields,
+    dialogs,
+    statusMessages,
+    menus,
+    tabs,
     demotedLandmarks,
     totalTargets: targets.length,
   };
