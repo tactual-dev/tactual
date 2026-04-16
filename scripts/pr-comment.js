@@ -31,11 +31,14 @@ if (severe > 0) icon = "\u{1F534}"; // red
 else if (high > 0) icon = "\u{1F7E0}"; // orange
 else if (moderate > 0) icon = "\u{1F7E1}"; // yellow
 
-const safeUrl = String(url || "").replace(/[<>]/g, "");
-const safeProfile = String(profile || "generic-mobile-web-sr-v0").replace(/[<>]/g, "");
+// Sanitize: strip HTML-breaking chars and the marker separator (|)
+const sanitize = (s) => String(s || "").replace(/[<>|]/g, "");
+const safeUrl = sanitize(url);
+const safeProfile = sanitize(profile || "generic-mobile-web-sr-v0");
 
 const lines = [];
-lines.push(`<!-- tactual-pr-comment:${safeUrl}:${safeProfile} -->`);
+// Use | as separator (URLs commonly contain : but rarely |)
+lines.push(`<!-- tactual-pr-comment|${safeUrl}|${safeProfile} -->`);
 lines.push(`## ${icon} Tactual: Screen-Reader Navigation Cost`);
 lines.push("");
 lines.push("| Metric | Value |");

@@ -103,4 +103,30 @@ describe("analyze", () => {
     expect(result.metadata.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(result.metadata.duration).toBeGreaterThanOrEqual(0);
   });
+
+  it("warns when --focus filter matches no landmarks (no-effect)", () => {
+    const state = makeState();
+    const result = analyze([state], genericMobileWebSrV0, {
+      filter: { focus: ["does-not-exist"] },
+    });
+
+    const warning = result.diagnostics.find((d) =>
+      d.message.includes("Focus filter") && d.message.includes("had no effect"),
+    );
+    expect(warning).toBeDefined();
+    expect(warning?.level).toBe("warning");
+  });
+
+  it("does not emit no-effect warning when focus filter actually matches", () => {
+    const state = makeState();
+    // makeState includes a landmark with role "main"
+    const result = analyze([state], genericMobileWebSrV0, {
+      filter: { focus: ["main"] },
+    });
+
+    const warning = result.diagnostics.find((d) =>
+      d.message.includes("Focus filter") && d.message.includes("had no effect"),
+    );
+    expect(warning).toBeUndefined();
+  });
 });

@@ -10,7 +10,7 @@ import { getPreset, listPresets } from "../core/presets.js";
 import { checkThreshold } from "../core/filter.js";
 import { buildGraph } from "../core/graph-builder.js";
 import { collectEntryPoints, computePathsFromEntries } from "../core/path-analysis.js";
-import type { AnalysisResult, Finding } from "../core/types.js";
+import { extractFindings, type NormalizedFinding } from "../mcp/helpers.js";
 import { VERSION } from "../version.js";
 
 function validateNum(value: number, flag: string): number {
@@ -304,8 +304,15 @@ program
         if (opts.alsoJson && opts.format !== "json") {
           const fs = await import("fs/promises");
           const jsonOutput = formatReport(result, "json");
-          await fs.writeFile(opts.alsoJson, jsonOutput, "utf-8");
-          console.error(`JSON also written to ${opts.alsoJson}`);
+          try {
+            await fs.writeFile(opts.alsoJson, jsonOutput, "utf-8");
+            console.error(`JSON also written to ${opts.alsoJson}`);
+          } catch (err) {
+            console.error(
+              `Error: --also-json write failed for ${opts.alsoJson}: ${err instanceof Error ? err.message : err}`,
+            );
+            process.exit(1);
+          }
         }
 
         // Threshold check for CI
@@ -887,8 +894,8 @@ program.parse();
 
 interface DiffEntry {
   targetId: string;
-  baseline: Finding | undefined;
-  candidate: Finding | undefined;
+  baseline: NormalizedFinding | undefined;
+  candidate: NormalizedFinding | undefined;
   overallDelta: number;
 }
 
@@ -899,39 +906,11 @@ interface DiffResult {
   unchanged: number;
 }
 
-/**
- * Extract findings from either a full AnalysisResult or a SummarizedResult (JSON reporter output).
- * Returns a Map of targetId → { scores: { overall }, severity, penalties, targetId }.
- */
-function extractFindings(data: Record<string, unknown>): Map<string, Finding> {
-  // Full AnalysisResult has findings[]
-  if (Array.isArray(data.findings) && data.findings.length > 0 && data.findings[0]?.scores) {
-    return new Map((data as AnalysisResult).findings.map((f) => [f.targetId, f]));
-  }
-  // SummarizedResult (from JSON reporter) has worstFindings[] with a flat score shape
-  if (Array.isArray((data as Record<string, unknown>).worstFindings)) {
-    const wf = (data as Record<string, unknown>).worstFindings as Array<{
-      targetId: string; overall: number; severity: string; scores: Record<string, number>;
-      penalties: string[]; suggestedFixes: string[];
-    }>;
-    return new Map(wf.map((f) => [f.targetId, {
-      targetId: f.targetId,
-      severity: f.severity,
-      scores: { overall: f.overall, discoverability: f.scores.discoverability ?? 0, reachability: f.scores.reachability ?? 0, operability: f.scores.operability ?? 0, recovery: f.scores.recovery ?? 0, interopRisk: f.scores.interopRisk ?? 0 },
-      penalties: f.penalties,
-      suggestedFixes: f.suggestedFixes ?? [],
-      bestPath: [],
-      alternatePaths: [],
-      profile: "",
-      confidence: 1,
-    } as unknown as Finding]));
-  }
-  return new Map();
-}
-
 function computeDiff(baseline: Record<string, unknown>, candidate: Record<string, unknown>): DiffResult {
-  const baseMap = extractFindings(baseline);
-  const candMap = extractFindings(candidate);
+  // Use the shared extractor from mcp/helpers — handles AnalysisResult,
+  // SummarizedResult (JSON reporter), and SARIF shapes.
+  const baseMap = new Map(extractFindings(baseline).map((f) => [f.targetId, f]));
+  const candMap = new Map(extractFindings(candidate).map((f) => [f.targetId, f]));
   const allIds = new Set([...baseMap.keys(), ...candMap.keys()]);
 
   const entries: DiffEntry[] = [];
@@ -942,7 +921,7 @@ function computeDiff(baseline: Record<string, unknown>, candidate: Record<string
   for (const id of allIds) {
     const b = baseMap.get(id);
     const c = candMap.get(id);
-    const delta = (c?.scores.overall ?? 0) - (b?.scores.overall ?? 0);
+    const delta = (c?.overall ?? 0) - (b?.overall ?? 0);
     entries.push({ targetId: id, baseline: b, candidate: c, overallDelta: delta });
     if (delta > 0) improved++;
     else if (delta < 0) regressed++;
@@ -962,8 +941,8 @@ function formatDiff(diff: DiffResult, _format: ReportFormat): string {
 
   for (const entry of diff.entries) {
     const sign = entry.overallDelta > 0 ? "+" : "";
-    const base = entry.baseline?.scores.overall ?? "new";
-    const cand = entry.candidate?.scores.overall ?? "removed";
+    const base = entry.baseline?.overall ?? "new";
+    const cand = entry.candidate?.overall ?? "removed";
     lines.push(`  ${entry.targetId}: ${base} -> ${cand} (${sign}${entry.overallDelta})`);
   }
 

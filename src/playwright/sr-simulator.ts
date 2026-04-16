@@ -88,7 +88,7 @@ export interface NestingContext {
  *
  * Reference: https://www.w3.org/TR/html-aam-1.0/#el-header
  */
-function isLandmarkDemoted(ctx: NestingContext): boolean {
+export function isLandmarkDemoted(ctx: NestingContext): boolean {
   // Explicit role="banner" always works regardless of nesting
   if (ctx.hasExplicitRole) return false;
 

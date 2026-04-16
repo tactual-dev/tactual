@@ -8,6 +8,7 @@ import {
   filterDiagnostics,
   type AnalysisFilter,
 } from "./filter.js";
+import { globToRegex } from "../mcp/trace-helpers.js";
 import type { ATProfile } from "../profiles/types.js";
 import { VERSION } from "../version.js";
 
@@ -78,11 +79,22 @@ export function analyze(
     targets: filterTargets(state.targets, filter),
   }));
 
-  // Warn if --focus was specified but had no effect (no matching landmarks found)
+  // Warn if --focus patterns match no landmarks at all (filter had no effect)
   if (filter.focus && filter.focus.length > 0) {
-    const totalBefore = states.reduce((n, s) => n + s.targets.length, 0);
-    const totalAfter = filteredStates.reduce((n, s) => n + s.targets.length, 0);
-    if (totalBefore === totalAfter) {
+    const focusPatterns = filter.focus.map((p) => globToRegex(p));
+    const hasMatch = states.some((s) =>
+      s.targets.some(
+        (t) =>
+          (t.kind === "landmark" || t.kind === "search") &&
+          focusPatterns.some(
+            (re) =>
+              re.test((t.name ?? "").toLowerCase()) ||
+              re.test((t.role ?? "").toLowerCase()),
+          ),
+      ),
+    );
+    if (!hasMatch) {
+      const totalAfter = filteredStates.reduce((n, s) => n + s.targets.length, 0);
       diagnostics.push({
         level: "warning",
         code: "no-landmarks",

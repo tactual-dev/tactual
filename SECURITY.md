@@ -48,7 +48,8 @@ Tactual launches a Chromium browser, navigates to user-specified URLs, and captu
 
 | Version | Supported |
 |---|---|
-| 0.2.x | Yes (current) |
+| 0.3.x | Yes (current) |
+| 0.2.x | No |
 | 0.1.x | No |
 
 ## Dependencies

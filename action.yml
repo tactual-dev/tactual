@@ -140,8 +140,9 @@ runs:
           tactual-results.json "$AVG" "$URL" "$PROFILE")
 
         # Find existing comment for this URL+profile, or create new one
+        # Use | separator (URLs contain : but rarely |); strip HTML-breaking chars
         PR_NUM="${{ github.event.pull_request.number }}"
-        MARKER="tactual-pr-comment:$(printf '%s' "$URL" | sed 's/[<>]//g'):$(printf '%s' "$PROFILE" | sed 's/[<>]//g')"
+        MARKER="tactual-pr-comment|$(printf '%s' "$URL" | sed 's/[<>|]//g')|$(printf '%s' "$PROFILE" | sed 's/[<>|]//g')"
         EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
           --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
           2>/dev/null | head -1)
