@@ -78,6 +78,19 @@ export function analyze(
     targets: filterTargets(state.targets, filter),
   }));
 
+  // Warn if --focus was specified but had no effect (no matching landmarks found)
+  if (filter.focus && filter.focus.length > 0) {
+    const totalBefore = states.reduce((n, s) => n + s.targets.length, 0);
+    const totalAfter = filteredStates.reduce((n, s) => n + s.targets.length, 0);
+    if (totalBefore === totalAfter) {
+      diagnostics.push({
+        level: "warning",
+        code: "no-landmarks",
+        message: `Focus filter (${filter.focus.join(", ")}) had no effect — no matching landmarks found. All ${totalAfter} targets were analyzed.`,
+      });
+    }
+  }
+
   let graph: ReturnType<typeof buildGraph>;
   try {
     graph = buildGraph(filteredStates, profile);

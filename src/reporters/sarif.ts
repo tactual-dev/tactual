@@ -14,6 +14,7 @@ interface SarifLog {
 interface SarifRun {
   tool: { driver: SarifDriver };
   results: SarifResult[];
+  properties?: Record<string, unknown>;
 }
 
 interface SarifDriver {
@@ -213,6 +214,14 @@ export function formatSARIF(result: AnalysisResult): string {
           },
         },
         results: capped,
+        properties: {
+          profile: result.metadata.profile,
+          targetCount: result.metadata.targetCount,
+          stateCount: result.metadata.stateCount,
+          averageScore: result.findings.length > 0
+            ? Math.round(result.findings.reduce((s, f) => s + f.scores.overall, 0) / result.findings.length * 10) / 10
+            : 0,
+        },
       },
     ],
   };

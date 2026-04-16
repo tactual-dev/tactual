@@ -286,9 +286,10 @@ program
           output = formatReport(result, opts.format as ReportFormat, { maxDetailedFindings: topN });
         }
 
-        // For console format, append timing
+        // For console format, append timing + device info
         if (opts.format === "console" && isTTY && !opts.summaryOnly) {
-          console.error(`  ${"\x1b[90m"}Completed in ${elapsed}s${"\x1b[0m"}`);
+          const deviceNote = device ? ` (device: ${device})` : "";
+          console.error(`  ${"\x1b[90m"}Completed in ${elapsed}s${deviceNote}${"\x1b[0m"}`);
         }
 
         if (opts.output) {
