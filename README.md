@@ -40,6 +40,10 @@ npx tactual analyze-url https://example.com --profile voiceover-ios-v0
 # Explore hidden UI (menus, tabs, dialogs, disclosures)
 npx tactual analyze-url https://example.com --explore
 
+# Use a scoring preset for your use case
+npx tactual analyze-url https://shop.com --preset ecommerce-checkout
+npx tactual analyze-url https://docs.example.com --preset docs-site
+
 # Output as JSON, Markdown, or SARIF
 npx tactual analyze-url https://example.com --format json --output report.json
 npx tactual analyze-url https://example.com --format sarif --output report.sarif
@@ -47,8 +51,9 @@ npx tactual analyze-url https://example.com --format sarif --output report.sarif
 # Compare two analysis runs
 npx tactual diff baseline.json candidate.json
 
-# List available AT profiles
+# List available AT profiles and scoring presets
 npx tactual profiles
+npx tactual presets
 
 # Run benchmark suite
 npx tactual benchmark
@@ -216,6 +221,7 @@ Options:
   --top <n>                       Show only worst N findings
   --min-severity <level>          Minimum severity to report
   --threshold <n>                 Exit non-zero if avg score < N
+  --preset <name>                 Scoring preset (ecommerce-checkout, docs-site, dashboard, form-heavy)
   --config <path>                 Path to tactual.json
   --no-headless                   Headed browser (for bot-blocked sites)
   --timeout <ms>                  Page load timeout (default: 30000)
@@ -261,6 +267,22 @@ Config is auto-detected from the working directory (`tactual.json` or `.tactualr
 | `jaws-desktop-v0` | Desktop | JAWS on Windows — virtual cursor with auto forms mode |
 
 Profiles define the cost of each navigation action, score dimension weights, `costSensitivity` (scales the reachability decay curve), and context-dependent modifiers. See `src/profiles/` for implementation details.
+
+## Scoring Presets
+
+Presets bundle focus filters and priority mappings for common use cases. They layer under config files and CLI flags (preset → tactual.json → CLI flags).
+
+| Preset | Use case | Focus | Critical targets |
+|---|---|---|---|
+| `ecommerce-checkout` | Shopping flows | main | checkout, cart, payment, buy |
+| `docs-site` | Documentation | main, navigation | search, nav |
+| `dashboard` | Web apps | main, navigation | save, submit, create, delete, search |
+| `form-heavy` | Form pages | main | submit, save, next, continue, error |
+
+```bash
+npx tactual analyze-url https://shop.com --preset ecommerce-checkout
+npx tactual presets  # list all presets with details
+```
 
 ## Scoring
 

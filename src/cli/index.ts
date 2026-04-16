@@ -6,6 +6,7 @@ import { formatReport, type ReportFormat } from "../reporters/index.js";
 import { analyze } from "../core/analyzer.js";
 import { validateUrl } from "../core/url-validation.js";
 import { loadConfig, mergeConfigWithFlags, configToFilter } from "../core/config.js";
+import { getPreset, listPresets } from "../core/presets.js";
 import { checkThreshold } from "../core/filter.js";
 import { buildGraph } from "../core/graph-builder.js";
 import { collectEntryPoints, computePathsFromEntries } from "../core/path-analysis.js";
@@ -62,6 +63,7 @@ program
   .option("-q, --quiet", "Suppress info-level diagnostics")
   // CI
   .option("--threshold <n>", "Exit non-zero if average score is below this")
+  .option("--preset <name>", "Use a scoring preset (ecommerce-checkout, docs-site, dashboard, form-heavy)")
   .option("--config <path>", "Path to tactual.json config file")
   // Browser
   .option("--no-headless", "Run browser in headed mode (helps with bot-blocked sites)")
@@ -93,6 +95,7 @@ program
         minSeverity?: string;
         quiet?: boolean;
         threshold?: string;
+        preset?: string;
         config?: string;
         headless?: boolean;
         timeout?: string;
@@ -102,9 +105,19 @@ program
         summaryOnly?: boolean;
       },
     ) => {
-      // Load config file and merge with CLI flags
+      // Load preset → config file → CLI flags (each layer overrides the previous)
+      let baseConfig = {};
+      if (opts.preset) {
+        const preset = getPreset(opts.preset);
+        if (!preset) {
+          console.error(`Unknown preset: ${opts.preset}`);
+          console.error(`Available: ${listPresets().map((p) => p.id).join(", ")}`);
+          process.exit(1);
+        }
+        baseConfig = preset.config;
+      }
       const fileConfig = loadConfig(opts.config);
-      const merged = mergeConfigWithFlags(fileConfig, {
+      const merged = mergeConfigWithFlags(mergeConfigWithFlags(baseConfig, fileConfig), {
         profile: opts.profile,
         device: opts.device,
         explore: opts.explore,
@@ -769,6 +782,26 @@ program
       const p = getProfile(id);
       console.log(`  ${id}  ${p?.platform ?? ""} — ${p?.description?.slice(0, 60) ?? ""}`);
     }
+  });
+
+// ---- presets ----
+
+program
+  .command("presets")
+  .description("List available scoring presets")
+  .action(() => {
+    const presets = listPresets();
+    console.log("Available presets:");
+    console.log("");
+    for (const p of presets) {
+      console.log(`  ${p.id}`);
+      console.log(`    ${p.description}`);
+      if (p.config.focus) console.log(`    Focus: ${p.config.focus.join(", ")}`);
+      const critical = Object.entries(p.config.priority ?? {}).filter(([, v]) => v === "critical").map(([k]) => k);
+      if (critical.length > 0) console.log(`    Critical targets: ${critical.join(", ")}`);
+      console.log("");
+    }
+    console.log("Usage: npx tactual analyze-url <url> --preset <name>");
   });
 
 // ---- init ----

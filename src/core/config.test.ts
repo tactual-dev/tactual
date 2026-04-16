@@ -178,3 +178,47 @@ describe("configToFilter", () => {
     expect(filter.minSeverity).toBeUndefined();
   });
 });
+
+// ---------------------------------------------------------------------------
+// Presets tests
+// ---------------------------------------------------------------------------
+
+import { getPreset, listPresets } from "./presets.js";
+
+describe("presets", () => {
+  it("lists all presets", () => {
+    const presets = listPresets();
+    expect(presets.length).toBeGreaterThanOrEqual(4);
+    for (const p of presets) {
+      expect(p.id).toBeTruthy();
+      expect(p.name).toBeTruthy();
+      expect(p.description).toBeTruthy();
+      expect(p.config).toBeDefined();
+    }
+  });
+
+  it("retrieves preset by ID", () => {
+    const p = getPreset("ecommerce-checkout");
+    expect(p).not.toBeNull();
+    expect(p!.config.focus).toContain("main");
+    expect(p!.config.priority!["*checkout*"]).toBe("critical");
+  });
+
+  it("returns null for unknown preset", () => {
+    expect(getPreset("nonexistent")).toBeNull();
+  });
+
+  it("preset config merges correctly with CLI flags", () => {
+    const preset = getPreset("docs-site")!;
+    const flags: Partial<TactualConfig> = { profile: "nvda-desktop-v0", focus: ["complementary"] };
+    const merged = mergeConfigWithFlags(preset.config, flags);
+    // CLI flag overrides preset profile
+    expect(merged.profile).toBe("nvda-desktop-v0");
+    // Focus arrays merge
+    expect(merged.focus).toContain("main");
+    expect(merged.focus).toContain("navigation");
+    expect(merged.focus).toContain("complementary");
+    // Priority from preset preserved
+    expect(merged.priority!["*search*"]).toBe("critical");
+  });
+});
