@@ -71,6 +71,7 @@ program
   .option("--wait-for-selector <selector>", "CSS selector to wait for before capturing (essential for SPAs)")
   .option("--wait-time <ms>", "Additional milliseconds to wait after page load")
   .option("--storage-state <path>", "Playwright storageState JSON file for authenticated pages")
+  .option("--also-json <path>", "Also write JSON output to this path (avoids a second analysis run in CI)")
   .option("--summary-only", "Output only summary stats (~500 bytes)")
   .action(
     async (
@@ -102,6 +103,7 @@ program
         waitForSelector?: string;
         waitTime?: string;
         storageState?: string;
+        alsoJson?: string;
         summaryOnly?: boolean;
       },
     ) => {
@@ -295,6 +297,14 @@ program
           console.error(`Report written to ${opts.output}`);
         } else {
           console.log(output);
+        }
+
+        // --also-json: write JSON alongside the primary format (single analysis run)
+        if (opts.alsoJson && opts.format !== "json") {
+          const fs = await import("fs/promises");
+          const jsonOutput = formatReport(result, "json");
+          await fs.writeFile(opts.alsoJson, jsonOutput, "utf-8");
+          console.error(`JSON also written to ${opts.alsoJson}`);
         }
 
         // Threshold check for CI

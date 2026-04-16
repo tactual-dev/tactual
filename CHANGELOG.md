@@ -17,7 +17,8 @@ New diagnostics, scoring presets, SR simulator, performance improvements, securi
 - **Nested focusable detection** (`--probe`) — flags elements with focusable descendants causing duplicate tab stops.
 - **Focus indicator suppression** (`--probe`) — detects when CSS suppresses the focus outline without a visible alternative.
 - **Skipped elements reporting** — exploration now lists which elements were skipped by the safety policy.
-- **PR comment action** — `comment-on-pr: "true"` input posts a summary comment on pull requests. Supports multiple URLs/profiles per PR via hidden markers. Updates existing comment on re-run.
+- **`--also-json`** — write JSON output alongside the primary format from a single analysis run. Eliminates double Playwright capture in CI workflows.
+- **PR comment action** — `comment-on-pr: "true"` input posts a summary comment on pull requests. Supports multiple URLs/profiles per PR via hidden markers. Updates existing comment on re-run. Comment template is in `scripts/pr-comment.js` (testable, editable).
 
 ### Performance
 

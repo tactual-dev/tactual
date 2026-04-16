@@ -234,6 +234,7 @@ Options:
   --wait-for-selector <css>       Wait for selector before capturing (for SPAs)
   --wait-time <ms>                Additional wait after page load
   --storage-state <path>          Playwright storageState JSON for authenticated pages
+  --also-json <path>              Also write JSON to this path (single analysis run for CI)
   --summary-only                  Return only summary stats, no individual findings
   -q, --quiet                     Suppress info diagnostics
 ```

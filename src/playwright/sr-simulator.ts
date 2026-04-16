@@ -287,7 +287,7 @@ export async function simulateScreenReader(
           "Fix: add role=\"contentinfo\" to the <footer> element.";
       } else if (!ctx.hasLabel) {
         demotionReason =
-          `<${ctx.role === "form" ? "form" : "section"}> exists but has no aria-label — ` +
+          `Element with role="${ctx.role}" exists but has no aria-label — ` +
           "it is not exposed as a landmark without a label. " +
           "Fix: add aria-label to make it a landmark.";
       } else {

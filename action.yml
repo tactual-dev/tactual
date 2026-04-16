@@ -68,34 +68,31 @@ runs:
 
         FORMAT="${{ inputs.format }}"
 
-        # Primary run: produce the user's requested format
+        # Single analysis run — produce the user's format + JSON sidecar for score extraction.
+        # --also-json writes JSON from the same analysis without a second Playwright capture.
         EXT="txt"
         if [ "$FORMAT" = "sarif" ]; then EXT="sarif"; fi
         if [ "$FORMAT" = "json" ]; then EXT="json"; fi
         if [ "$FORMAT" = "markdown" ]; then EXT="md"; fi
         RESULT_FILE="tactual-results.${EXT}"
 
+        ALSO_JSON_FLAG=""
+        if [ "$FORMAT" != "json" ]; then
+          ALSO_JSON_FLAG="--also-json tactual-results.json"
+        fi
+
         npx tactual analyze-url "${{ inputs.url }}" \
           --profile "${{ inputs.profile }}" \
           --format "$FORMAT" \
           $EXPLORE_FLAG \
-          --output "$RESULT_FILE"
+          --output "$RESULT_FILE" \
+          $ALSO_JSON_FLAG
 
         echo "result-file=${RESULT_FILE}" >> "$GITHUB_OUTPUT"
 
-        # Score extraction: if primary format was JSON, reuse it.
-        # Otherwise, run a fast --summary-only JSON pass for score data.
-        # TODO: add --also-json flag to eliminate this second run.
+        JSON_FILE="tactual-results.json"
         if [ "$FORMAT" = "json" ]; then
           JSON_FILE="$RESULT_FILE"
-        else
-          JSON_FILE="tactual-results.json"
-          npx tactual analyze-url "${{ inputs.url }}" \
-            --profile "${{ inputs.profile }}" \
-            $EXPLORE_FLAG \
-            --format json \
-            --summary-only \
-            --output "$JSON_FILE"
         fi
 
         AVG=$(node -e "
@@ -130,64 +127,21 @@ runs:
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        AVG="${{ steps.analysis.outputs.average-score }}"
-        URL="${{ inputs.url }}"
-        PROFILE="${{ inputs.profile }}"
-
-        # Use summary JSON if available, fall back to full JSON
-        if [ -f "tactual-results.json" ]; then
-          JSON_FILE="tactual-results.json"
-        else
+        if [ ! -f "tactual-results.json" ]; then
           echo "No JSON results available for PR comment"
           exit 0
         fi
 
-        # Build the comment body
-        COMMENT=$(node -e "
-          const r = JSON.parse(require('fs').readFileSync('${JSON_FILE}','utf8'));
-          const s = r.stats || r.metadata || {};
-          const sc = r.severityCounts || {};
-          const findings = r.findings || [];
-          const severe = sc.severe || findings.filter(f => f.severity === 'severe').length;
-          const high = sc.high || findings.filter(f => f.severity === 'high').length;
-          const moderate = sc.moderate || findings.filter(f => f.severity === 'moderate').length;
-          const targets = s.targetCount || 0;
-          const avg = ${AVG};
+        AVG="${{ steps.analysis.outputs.average-score }}"
+        URL="${{ inputs.url }}"
+        PROFILE="${{ inputs.profile }}"
 
-          let icon = '🟢';
-          if (severe > 0) icon = '🔴';
-          else if (high > 0) icon = '🟠';
-          else if (moderate > 0) icon = '🟡';
-
-          const lines = [];
-          lines.push('<!-- tactual-pr-comment:${URL}:${PROFILE} -->');
-          lines.push('## ' + icon + ' Tactual: Screen-Reader Navigation Cost');
-          lines.push('');
-          lines.push('| Metric | Value |');
-          lines.push('|---|---|');
-          lines.push('| Average Score | **' + avg + '** / 100 |');
-          lines.push('| Targets | ' + targets + ' |');
-          lines.push('| Profile | \`${PROFILE}\` |');
-          if (severe + high + moderate > 0) {
-            lines.push('');
-            lines.push('**Findings:** ' + severe + ' severe, ' + high + ' high, ' + moderate + ' moderate');
-          }
-          const worst = findings.slice(0, 3);
-          if (worst.length > 0) {
-            lines.push('');
-            lines.push('**Worst targets:**');
-            for (const f of worst) {
-              lines.push('- \`' + f.targetId + '\` — ' + f.scores.overall + '/100 [' + f.severity + ']');
-            }
-          }
-          lines.push('');
-          lines.push('<sub>Posted by [Tactual](https://github.com/tactual-dev/tactual)</sub>');
-          console.log(lines.join('\n'));
-        ")
+        COMMENT=$(node "${{ github.action_path }}/scripts/pr-comment.js" \
+          tactual-results.json "$AVG" "$URL" "$PROFILE")
 
         # Find existing comment for this URL+profile, or create new one
         PR_NUM="${{ github.event.pull_request.number }}"
-        MARKER="tactual-pr-comment:${URL}:${PROFILE}"
+        MARKER="tactual-pr-comment:$(printf '%s' "$URL" | sed 's/[<>]//g'):$(printf '%s' "$PROFILE" | sed 's/[<>]//g')"
         EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
           --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
           2>/dev/null | head -1)
