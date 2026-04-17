@@ -34,7 +34,7 @@ export interface SummarizedResult {
   /** Count by severity band */
   severityCounts: Record<string, number>;
   /** Diagnostics (errors/warnings only) */
-  diagnostics: Array<{ level: string; message: string }>;
+  diagnostics: Array<{ level: string; code: string; message: string }>;
   /** Common issue patterns grouped with affected target count */
   issueGroups: IssueGroup[];
   /** Worst N findings with full detail */
@@ -137,10 +137,12 @@ export function summarize(result: AnalysisResult, options?: { maxDetailedFinding
     .slice(0, maxDetailed)
     .map(toDetailed);
 
-  // Diagnostics (skip info-level and "ok")
+  // Diagnostics (skip info-level and "ok"). Preserve `code` so
+  // programmatic consumers (LLMs, CI scripts) can filter by code
+  // rather than fragile message-text matching.
   const diagnostics = (result.diagnostics ?? [])
     .filter((d) => d.level !== "info" && d.code !== "ok")
-    .map((d) => ({ level: d.level, message: d.message }));
+    .map((d) => ({ level: d.level, code: d.code, message: d.message }));
 
   const isTruncated = findings.length > maxDetailed;
   let truncationNote: TruncationNote | null = null;
