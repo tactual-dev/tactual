@@ -53,3 +53,6 @@ export type { ReportFormat } from "./reporters/index.js";
 
 export { builtinRules } from "./rules/index.js";
 export type { Rule, RuleContext, RuleResult } from "./rules/index.js";
+
+export { getPreset, listPresets } from "./core/presets.js";
+export type { Preset } from "./core/presets.js";

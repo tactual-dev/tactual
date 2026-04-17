@@ -1,9 +1,10 @@
 import type { PageState, Target, Finding } from "./types.js";
-import { severityFromScore } from "./types.js";
+import { severityFromScore, CONTROL_KINDS } from "./types.js";
 import type { NavigationGraph, PathResult } from "./graph.js";
 import type { ScoreInputs } from "../scoring/index.js";
 import { computeScores } from "../scoring/index.js";
 import { computeInteropRisk } from "../scoring/interop.js";
+import { simulateAction } from "./state-machine.js";
 import { builtinRules } from "../rules/index.js";
 import type { ATProfile } from "../profiles/types.js";
 import {
@@ -85,10 +86,14 @@ export function buildFinding(
     .map((p) => truncatePath(formatPath(graph, p), 5));
 
   // --- Confidence ---
+  // Base 0.8 with penalties for uncertain analysis contexts.
+  // Current max deduction: 0.1 + 0.15 + 0.25 = 0.5 → worst case 0.3.
+  // Floor of 0.1 ensures future penalties can't drive confidence to zero.
   let confidence = 0.8;
-  if (!nearestHeading && !nearestLandmark) confidence -= 0.1;
-  if (target.requiresBranchOpen) confidence -= 0.15;
-  if (shortestCost === Infinity) confidence -= 0.25;
+  if (!nearestHeading && !nearestLandmark) confidence -= 0.1;  // no structural context
+  if (target.requiresBranchOpen) confidence -= 0.15;           // hidden branch may not be explored
+  if (shortestCost === Infinity) confidence -= 0.25;           // unreachable target
+  confidence = Math.max(0.1, confidence);
 
   return {
     targetId: target.id,
@@ -101,7 +106,7 @@ export function buildFinding(
     alternatePaths: altPathDescs,
     penalties: [...new Set(penalties)],
     suggestedFixes: [...new Set(suggestedFixes)],
-    confidence: Math.round(Math.max(0.1, confidence) * 100) / 100,
+    confidence: Math.round(confidence * 100) / 100,
   };
 }
 
@@ -231,6 +236,11 @@ function generatePenalties(
     suggestedFixes.push("Add an aria-label, aria-labelledby, or visible text label");
   }
 
+  // State-aware penalties (from captured ARIA attribute values)
+  const stateResults = detectStatePenalties(target);
+  penalties.push(...stateResults.penalties);
+  suggestedFixes.push(...stateResults.suggestedFixes);
+
   // Explain low discoverability when no other penalty covers it.
   // Without this, an LLM sees D:47 + no penalties = no guidance.
   if (penalties.length === 0) {
@@ -251,8 +261,25 @@ function generatePenalties(
     focusNotTrapped?: boolean;
     tabbable?: boolean;
     hasPositiveTabindex?: boolean;
+    nestedFocusable?: boolean;
+    focusIndicatorSuppressed?: boolean;
     probeSucceeded?: boolean;
+    ariaStateBeforeEnter?: Record<string, string>;
+    ariaStateAfterEnter?: Record<string, string>;
   } | undefined;
+
+  // Pattern-deviation detection: predict the post-Enter state via the
+  // ARIA APG state machine and compare to what the probe actually
+  // observed. Mismatches indicate broken pattern implementations.
+  // Returns an array — a button with both aria-pressed AND aria-expanded
+  // can have both deviations reported.
+  if (probe?.probeSucceeded && probe.ariaStateBeforeEnter && probe.ariaStateAfterEnter) {
+    const deviations = detectPatternDeviation(target, probe.ariaStateBeforeEnter, probe.ariaStateAfterEnter);
+    for (const d of deviations) {
+      penalties.push(d.message);
+      suggestedFixes.push(d.fix);
+    }
+  }
 
   if (probe?.probeSucceeded) {
     if (probe.escapeRestoresFocus === false) {
@@ -274,6 +301,14 @@ function generatePenalties(
     if (probe.hasPositiveTabindex === true) {
       penalties.push("Element uses positive tabindex — this forces a non-standard Tab order that may confuse keyboard users");
       suggestedFixes.push("Remove the positive tabindex value and use DOM source order to control Tab sequence");
+    }
+    if (probe.nestedFocusable === true) {
+      penalties.push("This element contains a nested focusable child, causing duplicate tab stops — keyboard users must Tab through the same control twice");
+      suggestedFixes.push("Remove tabindex from the inner element, or use tabindex=\"-1\" on the outer element if only the inner one should be focusable");
+    }
+    if (probe.focusIndicatorSuppressed === true) {
+      penalties.push("Focus indicator is not visible — sighted keyboard users cannot see which element is focused");
+      suggestedFixes.push("Ensure a visible focus indicator via outline, box-shadow, or border change. Do not set outline:none without providing an alternative");
     }
   } else if (target.requiresBranchOpen) {
     penalties.push("Recovery cost: target is behind a hidden branch — dismissing may lose navigation position");
@@ -336,8 +371,7 @@ function classifyActionType(
 }
 
 function isControlKind(kind: string): boolean {
-  return kind === "button" || kind === "link" || kind === "formField" ||
-         kind === "menuTrigger" || kind === "tab" || kind === "search";
+  return CONTROL_KINDS.has(kind);
 }
 
 // ---------------------------------------------------------------------------
@@ -393,7 +427,6 @@ function deriveOperability(target: Target): {
   // Check for runtime probe results (passthrough field from probes.ts)
   const probe = (target as Record<string, unknown>)._probe as {
     focusable?: boolean;
-    activatable?: boolean;
     escapeRestoresFocus?: boolean;
     focusNotTrapped?: boolean;
     stateChanged?: boolean;
@@ -425,6 +458,10 @@ function deriveOperability(target: Target): {
   const isStateful = STATEFUL_ROLES.has(role);
   const managesFocus = FOCUS_MANAGING_ROLES.has(role);
 
+  // Without probe data, assume the worst for complex roles:
+  // - Stateful roles (combobox, checkbox) are assumed NOT to announce state changes
+  // - Focus-managing roles (dialog, menu) are assumed NOT to handle focus correctly
+  // The probe path provides ground truth; this is the conservative fallback.
   return {
     roleCorrect: !!role,
     keyboardCompatible: isInteractive || !isControlKind(target.kind),
@@ -485,4 +522,198 @@ function truncatePath(path: string[], maxSteps: number): string[] {
   const truncated = path.slice(0, maxSteps);
   truncated.push(`... (${path.length - maxSteps} more steps)`);
   return truncated;
+}
+
+/**
+ * Detect pattern-implementation deviation by comparing the actual
+ * probe-observed state change to the ARIA APG spec's expected behavior.
+ *
+ * Uses the canonical state machine in core/state-machine.ts to predict
+ * what each tracked aria-* attribute SHOULD be after pressing Enter,
+ * then compares against what the probe actually observed.
+ */
+function detectPatternDeviation(
+  target: Target,
+  before: Record<string, string>,
+  after: Record<string, string>,
+): Array<{ message: string; fix: string }> {
+  // Synthesize a target with the "before" attribute state, predict
+  // post-Enter via the canonical state machine.
+  const beforeTarget = {
+    ...target,
+    _attributeValues: { ...before },
+  } as Target;
+  const predicted = simulateAction(beforeTarget, "Enter");
+  // No predicted change for this role+state combination → nothing to verify
+  if (!predicted.changed) return [];
+
+  const out: Array<{ message: string; fix: string }> = [];
+  for (const change of predicted.changes) {
+    // Skip non-aria changes (e.g., slider _value updates aren't checked here)
+    if (!change.attr.startsWith("aria-")) continue;
+    const expected = change.to;
+    const actual = after[change.attr];
+    if (actual === expected) continue;
+
+    const role = target.role;
+    const patternName = role === "button"
+      ? (change.attr === "aria-pressed" ? "toggle-button" : "disclosure")
+      : role;
+    const fixHint =
+      change.attr === "aria-pressed"
+        ? "Ensure the button's onClick handler toggles aria-pressed. Screen-reader users rely on this state to know whether the toggle is active."
+        : change.attr === "aria-expanded"
+          ? "Ensure the button's click handler toggles aria-expanded AND shows/hides the disclosed content."
+          : `Ensure the ${role}'s keyboard handler toggles ${change.attr}. Screen-reader users rely on this state.`;
+
+    out.push({
+      message:
+        `Pattern deviation: pressing Enter on a ${patternName} should toggle ${change.attr} ` +
+        `from "${change.from ?? "(unset)"}" to "${expected}" per the ARIA APG ${patternName} ` +
+        `pattern, but probe observed ${change.attr}="${actual ?? "(unset)"}".`,
+      fix: fixHint,
+    });
+  }
+  return out;
+}
+
+/**
+ * State-aware penalties from captured ARIA attribute values.
+ *
+ * These checks complement rule-based penalties by reading the
+ * Target._attributeValues map populated during snapshot parsing.
+ * Each penalty represents something a screen-reader user would
+ * notice when navigating — confusing announcements, missing state
+ * info, disabled-but-discoverable controls, etc.
+ */
+function detectStatePenalties(target: Target): { penalties: string[]; suggestedFixes: string[] } {
+  const penalties: string[] = [];
+  const suggestedFixes: string[] = [];
+
+  // Orphaned aria-labelledby: references at least one ID that doesn't exist.
+  // The element appears unlabeled to AT despite developer intent.
+  if ((target as Record<string, unknown>)._labelledByMissing) {
+    penalties.push(
+      "aria-labelledby references an element ID that doesn't exist — " +
+      "the element has no accessible name despite the developer's intent.",
+    );
+    suggestedFixes.push(
+      "Verify the IDs in aria-labelledby match real elements on the page. " +
+      "Missing IDs silently produce unlabeled controls.",
+    );
+  }
+
+  // Orphaned aria-describedby: similar — description silently missing.
+  if ((target as Record<string, unknown>)._descriptionMissing) {
+    penalties.push(
+      "aria-describedby references an element ID that doesn't exist — " +
+      "the description the developer attached is silently dropped.",
+    );
+    suggestedFixes.push(
+      "Verify the IDs in aria-describedby match real elements on the page.",
+    );
+  }
+
+  // Assertive live region: interrupts whatever the user is doing.
+  // Use sparingly — for status messages, errors that need immediate attention.
+  const liveRegion = (target as Record<string, unknown>)._liveRegion as string | undefined;
+  if (liveRegion === "assertive" && target.kind !== "statusMessage") {
+    penalties.push(
+      "aria-live='assertive' interrupts the user mid-action. Use only for errors " +
+      "or critical alerts; routine updates should use 'polite'.",
+    );
+    suggestedFixes.push(
+      "Change aria-live='assertive' to 'polite' unless this is an error or critical alert " +
+      "that must be heard immediately.",
+    );
+  }
+
+  const attrs = (target as Record<string, unknown>)._attributeValues as
+    | Record<string, string>
+    | undefined;
+  if (!attrs) return { penalties, suggestedFixes };
+
+  const role = target.role;
+  const name = (target.name ?? "").toLowerCase();
+
+  // Label-state mismatch: button labeled "expand"/"collapse"/etc. while
+  // aria-expanded is set. NVDA reads both, producing confusing announcements
+  // like "Collapse, expanded" — technically correct but reads as a contradiction.
+  const expanded = attrs["aria-expanded"];
+  if (
+    expanded !== undefined &&
+    (role === "button" || role === "link") &&
+    /\b(expand|collapse|show|hide|open|close)\b/.test(name)
+  ) {
+    penalties.push(
+      `Label-state mismatch: button labeled "${target.name}" with aria-expanded=${expanded} ` +
+      `produces a confusing announcement (e.g., "Collapse, expanded"). The label describes ` +
+      `the action; the state describes the current condition.`,
+    );
+    suggestedFixes.push(
+      "Use a state-neutral label (e.g., 'Toggle operation details') and let aria-expanded " +
+      "convey state, or swap the label dynamically: 'Show details' when collapsed, 'Hide details' when expanded.",
+    );
+  }
+
+  // Disabled-but-discoverable: form fields and controls that are in the AT
+  // tree but disabled. NVDA announces them, users tab to them, can't interact.
+  const isDisabled = attrs["aria-disabled"] === "true";
+  const isFormControl =
+    role === "textbox" || role === "searchbox" || role === "combobox" ||
+    role === "listbox" || role === "spinbutton" || role === "slider" ||
+    role === "checkbox" || role === "radio" || role === "switch";
+  if (isDisabled && (isFormControl || role === "button" || role === "link")) {
+    penalties.push(
+      `Control is in the accessibility tree but disabled (aria-disabled=true). ` +
+      `Screen-reader users will navigate to it and hear "unavailable" but cannot interact.`,
+    );
+    suggestedFixes.push(
+      "If the control should be hidden until enabled, add aria-hidden='true' and remove " +
+      "from tab order. If it must be visible, ensure surrounding context explains why " +
+      "it is disabled (e.g., 'Click \"Try it out\" to enable these fields').",
+    );
+  }
+
+  // Tab missing aria-selected: required for tab pattern, NVDA can't announce
+  // which tab is current without it.
+  if (role === "tab" && attrs["aria-selected"] === undefined) {
+    penalties.push(
+      "Tab missing aria-selected — screen-reader users cannot tell which tab is currently active.",
+    );
+    suggestedFixes.push(
+      "Add aria-selected='true' to the active tab and aria-selected='false' to the others.",
+    );
+  }
+
+  // Combobox/listbox/menu missing aria-expanded: NVDA can't announce whether
+  // the popup is open or closed.
+  if (
+    (role === "combobox" || role === "listbox" || role === "menu") &&
+    attrs["aria-expanded"] === undefined
+  ) {
+    penalties.push(
+      `${role} missing aria-expanded — screen-reader users cannot tell if the popup is open or closed.`,
+    );
+    suggestedFixes.push(
+      `Add aria-expanded='true' when the ${role} is open and 'false' when closed. ` +
+      "Update on toggle.",
+    );
+  }
+
+  // Cross-AT divergence — flags when AT announcements likely diverge in
+  // a way that affects the user. Confidence labels are honest about
+  // what's verified vs heuristic. See sr-simulator.ts data quality note.
+  // (Inlined here to avoid core → playwright import dependency.)
+  if (role === "combobox" && attrs["aria-expanded"] !== undefined) {
+    penalties.push(
+      "Cross-AT divergence (HIGH confidence for native <select>, MEDIUM for " +
+      "ARIA combobox): VoiceOver announces this combobox as 'popup button' " +
+      "with state implicit in the role text, while NVDA/JAWS announce " +
+      "'combo box, expanded/collapsed' explicitly. Verify with real testing " +
+      "if this control is on a critical path.",
+    );
+  }
+
+  return { penalties, suggestedFixes };
 }

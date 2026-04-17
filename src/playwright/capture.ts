@@ -56,6 +56,10 @@ export async function captureState(
     }
   }
 
+  // Enrich targets with ARIA reference data (describedby text, labelledby
+  // validity, live regions). Single DOM pass — adds ~50ms typical.
+  await enrichWithAriaReferences(page, targets);
+
   const snapshotHash = hash(snapshotYaml);
 
   // Hash interactive elements for state dedup
@@ -111,7 +115,7 @@ async function waitForConvergence(
   snapshotDepth?: number,
 ): Promise<{ targets: Target[]; yaml: string }> {
   const start = Date.now();
-  let prevCount = 0;
+  let prevCount = -1;
   let stableRounds = 0;
   let bestTargets: Target[] = [];
   let bestYaml = "";
@@ -204,6 +208,9 @@ async function waitForFrameworkRender(page: Page, timeout: number): Promise<void
 /**
  * Parse Playwright's aria snapshot YAML format into Targets.
  */
+/** Hard cap on targets from a single snapshot to prevent DoS on pathological pages. */
+const MAX_SNAPSHOT_TARGETS = 5000;
+
 export function parseAriaSnapshot(yaml: string): Target[] {
   const targets: Target[] = [];
   let counter = 0;
@@ -211,6 +218,7 @@ export function parseAriaSnapshot(yaml: string): Target[] {
   const lines = yaml.split("\n");
 
   for (const line of lines) {
+    if (targets.length >= MAX_SNAPSHOT_TARGETS) break;
     const trimmed = line.trim();
     if (!trimmed || !trimmed.startsWith("- ")) continue;
 
@@ -254,6 +262,12 @@ export function parseAriaSnapshot(yaml: string): Target[] {
       requiresBranchOpen: false,
       // Store raw ARIA attributes for interop risk calibration and feature detection
       ...(parsed.attributes && parsed.attributes.length > 0 ? { _attributes: parsed.attributes } : {}),
+      // State values for the SR simulator (e.g., aria-expanded=false, aria-checked=true)
+      ...(parsed.attributeValues && Object.keys(parsed.attributeValues).length > 0
+        ? { _attributeValues: parsed.attributeValues }
+        : {}),
+      // Slider/spinbutton/progressbar value (from trailing `: "75"` in ariaSnapshot)
+      ...(parsed.value ? { _value: parsed.value } : {}),
     } as Target);
   }
 
@@ -264,8 +278,13 @@ interface ParsedLine {
   role: string;
   name?: string;
   level?: number;
-  /** Raw ARIA attribute names from the snapshot (e.g., ["selected", "expanded=false"]) */
+  /** Slider/spinbutton/progressbar trailing `: "value"` (e.g., "75") */
+  value?: string;
+  /** Raw ARIA attribute names from the snapshot (e.g., ["aria-checked", "aria-expanded"]) */
   attributes?: string[];
+  /** ARIA attribute values from the snapshot (e.g., { "aria-expanded": "false" }).
+   *  Bare tokens like [checked] are recorded with value "true". */
+  attributeValues?: Record<string, string>;
 }
 
 function parseSnapshotLine(content: string): ParsedLine | null {
@@ -273,27 +292,35 @@ function parseSnapshotLine(content: string): ParsedLine | null {
 
   // Match role, optional "name", optional [attrs], optional : "value" (slider/spinbutton current value)
   const match = cleaned.match(
-    /^(\w[\w-]*?)(?:\s+"([^"]*)")?(?:\s+\[([^\]]*)\])?(?::\s+"[^"]*")?$/,
+    /^(\w[\w-]*?)(?:\s+"([^"]*)")?(?:\s+\[([^\]]*)\])?(?::\s+"([^"]*)")?$/,
   );
   if (!match) return null;
 
   const role = match[1];
   const name = match[2];
   const attrs = match[3];
+  const value = match[4];
 
   let level: number | undefined;
   const attributes: string[] = [];
+  const attributeValues: Record<string, string> = {};
   if (attrs) {
     const levelMatch = attrs.match(/level=(\d+)/);
     if (levelMatch) level = parseInt(levelMatch[1], 10);
     // Extract all attribute tokens (e.g., "selected", "expanded=false", "haspopup=menu")
     for (const token of attrs.split(/\s+/)) {
-      const attrName = token.split("=")[0].trim();
-      if (attrName) attributes.push(`aria-${attrName}`);
+      const eqIdx = token.indexOf("=");
+      const attrName = (eqIdx >= 0 ? token.slice(0, eqIdx) : token).trim();
+      const attrVal = eqIdx >= 0 ? token.slice(eqIdx + 1).trim() : "true";
+      if (attrName) {
+        const ariaKey = `aria-${attrName}`;
+        attributes.push(ariaKey);
+        attributeValues[ariaKey] = attrVal;
+      }
     }
   }
 
-  return { role, name, level, attributes };
+  return { role, name, level, value, attributes, attributeValues };
 }
 
 function roleToTargetKind(role: string): TargetKind | null {
@@ -372,4 +399,104 @@ async function hideExcludedElements(page: Page, selectors: string[]): Promise<vo
 
 function hash(input: string): string {
   return createHash("sha256").update(input).digest("hex");
+}
+
+// ---------------------------------------------------------------------------
+// ARIA reference enrichment (describedby resolution, labelledby validity,
+// live regions). Adds Target._description, _descriptionMissing,
+// _labelledByMissing, _liveRegion.
+// ---------------------------------------------------------------------------
+
+interface AriaEnrichment {
+  role: string;
+  name: string;
+  description?: string;
+  descriptionMissing?: boolean;
+  labelledByMissing?: boolean;
+  liveRegion?: string;
+}
+
+async function enrichWithAriaReferences(page: Page, targets: Target[]): Promise<void> {
+  const enrichments = await page.evaluate(() => {
+    // DOM types not in tsconfig lib — declared via `as never` cast pattern.
+    const doc = (globalThis as unknown as { document: {
+      querySelectorAll(s: string): ArrayLike<{
+        getAttribute(n: string): string | null;
+        textContent: string | null;
+        tagName: string;
+      }>;
+      getElementById(id: string): { textContent: string | null } | null;
+    } }).document;
+    const results: Array<{
+      role: string; name: string; description?: string;
+      descriptionMissing?: boolean; labelledByMissing?: boolean; liveRegion?: string;
+    }> = [];
+
+    const elements = doc.querySelectorAll(
+      "[aria-describedby], [aria-labelledby], [aria-live]",
+    );
+
+    for (let i = 0; i < elements.length; i++) {
+      const el = elements[i];
+      const role = (el.getAttribute("role") ?? el.tagName.toLowerCase()).trim();
+      const name = (el.getAttribute("aria-label") ?? "").trim();
+
+      const out: typeof results[number] = { role, name };
+
+      const describedBy = el.getAttribute("aria-describedby");
+      if (describedBy) {
+        const ids = describedBy.split(/\s+/).filter(Boolean);
+        const texts: string[] = [];
+        let missing = false;
+        for (const id of ids) {
+          const ref = doc.getElementById(id);
+          if (!ref) {
+            missing = true;
+          } else if (ref.textContent) {
+            texts.push(ref.textContent.trim());
+          }
+        }
+        if (texts.length > 0) out.description = texts.join(" ");
+        if (missing) out.descriptionMissing = true;
+      }
+
+      const labelledBy = el.getAttribute("aria-labelledby");
+      if (labelledBy) {
+        const ids = labelledBy.split(/\s+/).filter(Boolean);
+        const allMissing = ids.every((id) => !doc.getElementById(id));
+        const someMissing = ids.some((id) => !doc.getElementById(id));
+        if (allMissing) out.labelledByMissing = true;
+        else if (someMissing) out.labelledByMissing = true;
+      }
+
+      const live = el.getAttribute("aria-live");
+      if (live && (live === "polite" || live === "assertive")) {
+        out.liveRegion = live;
+      }
+
+      if (out.description || out.descriptionMissing || out.labelledByMissing || out.liveRegion) {
+        results.push(out);
+      }
+    }
+
+    return results;
+  }).catch(() => [] as AriaEnrichment[]);
+
+  // Match enrichments to targets by role + name (best-effort, first-fit).
+  // Multiple targets with same role+name will only match the first enrichment.
+  const used = new Set<number>();
+  for (const target of targets) {
+    const targetName = (target.name ?? "").trim();
+    const idx = enrichments.findIndex(
+      (e, i) => !used.has(i) && e.role === target.role && e.name === targetName,
+    );
+    if (idx < 0) continue;
+    used.add(idx);
+    const e = enrichments[idx];
+    const t = target as Record<string, unknown>;
+    if (e.description) t._description = e.description;
+    if (e.descriptionMissing) t._descriptionMissing = true;
+    if (e.labelledByMissing) t._labelledByMissing = true;
+    if (e.liveRegion) t._liveRegion = e.liveRegion;
+  }
 }

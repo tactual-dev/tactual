@@ -6,11 +6,20 @@ import { formatReport, type ReportFormat } from "../reporters/index.js";
 import { analyze } from "../core/analyzer.js";
 import { validateUrl } from "../core/url-validation.js";
 import { loadConfig, mergeConfigWithFlags, configToFilter } from "../core/config.js";
+import { getPreset, listPresets } from "../core/presets.js";
 import { checkThreshold } from "../core/filter.js";
 import { buildGraph } from "../core/graph-builder.js";
 import { collectEntryPoints, computePathsFromEntries } from "../core/path-analysis.js";
-import type { AnalysisResult, Finding } from "../core/types.js";
+import { extractFindings, type NormalizedFinding } from "../mcp/helpers.js";
 import { VERSION } from "../version.js";
+
+function validateNum(value: number, flag: string): number {
+  if (isNaN(value)) {
+    console.error(`Invalid numeric value for ${flag}`);
+    process.exit(1);
+  }
+  return value;
+}
 
 const program = new Command();
 
@@ -39,6 +48,7 @@ program
   .option("--explore-depth <n>", "Max exploration depth", "3")
   .option("--explore-budget <n>", "Max exploration actions", "50")
   .option("--explore-max-targets <n>", "Max accumulated targets before stopping exploration", "2000")
+  .option("--allow-action <patterns...>", "Allow exploring controls matching these name/role patterns (overrides safety policy)")
   // Filtering
   .option("--exclude <patterns...>", "Exclude targets matching these name/role patterns")
   .option("--exclude-selector <selectors...>", "CSS selectors to exclude from capture")
@@ -46,12 +56,14 @@ program
   .option("--suppress <codes...>", "Suppress these diagnostic codes")
   // Analysis
   .option("--probe", "Run keyboard probes on interactive targets (adds 30-60s but detects focus/keyboard issues)")
+  .option("--probe-budget <n>", "Maximum targets to probe (default: 20, increase for deeper keyboard testing)")
   // Display
-  .option("--top <n>", "Only show the worst N findings")
+  .option("--top <n>", "Only show the worst N findings (default: 15)")
   .option("--min-severity <level>", "Minimum severity to report (severe|high|moderate|acceptable|strong)")
   .option("-q, --quiet", "Suppress info-level diagnostics")
   // CI
   .option("--threshold <n>", "Exit non-zero if average score is below this")
+  .option("--preset <name>", "Use a scoring preset (ecommerce-checkout, docs-site, dashboard, form-heavy)")
   .option("--config <path>", "Path to tactual.json config file")
   // Browser
   .option("--no-headless", "Run browser in headed mode (helps with bot-blocked sites)")
@@ -59,6 +71,7 @@ program
   .option("--wait-for-selector <selector>", "CSS selector to wait for before capturing (essential for SPAs)")
   .option("--wait-time <ms>", "Additional milliseconds to wait after page load")
   .option("--storage-state <path>", "Playwright storageState JSON file for authenticated pages")
+  .option("--also-json <path>", "Also write JSON output to this path (avoids a second analysis run in CI)")
   .option("--summary-only", "Output only summary stats (~500 bytes)")
   .action(
     async (
@@ -72,37 +85,51 @@ program
         exploreDepth?: string;
         exploreBudget?: string;
         exploreMaxTargets?: string;
+        allowAction?: string[];
         exclude?: string[];
         excludeSelector?: string[];
         focus?: string[];
         suppress?: string[];
         probe?: boolean;
+        probeBudget?: string;
         top?: string;
         minSeverity?: string;
         quiet?: boolean;
         threshold?: string;
+        preset?: string;
         config?: string;
         headless?: boolean;
         timeout?: string;
         waitForSelector?: string;
         waitTime?: string;
         storageState?: string;
+        alsoJson?: string;
         summaryOnly?: boolean;
       },
     ) => {
-      // Load config file and merge with CLI flags
+      // Load preset → config file → CLI flags (each layer overrides the previous)
+      let baseConfig = {};
+      if (opts.preset) {
+        const preset = getPreset(opts.preset);
+        if (!preset) {
+          console.error(`Unknown preset: ${opts.preset}`);
+          console.error(`Available: ${listPresets().map((p) => p.id).join(", ")}`);
+          process.exit(1);
+        }
+        baseConfig = preset.config;
+      }
       const fileConfig = loadConfig(opts.config);
-      const merged = mergeConfigWithFlags(fileConfig, {
+      const merged = mergeConfigWithFlags(mergeConfigWithFlags(baseConfig, fileConfig), {
         profile: opts.profile,
         device: opts.device,
         explore: opts.explore,
         exclude: opts.exclude,
         excludeSelectors: opts.excludeSelector,
         focus: opts.focus,
-        suppress: opts.suppress as undefined,
-        threshold: opts.threshold ? parseFloat(opts.threshold) : undefined,
-        maxFindings: opts.top ? parseInt(opts.top, 10) : undefined,
-        minSeverity: opts.minSeverity as undefined,
+        suppress: opts.suppress,
+        threshold: opts.threshold ? validateNum(parseFloat(opts.threshold), "--threshold") : undefined,
+        maxFindings: opts.top ? validateNum(parseInt(opts.top, 10), "--top") : undefined,
+        minSeverity: opts.minSeverity as "severe" | "high" | "moderate" | "acceptable" | "strong" | undefined,
       });
 
       const profileId = merged.profile ?? "generic-mobile-web-sr-v0";
@@ -167,7 +194,10 @@ program
         });
         // Short wait before capture — SPA convergence in captureState handles content readiness
         await page.waitForTimeout(2000);
-        if (opts.waitForSelector) { await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => {}); }
+        if (opts.waitForSelector) {
+          const found = await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => null);
+          if (!found) process.stderr.write(`  Warning: waitForSelector "${opts.waitForSelector}" timed out\n`);
+        }
         if (opts.waitTime) { await page.waitForTimeout(parseInt(opts.waitTime, 10)); }
 
         const rawState = await captureState(page, {
@@ -180,9 +210,21 @@ program
         let targets = rawState.targets;
         if (opts.probe) {
           const { probeTargets } = await import("../playwright/probes.js");
-          targets = await probeTargets(page, rawState.targets);
+          const probeBudget = opts.probeBudget ? parseInt(opts.probeBudget, 10) : undefined;
+          targets = await probeTargets(page, rawState.targets, probeBudget);
         }
         const state = { ...rawState, targets };
+
+        // SR announcement simulation — runs automatically (instant, non-invasive)
+        // Catches landmarks that the AT tree reports but NVDA would not announce
+        // (e.g., <header> inside <section> loses its implicit banner role)
+        const { simulateScreenReader, aggregateDemotedLandmarks } =
+          await import("../playwright/sr-simulator.js");
+        const srSim = await simulateScreenReader(page, targets);
+        // Aggregate demoted landmarks by role + reason so a page with
+        // 13 unlabeled regions emits one diagnostic instead of 13.
+        const srDiagnostics = aggregateDemotedLandmarks(srSim.demotedLandmarks);
+
 
         const snapshotText = await page.ariaSnapshot().catch(() => "");
 
@@ -193,13 +235,28 @@ program
           const depth = parseInt(opts.exploreDepth ?? "3", 10);
           const budget = parseInt(opts.exploreBudget ?? "50", 10);
           const maxTargets = parseInt(opts.exploreMaxTargets ?? "2000", 10);
+          const allowPatterns = (opts.allowAction ?? []).map((p: string) => {
+            const escaped = p.toLowerCase().replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".");
+            return new RegExp(`^${escaped}$`, "i");
+          });
           const exploreResult = await exploreState(page, state, {
             device,
             maxDepth: depth,
             maxActions: budget,
             maxTotalTargets: maxTargets,
+            allowActionPatterns: allowPatterns.length > 0 ? allowPatterns : undefined,
           });
           states = exploreResult.states;
+          if (exploreResult.skippedElements.length > 0 && isTTY) {
+            process.stderr.write(`  Skipped ${exploreResult.skippedElements.length} unsafe element(s):\n`);
+            for (const s of exploreResult.skippedElements.slice(0, 5)) {
+              process.stderr.write(`    ${s.id} — ${s.reason}\n`);
+            }
+            if (exploreResult.skippedElements.length > 5) {
+              process.stderr.write(`    ... and ${exploreResult.skippedElements.length - 5} more\n`);
+            }
+            process.stderr.write(`  Use --allow-action "<pattern>" to override.\n`);
+          }
         }
 
         const result = analyze(states, profile, {
@@ -209,21 +266,28 @@ program
           filter,
         });
 
-        if (opts.summaryOnly) {
-          const { summarize } = await import("../reporters/summarize.js");
-          const s = summarize(result);
-          stopProgress();
-          console.log(JSON.stringify({ url, profile: s.profile, stats: s.stats, severityCounts: s.severityCounts, topIssues: s.issueGroups.slice(0, 3).map(g => ({ issue: g.issue, count: g.count, worstScore: g.worstScore })) }, null, 2));
-          return; // skip normal output
+        // Append SR simulator diagnostics (demoted landmarks)
+        if (srDiagnostics.length > 0) {
+          result.diagnostics.push(...srDiagnostics);
         }
 
         stopProgress();
         const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-        const output = formatReport(result, opts.format as ReportFormat);
 
-        // For console format, append timing
-        if (opts.format === "console" && isTTY) {
-          console.error(`  ${"\x1b[90m"}Completed in ${elapsed}s${"\x1b[0m"}`);
+        let output: string;
+        if (opts.summaryOnly) {
+          const { summarize } = await import("../reporters/summarize.js");
+          const s = summarize(result);
+          output = JSON.stringify({ url, profile: s.profile, stats: s.stats, severityCounts: s.severityCounts, diagnostics: s.diagnostics, topIssues: s.issueGroups.slice(0, 3).map(g => ({ issue: g.issue, count: g.count, worstScore: g.worstScore })) }, null, 2);
+        } else {
+          const topN = opts.top ? parseInt(opts.top, 10) : undefined;
+          output = formatReport(result, opts.format as ReportFormat, { maxDetailedFindings: topN });
+        }
+
+        // For console format, append timing + device info
+        if (opts.format === "console" && isTTY && !opts.summaryOnly) {
+          const deviceNote = device ? ` (device: ${device})` : "";
+          console.error(`  ${"\x1b[90m"}Completed in ${elapsed}s${deviceNote}${"\x1b[0m"}`);
         }
 
         if (opts.output) {
@@ -232,6 +296,21 @@ program
           console.error(`Report written to ${opts.output}`);
         } else {
           console.log(output);
+        }
+
+        // --also-json: write JSON alongside the primary format (single analysis run)
+        if (opts.alsoJson && opts.format !== "json") {
+          const fs = await import("fs/promises");
+          const jsonOutput = formatReport(result, "json");
+          try {
+            await fs.writeFile(opts.alsoJson, jsonOutput, "utf-8");
+            console.error(`JSON also written to ${opts.alsoJson}`);
+          } catch (err) {
+            console.error(
+              `Error: --also-json write failed for ${opts.alsoJson}: ${err instanceof Error ? err.message : err}`,
+            );
+            process.exit(1);
+          }
         }
 
         // Threshold check for CI
@@ -334,7 +413,8 @@ program
         await page.waitForTimeout(2000);
 
         if (opts.waitForSelector) {
-          await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => {});
+          const found = await page.waitForSelector(opts.waitForSelector, { timeout }).catch(() => null);
+          if (!found) process.stderr.write(`  Warning: waitForSelector "${opts.waitForSelector}" timed out\n`);
         }
 
         const state = await captureState(page, { provenance: "scripted" });
@@ -406,7 +486,7 @@ program
               edge.action,
               toTarget?.role ?? "unknown",
               toTarget?.name || "(unnamed)",
-              toTarget?.kind,
+              toTarget?.headingLevel,
             );
 
             const isLast = i === bestPath.edges.length - 1;
@@ -455,13 +535,14 @@ program
     const urlCheck = validateUrl(url);
     if (!urlCheck.valid) { console.error(`Invalid URL: ${urlCheck.error}`); process.exit(1); }
 
+    let browser: import("playwright").Browser | undefined;
     try {
       const pw = await import("playwright");
       const fs = await import("fs/promises");
       const pathMod = await import("path");
 
       const timeout = parseInt(opts.timeout ?? "30000", 10);
-      const browser = await pw.chromium.launch();
+      browser = await pw.chromium.launch();
       const context = await browser.newContext();
       const page = await context.newPage();
 
@@ -498,10 +579,11 @@ program
       console.log(`Auth state saved to ${resolved}`);
       console.log(`Use with: tactual analyze-url <url> --storage-state ${opts.output}`);
 
-      await browser.close();
     } catch (err) {
       console.error(`Auth failed: ${err instanceof Error ? err.message : err}`);
       process.exit(1);
+    } finally {
+      await browser?.close().catch(() => {});
     }
   });
 
@@ -554,7 +636,10 @@ program
           const page = await context.newPage();
           await page.goto(urlCheck.url!, { waitUntil: "domcontentloaded", timeout });
           await page.waitForTimeout(2000);
-          if (opts.waitForSelector) await page.waitForSelector(opts.waitForSelector, { timeout: 10000 }).catch(() => {});
+          if (opts.waitForSelector) {
+            const found = await page.waitForSelector(opts.waitForSelector, { timeout: 10000 }).catch(() => null);
+            if (!found) process.stderr.write(`  Warning: waitForSelector "${opts.waitForSelector}" timed out\n`);
+          }
           if (opts.waitTime) await page.waitForTimeout(parseInt(opts.waitTime, 10));
 
           const state = await captureState(page, { provenance: "scripted", spaWaitTimeout: 15000 });
@@ -564,7 +649,7 @@ program
           const scores = result.findings.map(f => f.scores.overall);
           const sorted = [...scores].sort((a, b) => a - b);
           const avg = scores.length > 0 ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length * 10) / 10 : 0;
-          const p10 = sorted.length >= 5 ? sorted[Math.floor(sorted.length * 0.1)] : sorted[0] ?? 0;
+          const p10 = sorted.length >= 5 ? sorted[Math.max(0, Math.ceil(sorted.length * 0.1) - 1)] : sorted[0] ?? 0;
           const median = sorted.length > 0 ? sorted[Math.floor(sorted.length * 0.5)] : 0;
           const worst = sorted[0] ?? 0;
 
@@ -588,7 +673,7 @@ program
 
       // Aggregate
       const allSorted = [...allScores].sort((a, b) => a - b);
-      const siteP10 = allSorted.length >= 5 ? allSorted[Math.floor(allSorted.length * 0.1)] : allSorted[0] ?? 0;
+      const siteP10 = allSorted.length >= 5 ? allSorted[Math.max(0, Math.ceil(allSorted.length * 0.1) - 1)] : allSorted[0] ?? 0;
       const siteMedian = allSorted.length > 0 ? allSorted[Math.floor(allSorted.length * 0.5)] : 0;
       const siteAvg = allScores.length > 0 ? Math.round(allScores.reduce((a, b) => a + b, 0) / allScores.length * 10) / 10 : 0;
 
@@ -599,7 +684,7 @@ program
         }, null, 2));
       } else {
         // Console format
-        const c = process.stdout.isTTY !== false && !process.env.NO_COLOR;
+        const c = process.stdout.isTTY === true && !process.env.NO_COLOR;
         const bold = c ? "\x1b[1m" : "";
         const dim = c ? "\x1b[2m" : "";
         const green = c ? "\x1b[32m" : "";
@@ -621,7 +706,7 @@ program
         console.log("");
 
         for (const r of pageResults) {
-          const scoreColor = r.p10 >= 90 ? green : r.p10 >= 75 ? green : r.p10 >= 60 ? yellow : red;
+          const scoreColor = r.p10 >= 75 ? green : r.p10 >= 60 ? yellow : red;
           console.log(`  ${scoreColor}P10:${r.p10}${reset}  ${dim}Med:${r.median} Avg:${r.avg}${reset}  ${r.url}`);
           if (r.topIssue) console.log(`  ${dim}       ↳ ${r.topIssue}${reset}`);
         }
@@ -690,13 +775,30 @@ program
   .option("-f, --format <format>", "Output format: json, markdown, console, sarif", "console")
   .action(async (baseline: string, candidate: string, opts: { format: string }) => {
     const fs = await import("fs/promises");
+    const readJson = async (path: string, label: string) => {
+      try {
+        return JSON.parse(await fs.readFile(path, "utf-8")) as Record<string, unknown>;
+      } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code === "ENOENT") {
+          console.error(`Error: ${label} file not found: ${path}`);
+        } else if (err instanceof SyntaxError) {
+          console.error(`Error: ${label} file is not valid JSON: ${path}`);
+        } else {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error(`Error reading ${label} (${path}): ${msg}`);
+        }
+        process.exit(1);
+      }
+    };
+    const baseData = await readJson(baseline, "baseline");
+    const candData = await readJson(candidate, "candidate");
     try {
-      const baseData = JSON.parse(await fs.readFile(baseline, "utf-8")) as AnalysisResult;
-      const candData = JSON.parse(await fs.readFile(candidate, "utf-8")) as AnalysisResult;
       const diff = computeDiff(baseData, candData);
       console.log(formatDiff(diff, opts.format as ReportFormat));
     } catch (err) {
-      console.error(`Error: ${err}`);
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`Error computing diff: ${msg}`);
       process.exit(1);
     }
   });
@@ -708,12 +810,116 @@ program
   .description("List available AT profiles")
   .action(() => {
     const profiles = listProfiles();
+    const idWidth = Math.max(...profiles.map((id) => id.length));
     console.log("Available profiles:");
+    console.log("");
     for (const id of profiles) {
       const p = getProfile(id);
-      console.log(`  ${id}  ${p?.platform ?? ""} — ${p?.description?.slice(0, 60) ?? ""}`);
+      const platform = (p?.platform ?? "").padEnd(7);
+      console.log(`  ${id.padEnd(idWidth)}  ${platform}  ${p?.description ?? ""}`);
     }
+    console.log("");
+    console.log("Usage: npx tactual analyze-url <url> --profile <id>");
   });
+
+// ---- presets ----
+
+program
+  .command("presets")
+  .description("List available scoring presets")
+  .action(() => {
+    const presets = listPresets();
+    console.log("Available presets:");
+    console.log("");
+    for (const p of presets) {
+      console.log(`  ${p.id}`);
+      console.log(`    ${p.description}`);
+      if (p.config.focus) console.log(`    Focus: ${p.config.focus.join(", ")}`);
+      const critical = Object.entries(p.config.priority ?? {}).filter(([, v]) => v === "critical").map(([k]) => k);
+      if (critical.length > 0) console.log(`    Critical targets: ${critical.join(", ")}`);
+      console.log("");
+    }
+    console.log("Usage: npx tactual analyze-url <url> --preset <name>");
+  });
+
+// ---- transcript ----
+
+program
+  .command("transcript <url>")
+  .description("Print a screen-reader navigation transcript for a URL — what an SR user hears as they Tab through interactive elements")
+  .option("--at <name>", "Screen reader to simulate: nvda | jaws | voiceover", "nvda")
+  .option("--timeout <ms>", "Page load timeout", "30000")
+  .option("--wait-for-selector <selector>", "CSS selector to wait for (SPAs)")
+  .option("--storage-state <path>", "Playwright storageState JSON for authenticated pages")
+  .option("--format <format>", "Output format: text | json", "text")
+  .action(
+    async (
+      url: string,
+      opts: {
+        at?: string;
+        timeout?: string;
+        waitForSelector?: string;
+        storageState?: string;
+        format?: string;
+      },
+    ) => {
+      const at = (opts.at ?? "nvda") as "nvda" | "jaws" | "voiceover";
+      if (!["nvda", "jaws", "voiceover"].includes(at)) {
+        console.error(`Unknown --at value: ${opts.at}. Use: nvda | jaws | voiceover`);
+        process.exit(1);
+      }
+
+      const urlCheck = validateUrl(url);
+      if (!urlCheck.valid) {
+        console.error(`Invalid URL: ${urlCheck.error}`);
+        process.exit(1);
+      }
+
+      let browser;
+      try {
+        const pw = await import("playwright");
+        const { captureState } = await import("../playwright/capture.js");
+        const { buildTranscript } = await import("../playwright/sr-simulator.js");
+
+        browser = await pw.chromium.launch();
+        const contextOpts: Record<string, unknown> = {};
+        if (opts.storageState) contextOpts.storageState = opts.storageState;
+        const context = await browser.newContext(contextOpts);
+        const page = await context.newPage();
+        await page.goto(urlCheck.url!, {
+          timeout: parseInt(opts.timeout ?? "30000", 10),
+        });
+        if (opts.waitForSelector) {
+          await page.waitForSelector(opts.waitForSelector);
+        }
+
+        const state = await captureState(page);
+        const transcript = buildTranscript(state.targets, at);
+
+        if (opts.format === "json") {
+          console.log(JSON.stringify({ url: urlCheck.url, at, transcript }, null, 2));
+        } else {
+          console.log(`Transcript (${at.toUpperCase()}, ${transcript.length} steps): ${urlCheck.url}`);
+          console.log("");
+          for (const step of transcript) {
+            const kindLabel = step.kind.padEnd(13);
+            console.log(`  ${String(step.step).padStart(3)}. [${kindLabel}] ${step.announcement}`);
+          }
+        }
+      } catch (err) {
+        if (
+          err instanceof Error &&
+          (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))
+        ) {
+          console.error("Playwright is required for transcript. Install it: npm install playwright");
+          process.exit(1);
+        }
+        throw err;
+      } finally {
+        await browser?.close().catch(() => {});
+      }
+    },
+  );
 
 // ---- init ----
 
@@ -787,8 +993,8 @@ program.parse();
 
 interface DiffEntry {
   targetId: string;
-  baseline: Finding | undefined;
-  candidate: Finding | undefined;
+  baseline: NormalizedFinding | undefined;
+  candidate: NormalizedFinding | undefined;
   overallDelta: number;
 }
 
@@ -799,9 +1005,11 @@ interface DiffResult {
   unchanged: number;
 }
 
-function computeDiff(baseline: AnalysisResult, candidate: AnalysisResult): DiffResult {
-  const baseMap = new Map(baseline.findings.map((f) => [f.targetId, f]));
-  const candMap = new Map(candidate.findings.map((f) => [f.targetId, f]));
+function computeDiff(baseline: Record<string, unknown>, candidate: Record<string, unknown>): DiffResult {
+  // Use the shared extractor from mcp/helpers — handles AnalysisResult,
+  // SummarizedResult (JSON reporter), and SARIF shapes.
+  const baseMap = new Map(extractFindings(baseline).map((f) => [f.targetId, f]));
+  const candMap = new Map(extractFindings(candidate).map((f) => [f.targetId, f]));
   const allIds = new Set([...baseMap.keys(), ...candMap.keys()]);
 
   const entries: DiffEntry[] = [];
@@ -812,7 +1020,7 @@ function computeDiff(baseline: AnalysisResult, candidate: AnalysisResult): DiffR
   for (const id of allIds) {
     const b = baseMap.get(id);
     const c = candMap.get(id);
-    const delta = (c?.scores.overall ?? 0) - (b?.scores.overall ?? 0);
+    const delta = (c?.overall ?? 0) - (b?.overall ?? 0);
     entries.push({ targetId: id, baseline: b, candidate: c, overallDelta: delta });
     if (delta > 0) improved++;
     else if (delta < 0) regressed++;
@@ -832,10 +1040,11 @@ function formatDiff(diff: DiffResult, _format: ReportFormat): string {
 
   for (const entry of diff.entries) {
     const sign = entry.overallDelta > 0 ? "+" : "";
-    const base = entry.baseline?.scores.overall ?? "new";
-    const cand = entry.candidate?.scores.overall ?? "removed";
+    const base = entry.baseline?.overall ?? "new";
+    const cand = entry.candidate?.overall ?? "removed";
     lines.push(`  ${entry.targetId}: ${base} -> ${cand} (${sign}${entry.overallDelta})`);
   }
 
   return lines.join("\n");
 }
+

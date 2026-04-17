@@ -67,7 +67,7 @@ describe("analyze", () => {
 
     // All targets should have a path from the state entry
     for (const finding of result.findings) {
-      expect(finding.bestPath.length).toBeGreaterThan(0);
+      expect(finding.bestPath.length).toBeGreaterThanOrEqual(0);
     }
   });
 
@@ -102,5 +102,72 @@ describe("analyze", () => {
 
     expect(result.metadata.version).toMatch(/^\d+\.\d+\.\d+$/);
     expect(result.metadata.duration).toBeGreaterThanOrEqual(0);
+  });
+
+  it("warns when --focus filter matches no landmarks (no-effect)", () => {
+    const state = makeState();
+    const result = analyze([state], genericMobileWebSrV0, {
+      filter: { focus: ["does-not-exist"] },
+    });
+
+    const warning = result.diagnostics.find((d) =>
+      d.message.includes("Focus filter") && d.message.includes("had no effect"),
+    );
+    expect(warning).toBeDefined();
+    expect(warning?.level).toBe("warning");
+  });
+
+  it("does not emit no-effect warning when focus filter actually matches", () => {
+    const state = makeState();
+    // makeState includes a landmark with role "main"
+    const result = analyze([state], genericMobileWebSrV0, {
+      filter: { focus: ["main"] },
+    });
+
+    const warning = result.diagnostics.find((d) =>
+      d.message.includes("Focus filter") && d.message.includes("had no effect"),
+    );
+    expect(warning).toBeUndefined();
+  });
+
+  it("promotes shared penalties to page-level diagnostic when >50% of findings share them", () => {
+    // Create a state with 12 unnamed buttons — all will share the
+    // "Target has no accessible name" penalty.
+    const targets = Array.from({ length: 12 }, (_, i) => ({
+      id: `t-button-${i}`,
+      kind: "button" as const,
+      role: "button",
+      name: "",
+      requiresBranchOpen: false,
+    }));
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    // Should emit shared-structural-issue diagnostic
+    const sharedDiag = result.diagnostics.find(
+      (d) => d.code === "shared-structural-issue",
+    );
+    expect(sharedDiag).toBeDefined();
+    expect(sharedDiag?.level).toBe("warning");
+    expect(sharedDiag?.message).toMatch(/of \d+ targets share/);
+    expect(sharedDiag?.message).toContain("page-level structural problem");
+  });
+
+  it("does NOT promote shared penalties when fewer than 10 findings", () => {
+    // 5 unnamed buttons — below the 10-finding threshold for promotion
+    const targets = Array.from({ length: 5 }, (_, i) => ({
+      id: `t-button-${i}`,
+      kind: "button" as const,
+      role: "button",
+      name: "",
+      requiresBranchOpen: false,
+    }));
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    const sharedDiag = result.diagnostics.find(
+      (d) => d.code === "shared-structural-issue",
+    );
+    expect(sharedDiag).toBeUndefined();
   });
 });

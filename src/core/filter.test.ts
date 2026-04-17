@@ -180,7 +180,7 @@ describe("checkThreshold", () => {
     expect(result.average).toBe(45);
   });
 
-  it("passes with empty findings", () => {
-    expect(checkThreshold([], 70).passed).toBe(true);
+  it("fails with empty findings (page may be blocked)", () => {
+    expect(checkThreshold([], 70).passed).toBe(false);
   });
 });

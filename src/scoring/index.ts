@@ -214,13 +214,15 @@ function scoreRecovery(inputs: RecoveryInputs): number {
 /**
  * Compute the full score vector for a target under a profile.
  *
- * The composite uses a **weighted geometric mean** so that a zero (or near-zero)
- * in any dimension drags the overall down sharply. This models the real user
+ * The composite uses a **weighted geometric mean** so that a near-zero in any
+ * dimension significantly drags the overall down. This models the real user
  * experience: you can't operate what you can't reach, and you can't reach
  * what you can't discover.
  *
- * To avoid log(0) issues, each dimension is floored at 1 before the
- * geometric mean. The result is then clamped to [0, 100].
+ * Each dimension is floored at 1 before the log (so log(0) is avoided).
+ * A zero score contributes log(1)=0 to the weighted sum, eliminating that
+ * dimension's contribution while the denominator stays constant. The result
+ * is then clamped to [0, 100].
  */
 export function computeScores(inputs: ScoreInputs, profile: ATProfile): ScoreVector {
   const d = scoreDiscoverability(inputs.discoverability);

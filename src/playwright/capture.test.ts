@@ -86,4 +86,29 @@ describe("parseAriaSnapshot", () => {
     const ids = targets.map((t) => t.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
+
+  it("captures ARIA attribute values for state-aware announcements", () => {
+    const yaml = `- main:
+  - checkbox "Subscribe" [checked]
+  - combobox "Country" [expanded=false]
+  - tab "Settings" [selected]
+  - dialog "Confirm" [modal]
+  - slider "Volume": "75"`;
+
+    const targets = parseAriaSnapshot(yaml);
+    const checkbox = targets.find((t) => t.role === "checkbox") as Record<string, unknown>;
+    expect(checkbox._attributeValues).toMatchObject({ "aria-checked": "true" });
+
+    const combobox = targets.find((t) => t.role === "combobox") as Record<string, unknown>;
+    expect(combobox._attributeValues).toMatchObject({ "aria-expanded": "false" });
+
+    const tab = targets.find((t) => t.role === "tab") as Record<string, unknown>;
+    expect(tab._attributeValues).toMatchObject({ "aria-selected": "true" });
+
+    const dialog = targets.find((t) => t.role === "dialog") as Record<string, unknown>;
+    expect(dialog._attributeValues).toMatchObject({ "aria-modal": "true" });
+
+    const slider = targets.find((t) => t.role === "slider") as Record<string, unknown>;
+    expect(slider._value).toBe("75");
+  });
 });

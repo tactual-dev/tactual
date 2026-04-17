@@ -3,7 +3,7 @@ import { resolve } from "path";
 import { z } from "zod";
 import type { AnalysisFilter } from "./filter.js";
 
-const TactualConfigSchema = z.object({
+export const TactualConfigSchema = z.object({
   exclude: z.array(z.string()).optional(),
   excludeSelectors: z.array(z.string()).optional(),
   focus: z.array(z.string()).optional(),
@@ -42,7 +42,8 @@ export function loadConfig(configPath?: string): TactualConfig {
       // Explicit path — error if can't load
       throw new Error(`Failed to load config from ${path}: ${err}`, { cause: err });
     }
-    // Auto-detected — silently ignore
+    // Auto-detected config exists but failed to parse — warn rather than silently ignore
+    process.stderr.write(`Warning: Found ${path} but failed to parse it: ${err instanceof Error ? err.message : err}\n`);
     return {};
   }
 }
@@ -63,7 +64,7 @@ export function mergeConfigWithFlags(
     // Arrays merge (CLI adds to config, doesn't replace)
     exclude: mergeArrays(config.exclude, flags.exclude),
     excludeSelectors: mergeArrays(config.excludeSelectors, flags.excludeSelectors),
-    focus: flags.focus ?? config.focus,
+    focus: mergeArrays(config.focus, flags.focus),
     suppress: mergeArrays(config.suppress, flags.suppress),
     priority: { ...config.priority, ...flags.priority },
   };

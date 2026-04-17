@@ -18,20 +18,30 @@ function makeState(overrides: Partial<PageState> = {}): PageState {
 }
 
 describe("diagnoseCapture", () => {
-  it("returns ok for a well-populated page", () => {
+  it("returns ok (plus info diagnostics) for a well-populated page", () => {
     const state = makeState({
-      targets: Array.from({ length: 35 }, (_, i) => ({
-        id: `t${i}`,
-        kind: i < 5 ? "heading" as const : i < 8 ? "landmark" as const : "link" as const,
-        role: i < 5 ? "heading" : i < 8 ? "main" : "link",
-        name: `Target ${i}`,
-        requiresBranchOpen: false,
-      })),
+      targets: [
+        ...Array.from({ length: 5 }, (_, i) => ({
+          id: `h${i}`, kind: "heading" as const, role: "heading", name: `Heading ${i}`, requiresBranchOpen: false,
+        })),
+        { id: "lm1", kind: "landmark" as const, role: "main", name: "Main", requiresBranchOpen: false },
+        { id: "lm2", kind: "landmark" as const, role: "banner", name: "Header", requiresBranchOpen: false },
+        { id: "lm3", kind: "landmark" as const, role: "contentinfo", name: "Footer", requiresBranchOpen: false },
+        { id: "lm4", kind: "landmark" as const, role: "navigation", name: "Nav", requiresBranchOpen: false },
+        { id: "skip", kind: "link" as const, role: "link", name: "Skip to content", requiresBranchOpen: false },
+        ...Array.from({ length: 25 }, (_, i) => ({
+          id: `l${i}`, kind: "link" as const, role: "link", name: `Link ${i}`, requiresBranchOpen: false,
+        })),
+      ],
     });
     const diags = diagnoseCapture(state, "https://example.com", "");
-    expect(diags).toHaveLength(1);
-    expect(diags[0].code).toBe("ok");
+    // No warnings or errors
+    expect(diags.some((d) => d.level === "warning" || d.level === "error")).toBe(false);
     expect(hasBlockingDiagnostic(diags)).toBe(false);
+    // structural-summary is always emitted as info
+    expect(diags.some((d) => d.code === "structural-summary")).toBe(true);
+    const summary = diags.find((d) => d.code === "structural-summary")!;
+    expect(summary.message).toContain("skip link: yes");
   });
 
   it("detects empty page", () => {
@@ -226,5 +236,106 @@ describe("diagnoseCapture", () => {
     });
     const diags = diagnoseCapture(state, "https://example.com", "");
     expect(diags.some((d) => d.code === "possibly-degraded-content")).toBe(false);
+  });
+
+  // --- Skip link detection ---
+
+  it("detects missing skip link", () => {
+    const state = makeState({
+      targets: [
+        { id: "h1", kind: "heading", role: "heading", name: "Title", requiresBranchOpen: false },
+        { id: "m1", kind: "landmark", role: "main", name: "Main", requiresBranchOpen: false },
+        { id: "b1", kind: "button", role: "button", name: "Click", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "Home", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "About", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    expect(diags.some((d) => d.code === "no-skip-link")).toBe(true);
+  });
+
+  it("does NOT flag skip link when one exists", () => {
+    const state = makeState({
+      targets: [
+        { id: "s1", kind: "link", role: "link", name: "Skip to main content", requiresBranchOpen: false },
+        { id: "h1", kind: "heading", role: "heading", name: "Title", requiresBranchOpen: false },
+        { id: "m1", kind: "landmark", role: "main", name: "Main", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "Home", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "About", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    expect(diags.some((d) => d.code === "no-skip-link")).toBe(false);
+  });
+
+  it("recognizes 'Jump to content' as a skip link", () => {
+    const state = makeState({
+      targets: [
+        { id: "s1", kind: "link", role: "link", name: "Jump to content", requiresBranchOpen: false },
+        { id: "h1", kind: "heading", role: "heading", name: "Title", requiresBranchOpen: false },
+        { id: "m1", kind: "landmark", role: "main", name: "Main", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "Home", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "About", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    expect(diags.some((d) => d.code === "no-skip-link")).toBe(false);
+  });
+
+  // --- Landmark completeness ---
+
+  it("detects missing main landmark when other landmarks exist", () => {
+    const state = makeState({
+      targets: [
+        { id: "h1", kind: "heading", role: "heading", name: "Title", requiresBranchOpen: false },
+        { id: "n1", kind: "landmark", role: "navigation", name: "Nav", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "Home", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "About", requiresBranchOpen: false },
+        { id: "l3", kind: "link", role: "link", name: "Contact", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    expect(diags.some((d) => d.code === "no-main-landmark")).toBe(true);
+    expect(diags.find((d) => d.code === "no-main-landmark")!.level).toBe("warning");
+  });
+
+  it("does NOT fire individual landmark checks when NO landmarks exist", () => {
+    const state = makeState({
+      targets: [
+        { id: "h1", kind: "heading", role: "heading", name: "Title", requiresBranchOpen: false },
+        { id: "b1", kind: "button", role: "button", name: "Click", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "Home", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "About", requiresBranchOpen: false },
+        { id: "l3", kind: "link", role: "link", name: "Contact", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    // Should get the generic "no-landmarks" warning, NOT individual landmark checks
+    expect(diags.some((d) => d.code === "no-landmarks")).toBe(true);
+    expect(diags.some((d) => d.code === "no-main-landmark")).toBe(false);
+    expect(diags.some((d) => d.code === "no-banner-landmark")).toBe(false);
+  });
+
+  // --- Structural summary ---
+
+  it("emits structural summary for pages with enough targets", () => {
+    const state = makeState({
+      targets: [
+        { id: "h1", kind: "heading", role: "heading", name: "Title", requiresBranchOpen: false },
+        { id: "n1", kind: "landmark", role: "navigation", name: "Nav", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "Home", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "About", requiresBranchOpen: false },
+        { id: "l3", kind: "link", role: "link", name: "Contact", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    const summary = diags.find((d) => d.code === "structural-summary");
+    expect(summary).toBeDefined();
+    expect(summary!.level).toBe("info");
+    expect(summary!.message).toContain("1 heading");
+    expect(summary!.message).toContain("navigation");
+    expect(summary!.message).toContain("missing:");
+    expect(summary!.message).toContain("main");
+    expect(summary!.message).toContain("skip link: no");
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "tactual",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "mcpName": "io.github.tactual-dev/tactual",
   "description": "Screen-reader navigation cost analyzer. Measures how hard it is for AT users to discover, reach, and operate web content.",
   "type": "module",
@@ -47,6 +47,7 @@
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
+    "calibrate": "node scripts/aria-at-calibrate.mjs",
     "prepack": "npm run build"
   },
   "publishConfig": {

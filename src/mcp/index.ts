@@ -39,9 +39,18 @@ async function getSharedBrowser(): Promise<import("playwright").Browser> {
     // If the browser crashes or disconnects, reset so it relaunches
     _browserPromise.then((b) => {
       b.on("disconnected", () => { _browserPromise = null; });
-    });
+    }).catch(() => { _browserPromise = null; });
   }
   return _browserPromise;
+}
+
+/** Close the shared browser pool (for clean HTTP server shutdown). */
+export async function closeSharedBrowser(): Promise<void> {
+  if (_browserPromise) {
+    const p = _browserPromise;
+    _browserPromise = null;
+    try { (await p).close(); } catch { /* already closed */ }
+  }
 }
 
 export function createMcpServer(): McpServer {
@@ -57,7 +66,7 @@ export function createMcpServer(): McpServer {
       description:
         "Analyze a web page for screen-reader navigation cost. Returns scored findings showing " +
         "how hard it is for AT users to discover, reach, and operate interactive targets. " +
-        "Read-only — navigates to the URL in a sandboxed browser but does not modify the page.\n\n" +
+        "Navigates to the URL in a sandboxed browser. Probes test keyboard behavior but do not submit forms or modify data.\n\n" +
         "**Recommended**: Use format='sarif' for concise, actionable output (~4KB). " +
         "SARIF auto-filters to findings that need attention (moderate and worse). " +
         "JSON/markdown include every target and can be 100x larger.\n\n" +
@@ -77,6 +86,10 @@ export function createMcpServer(): McpServer {
           .boolean()
           .default(false)
           .describe("Explore hidden branches (menus, tabs, dialogs). Use with format='sarif' to avoid output overflow."),
+        allowAction: z
+          .array(z.string())
+          .optional()
+          .describe("Glob patterns for controls that should be explorable despite the safety policy (e.g., 'button:checkout', 'submit:*'). Overrides unsafe→caution."),
         format: z
           .enum(["json", "markdown", "console", "sarif"])
           .default("sarif")
@@ -121,6 +134,16 @@ export function createMcpServer(): McpServer {
             "Adds ~30-60s but detects real focus management issues. Off by default — use for deep investigation, " +
             "not for triage or fix-verify loops. analyze_pages never probes.",
           ),
+        probeBudget: z
+          .number()
+          .int()
+          .min(1)
+          .max(200)
+          .optional()
+          .describe(
+            "Maximum number of targets to probe when probe=true. Default 20. Increase for deeper keyboard testing on " +
+            "large pages; decrease to keep total analysis time bounded. Each probe adds ~1-3s.",
+          ),
         summaryOnly: z
           .boolean()
           .default(false)
@@ -143,7 +166,7 @@ export function createMcpServer(): McpServer {
           ),
       },
     },
-    async ({ url, profile: profileId, device, explore, format, minSeverity, waitForSelector, waitTime, timeout, focus, excludeSelector, exclude, maxFindings, probe, summaryOnly, includeStates, storageState }) => {
+    async ({ url, profile: profileId, device, explore, allowAction, format, minSeverity, waitForSelector, waitTime, timeout, focus, excludeSelector, exclude, maxFindings, probe, probeBudget, summaryOnly, includeStates, storageState }) => {
       const profile = getProfile(profileId);
       if (!profile) {
         return {
@@ -175,7 +198,8 @@ export function createMcpServer(): McpServer {
         if (storageState) {
           const pathMod = await import("path");
           const resolved = pathMod.resolve(storageState);
-          if (resolved.includes("..") || !resolved.startsWith(process.cwd())) {
+          const rel = pathMod.relative(process.cwd(), resolved);
+          if (rel.startsWith("..") || pathMod.isAbsolute(rel)) {
             return { content: [{ type: "text" as const, text: "storageState path must be within the current working directory" }], isError: true };
           }
           contextOptions.storageState = resolved;
@@ -202,8 +226,12 @@ export function createMcpServer(): McpServer {
         await page.waitForTimeout(2000);
 
         // SPA support: wait for a specific selector to appear before capturing
+        const captureWarnings: string[] = [];
         if (waitForSelector) {
-          await page.waitForSelector(waitForSelector, { timeout: timeout }).catch(() => {});
+          const found = await page.waitForSelector(waitForSelector, { timeout: timeout }).catch(() => null);
+          if (!found) {
+            captureWarnings.push(`waitForSelector "${waitForSelector}" did not appear within ${timeout}ms. Analysis may reflect incomplete content.`);
+          }
         }
 
         // Additional wait time for slow-rendering SPAs
@@ -222,18 +250,31 @@ export function createMcpServer(): McpServer {
         let targets = rawState.targets;
         if (probe) {
           const { probeTargets } = await import("../playwright/probes.js");
-          targets = await probeTargets(page, rawState.targets);
+          targets = await probeTargets(page, rawState.targets, probeBudget);
         }
         const state = { ...rawState, targets };
+
+        // SR announcement simulation — detect demoted landmarks
+        const { simulateScreenReader, aggregateDemotedLandmarks } =
+          await import("../playwright/sr-simulator.js");
+        const srSim = await simulateScreenReader(page, targets);
+        // Aggregate by role + reason so 13 unlabeled regions emit
+        // one diagnostic instead of 13 near-identical warnings.
+        const srDiagnostics = aggregateDemotedLandmarks(srSim.demotedLandmarks);
 
         let states = [state];
 
         if (explore) {
           const { explore: exploreState } = await import("../playwright/explorer.js");
+          const allowPatterns = (allowAction ?? []).map((p: string) => {
+            const escaped = p.toLowerCase().replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*").replace(/\?/g, ".");
+            return new RegExp(`^${escaped}$`, "i");
+          });
           const result = await exploreState(page, state, {
             device,
             maxDepth: 2,
             maxActions: 30,
+            allowActionPatterns: allowPatterns.length > 0 ? allowPatterns : undefined,
           });
           states = result.states;
         }
@@ -244,6 +285,16 @@ export function createMcpServer(): McpServer {
         if (exclude) filter.exclude = exclude;
         if (maxFindings) filter.maxFindings = maxFindings;
         const result = analyze(states, profile, { name: url, filter });
+
+        // Inject capture warnings as diagnostics
+        for (const w of captureWarnings) {
+          result.diagnostics.push({ level: "warning", code: "timeout-during-render", message: w });
+        }
+        // Inject SR simulator demoted-landmark diagnostics with the
+        // correct code (was previously bucketed as timeout-during-render).
+        if (srDiagnostics.length > 0) {
+          result.diagnostics.push(...srDiagnostics);
+        }
 
         // Deduplicate findings with identical penalty signatures
         const deduped = deduplicateFindings(result);
@@ -620,12 +671,15 @@ export function createMcpServer(): McpServer {
       }
 
       let context: import("playwright").BrowserContext | undefined;
+      const warnings: string[] = [];
       try {
         let states: import("../core/types.js").PageState[];
 
         if (statesJson) {
           // Use pre-captured states — no browser launch needed
-          states = JSON.parse(statesJson);
+          const { PageStateSchema } = await import("../core/types.js");
+          const parsed = JSON.parse(statesJson);
+          states = Array.isArray(parsed) ? parsed.map((s: unknown) => PageStateSchema.parse(s)) : [PageStateSchema.parse(parsed)];
         } else {
           // Live capture
           const pw = await import("playwright");
@@ -636,7 +690,8 @@ export function createMcpServer(): McpServer {
           if (storageState) {
             const pathMod = await import("path");
             const resolved = pathMod.resolve(storageState);
-            if (resolved.includes("..") || !resolved.startsWith(process.cwd())) {
+            const rel = pathMod.relative(process.cwd(), resolved);
+            if (rel.startsWith("..") || pathMod.isAbsolute(rel)) {
               return { content: [{ type: "text" as const, text: "storageState path must be within the current working directory" }], isError: true };
             }
             contextOptions.storageState = resolved;
@@ -663,7 +718,10 @@ export function createMcpServer(): McpServer {
           await page.waitForTimeout(2000);
 
           if (waitForSelector) {
-            await page.waitForSelector(waitForSelector, { timeout }).catch(() => {});
+            const found = await page.waitForSelector(waitForSelector, { timeout }).catch(() => null);
+            if (!found) {
+              warnings.push(`waitForSelector "${waitForSelector}" did not appear within ${timeout}ms.`);
+            }
           }
 
           const state = await captureState(page, {
@@ -777,7 +835,7 @@ export function createMcpServer(): McpServer {
                 edge.action,
                 toTarget?.role ?? "unknown",
                 toTarget?.name || "(unnamed)",
-                toTarget?.kind,
+                toTarget?.headingLevel,
               ),
               reason: edge.reason || undefined,
             };
@@ -899,28 +957,33 @@ export function createMcpServer(): McpServer {
           } else if ("fill" in step && Array.isArray(step.fill) && step.fill.length === 2) {
             await page.fill(String(step.fill[0]), String(step.fill[1]));
           } else if ("wait" in step && typeof step.wait === "number") {
-            await page.waitForTimeout(step.wait);
+            await page.waitForTimeout(Math.min(step.wait, 60000));
           } else if ("waitForUrl" in step && typeof step.waitForUrl === "string") {
             await page.waitForURL(`**${step.waitForUrl}**`, { timeout });
+          } else {
+            const keys = Object.keys(step as Record<string, unknown>).join(", ");
+            return {
+              content: [{ type: "text" as const, text: `Unknown step type with keys: ${keys}. Valid step types: click, fill, wait, waitForUrl.` }],
+              isError: true,
+            };
           }
         }
 
         // Wait for post-login page to settle
-        await page.waitForTimeout(2000);
-        await page.waitForTimeout(1000);
+        await page.waitForTimeout(3000);
 
         // Save storage state
         const path = await import("path");
         const resolved = path.resolve(outputPath);
-        const cwd = process.cwd();
-        if (resolved.includes("..") || !resolved.startsWith(cwd)) {
+        const rel = path.relative(process.cwd(), resolved);
+        if (rel.startsWith("..") || path.isAbsolute(rel)) {
           return {
-            content: [{ type: "text" as const, text: `Invalid outputPath: must be within the current working directory (${cwd}). Resolved: ${resolved}` }],
+            content: [{ type: "text" as const, text: `Invalid outputPath: must be within the current working directory (${process.cwd()}). Resolved: ${resolved}` }],
             isError: true,
           };
         }
         const state = await context.storageState();
-        await fs.writeFile(resolved, JSON.stringify(state, null, 2));
+        await fs.writeFile(resolved, JSON.stringify(state, null, 2), { mode: 0o600 });
 
         const cookieCount = state.cookies?.length ?? 0;
         const originCount = state.origins?.length ?? 0;
@@ -965,7 +1028,7 @@ export function createMcpServer(): McpServer {
         "If a single URL fails (timeout, bot protection), its entry shows the error and " +
         "remaining URLs still complete.",
       inputSchema: {
-        urls: z.array(z.string()).describe("URLs to analyze (2-20 pages)"),
+        urls: z.array(z.string()).describe("URLs to analyze (1-20 pages)"),
         profile: z
           .string()
           .default("generic-mobile-web-sr-v0")
@@ -994,6 +1057,12 @@ export function createMcpServer(): McpServer {
         };
       }
 
+      if (urls.length === 0) {
+        return {
+          content: [{ type: "text" as const, text: "At least one URL is required." }],
+          isError: true,
+        };
+      }
       if (urls.length > 20) {
         return {
           content: [{ type: "text" as const, text: "Maximum 20 URLs per call." }],
@@ -1010,7 +1079,8 @@ export function createMcpServer(): McpServer {
         if (storageState) {
           const pathMod = await import("path");
           const resolved = pathMod.resolve(storageState);
-          if (resolved.includes("..") || !resolved.startsWith(process.cwd())) {
+          const rel = pathMod.relative(process.cwd(), resolved);
+          if (rel.startsWith("..") || pathMod.isAbsolute(rel)) {
             return { content: [{ type: "text" as const, text: "storageState path must be within the current working directory" }], isError: true };
           }
           contextOptions.storageState = resolved;
@@ -1047,26 +1117,29 @@ export function createMcpServer(): McpServer {
               continue;
             }
 
+            const pageWarnings: string[] = [];
             const page = await context.newPage();
-            await page.goto(urlCheck.url!, { waitUntil: "domcontentloaded", timeout });
-            // Cap network idle wait at 5s per page to prevent ad-heavy
-            // sites from stalling the entire multi-page analysis
-            await Promise.race([
-              page.waitForLoadState("networkidle").catch(() => {}),
-              new Promise((r) => setTimeout(r, 5000)),
-            ]);
-            if (waitForSelector) {
-              await page.waitForSelector(waitForSelector, { timeout: 10000 }).catch(() => {});
+            let state: import("../core/types.js").PageState;
+            try {
+              await page.goto(urlCheck.url!, { waitUntil: "domcontentloaded", timeout });
+              await Promise.race([
+                page.waitForLoadState("networkidle").catch(() => {}),
+                new Promise((r) => setTimeout(r, 5000)),
+              ]);
+              if (waitForSelector) {
+                const found = await page.waitForSelector(waitForSelector, { timeout: 10000 }).catch(() => null);
+                if (!found) pageWarnings.push(`waitForSelector "${waitForSelector}" timed out`);
+              }
+              if (waitTime && waitTime > 0) {
+                await page.waitForTimeout(waitTime);
+              }
+              state = await captureState(page, {
+                provenance: "scripted",
+                spaWaitTimeout: 15000,
+              });
+            } finally {
+              await page.close().catch(() => {});
             }
-            if (waitTime && waitTime > 0) {
-              await page.waitForTimeout(waitTime);
-            }
-
-            const state = await captureState(page, {
-              provenance: "scripted",
-              spaWaitTimeout: 15000,
-            });
-            await page.close();
 
             const result = analyze([state], profile, { name: url });
             const scores = result.findings.map((f) => f.scores.overall);
@@ -1076,7 +1149,7 @@ export function createMcpServer(): McpServer {
               ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length * 10) / 10
               : 0;
             const p10 = sorted.length >= 5
-              ? sorted[Math.floor(sorted.length * 0.1)]
+              ? sorted[Math.max(0, Math.ceil(sorted.length * 0.1) - 1)]
               : sorted[0] ?? 0;
             const median = sorted.length > 0
               ? sorted[Math.floor(sorted.length * 0.5)]
@@ -1120,7 +1193,7 @@ export function createMcpServer(): McpServer {
         // Site-level aggregation
         const allSorted = [...allScores].sort((a, b) => a - b);
         const siteP10 = allSorted.length >= 5
-          ? allSorted[Math.floor(allSorted.length * 0.1)]
+          ? allSorted[Math.max(0, Math.ceil(allSorted.length * 0.1) - 1)]
           : allSorted[0] ?? 0;
         const siteMedian = allSorted.length > 0
           ? allSorted[Math.floor(allSorted.length * 0.5)]

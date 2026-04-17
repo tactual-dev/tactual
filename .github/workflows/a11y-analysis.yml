@@ -47,7 +47,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: tactual-dev/tactual
-          ref: main
+          ref: v0.3.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -71,29 +71,41 @@ jobs:
             EXPLORE_FLAG="--explore"
           fi
 
-          node dist/cli/index.js analyze-url "${{ inputs.url }}" \
-            --profile "${{ inputs.profile }}" \
-            --format "${{ inputs.format }}" \
-            $EXPLORE_FLAG \
-            --output results.${{ inputs.format == 'sarif' && 'sarif' || inputs.format == 'json' && 'json' || 'txt' }}
+          FORMAT="${{ inputs.format }}"
+          EXT="txt"
+          if [ "$FORMAT" = "sarif" ]; then EXT="sarif"; fi
+          if [ "$FORMAT" = "json" ]; then EXT="json"; fi
+          if [ "$FORMAT" = "markdown" ]; then EXT="md"; fi
+          RESULT_FILE="results.${EXT}"
 
-          # Also generate JSON for threshold check
+          # --also-json eliminates the second Playwright run when the user
+          # requested a non-JSON primary format. We need JSON for the
+          # threshold check downstream.
+          ALSO_JSON_FLAG=""
+          if [ "$FORMAT" != "json" ]; then
+            ALSO_JSON_FLAG="--also-json results.json"
+          fi
+
           node dist/cli/index.js analyze-url "${{ inputs.url }}" \
             --profile "${{ inputs.profile }}" \
+            --format "$FORMAT" \
             $EXPLORE_FLAG \
-            --format json \
-            --output results.json
+            --output "$RESULT_FILE" \
+            $ALSO_JSON_FLAG
+
+          # If primary format was JSON, results.json IS the primary output
+          if [ "$FORMAT" = "json" ]; then cp "$RESULT_FILE" results.json; fi
 
       - name: Check score threshold
         if: inputs.fail-below > 0
         run: |
           AVG=$(node -e "
             const r = JSON.parse(require('fs').readFileSync('results.json','utf8'));
-            const avg = r.findings.reduce((s,f) => s + f.scores.overall, 0) / r.findings.length;
-            console.log(Math.round(avg * 10) / 10);
+            console.log(r.stats?.averageScore ?? 0);
           ")
           echo "Average score: $AVG"
-          if (( $(echo "$AVG < ${{ inputs.fail-below }}" | bc -l) )); then
+          BELOW=$(node -e "console.log(Number('$AVG') < Number('${{ inputs.fail-below }}') ? '1' : '0')")
+          if [ "$BELOW" = "1" ]; then
             echo "::error::Average score $AVG is below threshold ${{ inputs.fail-below }}"
             exit 1
           fi

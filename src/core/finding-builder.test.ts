@@ -366,4 +366,166 @@ describe("buildFinding", () => {
     const uniqueFixes = new Set(finding.suggestedFixes);
     expect(finding.suggestedFixes.length).toBe(uniqueFixes.size);
   });
+
+  describe("state-aware penalties (from _attributeValues)", () => {
+    function makeStatefulTarget(id: string, role: string, name: string, attrs: Record<string, string>): Target {
+      return makeTarget({ id, kind: role === "tab" ? "tab" : role === "combobox" ? "formField" : "button", role, name, _attributeValues: attrs } as Partial<Target>);
+    }
+
+    function getFindingFor(target: Target): { penalties: string[]; suggestedFixes: string[] } {
+      const heading = makeTarget({ id: "h1", kind: "heading", role: "heading", name: "Title", headingLevel: 1 });
+      const landmark = makeTarget({ id: "lm1", kind: "landmark", role: "main", name: "Main" });
+      const state = makeState([heading, landmark, target], { id: "s1" });
+      const graph = buildGraph([state], profile);
+      const nodeId = `${state.id}:${target.id}`;
+      const finding = buildFinding(graph, state, nodeId, target, profile);
+      return { penalties: finding.penalties, suggestedFixes: finding.suggestedFixes };
+    }
+
+    it("flags label-state mismatch on 'Collapse, expanded' button", () => {
+      const t = makeStatefulTarget("b1", "button", "Collapse operation", { "aria-expanded": "true" });
+      const { penalties, suggestedFixes } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("Label-state mismatch"))).toBe(true);
+      expect(suggestedFixes.some((f) => f.includes("state-neutral label"))).toBe(true);
+    });
+
+    it("flags label-state mismatch on 'Expand, collapsed' button", () => {
+      const t = makeStatefulTarget("b2", "button", "Expand details", { "aria-expanded": "false" });
+      const { penalties } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("Label-state mismatch"))).toBe(true);
+    });
+
+    it("does NOT flag label-state mismatch on a state-neutral label", () => {
+      const t = makeStatefulTarget("b3", "button", "Toggle details", { "aria-expanded": "true" });
+      const { penalties } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("Label-state mismatch"))).toBe(false);
+    });
+
+    it("flags disabled-but-discoverable form field", () => {
+      const t = makeStatefulTarget("f1", "textbox", "petId", { "aria-disabled": "true" });
+      const { penalties, suggestedFixes } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("disabled") && p.includes("unavailable"))).toBe(true);
+      expect(suggestedFixes.some((f) => f.includes("aria-hidden"))).toBe(true);
+    });
+
+    it("flags tab missing aria-selected", () => {
+      const t = makeStatefulTarget("t1", "tab", "Settings", { "aria-controls": "panel-1" });
+      const { penalties, suggestedFixes } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("aria-selected"))).toBe(true);
+      expect(suggestedFixes.some((f) => f.includes("aria-selected='true'"))).toBe(true);
+    });
+
+    it("does NOT flag tab when aria-selected IS present", () => {
+      const t = makeStatefulTarget("t2", "tab", "Settings", { "aria-selected": "true" });
+      const { penalties } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("aria-selected"))).toBe(false);
+    });
+
+    it("flags combobox missing aria-expanded", () => {
+      const t = makeStatefulTarget("c1", "combobox", "Country", { "aria-controls": "list-1" });
+      const { penalties, suggestedFixes } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("combobox") && p.includes("aria-expanded"))).toBe(true);
+      expect(suggestedFixes.some((f) => f.includes("aria-expanded"))).toBe(true);
+    });
+
+    it("does NOT flag combobox when aria-expanded IS present", () => {
+      const t = makeStatefulTarget("c2", "combobox", "Country", { "aria-expanded": "false" });
+      const { penalties } = getFindingFor(t);
+      expect(penalties.some((p) => p.includes("aria-expanded"))).toBe(false);
+    });
+
+    it("does nothing for targets without _attributeValues", () => {
+      // Target with no captured ARIA state (e.g., a plain button)
+      const t = makeTarget({ id: "b4", kind: "button", role: "button", name: "Submit" });
+      const { penalties } = getFindingFor(t);
+      // No state-aware penalties should fire
+      expect(penalties.some((p) => p.includes("Label-state mismatch"))).toBe(false);
+      expect(penalties.some((p) => p.includes("aria-disabled"))).toBe(false);
+    });
+  });
+
+  describe("pattern-deviation detection (probe vs APG spec)", () => {
+    function makeProbedTarget(
+      role: string, kind: Target["kind"], name: string,
+      before: Record<string, string>, after: Record<string, string>,
+      succeeded = true,
+    ): Target {
+      return makeTarget({
+        id: "probed-1", kind, role, name,
+        _attributeValues: before,
+        _probe: {
+          probeSucceeded: succeeded,
+          ariaStateBeforeEnter: before,
+          ariaStateAfterEnter: after,
+        },
+      } as Partial<Target>);
+    }
+
+    function findingFor(target: Target) {
+      const heading = makeTarget({ id: "h1", kind: "heading", role: "heading", name: "T", headingLevel: 1 });
+      const landmark = makeTarget({ id: "lm", kind: "landmark", role: "main", name: "M" });
+      const state = makeState([heading, landmark, target], { id: "s1" });
+      const graph = buildGraph([state], profile);
+      const finding = buildFinding(graph, state, `${state.id}:${target.id}`, target, profile);
+      return finding;
+    }
+
+    it("flags toggle button that doesn't toggle aria-pressed", () => {
+      const t = makeProbedTarget(
+        "button", "button", "Mute",
+        { "aria-pressed": "false" },
+        { "aria-pressed": "false" }, // bug: state didn't change
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("aria-pressed"))).toBe(true);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(true);
+    });
+
+    it("does NOT flag toggle button that correctly toggles", () => {
+      const t = makeProbedTarget(
+        "button", "button", "Mute",
+        { "aria-pressed": "false" },
+        { "aria-pressed": "true" }, // correct
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(false);
+    });
+
+    it("flags disclosure button that doesn't toggle aria-expanded", () => {
+      const t = makeProbedTarget(
+        "button", "button", "Details",
+        { "aria-expanded": "false" },
+        { "aria-expanded": "false" },
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("aria-expanded"))).toBe(true);
+    });
+
+    it("flags checkbox that doesn't toggle aria-checked", () => {
+      const t = makeProbedTarget(
+        "checkbox", "formField", "Subscribe",
+        { "aria-checked": "false" },
+        { "aria-checked": "false" },
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(true);
+      expect(finding.penalties.some((p) => p.includes("aria-checked"))).toBe(true);
+    });
+
+    it("does NOT flag a checkbox that correctly toggles", () => {
+      const t = makeProbedTarget(
+        "checkbox", "formField", "Subscribe",
+        { "aria-checked": "false" },
+        { "aria-checked": "true" },
+      );
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(false);
+    });
+
+    it("does NOT flag plain button (no aria-pressed/expanded)", () => {
+      const t = makeProbedTarget("button", "button", "Submit", {}, {});
+      const finding = findingFor(t);
+      expect(finding.penalties.some((p) => p.includes("Pattern deviation"))).toBe(false);
+    });
+  });
 });

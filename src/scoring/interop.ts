@@ -185,9 +185,6 @@ export const attributeInteropRisk: Record<string, InteropEntry> = {
 
 /**
  * Compute interop risk penalty for a target based on its role and attributes.
- */
-/**
- * Compute interop risk penalty for a target based on its role and attributes.
  *
  * Attributes can reduce risk when they indicate ARIA APG conformance.
  * For example, a tab with aria-selected follows the ARIA APG pattern
@@ -200,31 +197,43 @@ export function computeInteropRisk(
   const issues: string[] = [];
   let totalRisk = 0;
 
-  // Role-based risk
-  const roleEntry = roleInteropRisk[role];
+  // Role-based risk (lowercase for case-insensitive lookup)
+  const normalizedRole = role.toLowerCase();
+  const roleEntry = roleInteropRisk[normalizedRole];
   if (roleEntry && roleEntry.risk > 0) {
     totalRisk += roleEntry.risk;
-    issues.push(`${role}: ${roleEntry.issue}`);
+    issues.push(`${normalizedRole}: ${roleEntry.issue}`);
   }
 
   // ARIA APG conformance reduces risk — proper attributes indicate the
   // developer followed the standard pattern, improving cross-AT support.
-  if (attributes && totalRisk > 0) {
+  if (attributes) {
     const attrSet = new Set(attributes.map((a) => a.toLowerCase()));
 
+    // Add risk for attributes with known interop issues
+    for (const attr of attrSet) {
+      const entry = attributeInteropRisk[attr];
+      if (entry && entry.risk > 0) {
+        totalRisk += entry.risk;
+        issues.push(`${attr}: ${entry.issue}`);
+      }
+    }
+
+    // APG conformance reductions — well-structured patterns reduce risk
     // Tab with aria-selected → APG-conformant tab pattern
-    if (role === "tab" && attrSet.has("aria-selected")) {
+    if (normalizedRole === "tab" && attrSet.has("aria-selected")) {
       totalRisk = Math.max(0, totalRisk - 2);
       if (totalRisk === 0) issues.length = 0;
     }
 
     // Combobox with aria-expanded + aria-autocomplete → well-structured
-    if (role === "combobox" && attrSet.has("aria-expanded") && attrSet.has("aria-autocomplete")) {
+    if (normalizedRole === "combobox" && attrSet.has("aria-expanded") && attrSet.has("aria-autocomplete")) {
       totalRisk = Math.max(0, totalRisk - 3);
+      if (totalRisk === 0) issues.length = 0;
     }
 
     // Menu/menuitem with aria-haspopup → expected submenu pattern
-    if ((role === "menu" || role === "menuitem") && attrSet.has("aria-haspopup")) {
+    if ((normalizedRole === "menu" || normalizedRole === "menuitem") && attrSet.has("aria-haspopup")) {
       totalRisk = Math.max(0, totalRisk - 2);
       if (totalRisk === 0) issues.length = 0;
     }

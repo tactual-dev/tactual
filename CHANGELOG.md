@@ -1,5 +1,88 @@
 # Changelog
 
+## 0.3.0 (2026-04-16)
+
+New diagnostics, scoring presets, SR simulator, performance improvements, security hardening, and documentation overhaul.
+
+### Features
+
+- **Scoring presets** — `--preset ecommerce-checkout`, `docs-site`, `dashboard`, `form-heavy`. Named config bundles with focus filters and priority mappings for common use cases. Layers under config files and CLI flags.
+- **Heading hierarchy skip** — `heading-skip` diagnostic flags `h1 → h3` (or any +2 level jump) that breaks SR users' mental model
+- **Skip link detection** — `no-skip-link` diagnostic warns when pages with 5+ targets lack a skip-to-content link.
+- **Landmark completeness** — `no-main-landmark`, `no-banner-landmark`, `no-contentinfo-landmark`, `no-nav-landmark` diagnostics fire when pages have some landmarks but are missing key ones.
+- **Structural summary** — `structural-summary` info diagnostic gives a one-line snapshot of page structure for machine consumption.
+- **Shared-cause deduplication** — penalties affecting >50% of findings are promoted to page-level diagnostics (`shared-structural-issue`) instead of repeating on every target.
+- **SR announcement simulator** — heuristic prediction of what NVDA, JAWS, and VoiceOver each announce for all target kinds (landmarks, headings, controls, form fields, dialogs, status messages, menus, tabs). State-aware: emits "Subscribe, check box, checked", "Country, combo box, collapsed", "Actions, menu button, collapsed", "Mute, button, not pressed", "Condiments, check box, partially checked", "Volume, slider, 75", "Email, edit, invalid entry, required, you must use a work address" (with `aria-describedby` resolved), etc. Encodes documented cross-AT differences. **Calibrated against [W3C ARIA-AT](https://aria-at.w3.org)**: passes 77/77 assertions at 100% across all three ATs (NVDA, JAWS, VoiceOver) for 36 single-target patterns and 4 multi-target landmark scenarios (entering/traversing landmarks). Patterns covered: command-button, toggle-button, all menu-button variants, disclosure-faq, disclosure-navigation, accordion, checkbox, checkbox-tri-state, switch (3 variants), 4 slider variants, modal-dialog, alert, breadcrumb, all link variants, both tabs variants, both combobox variants, both radiogroup variants, rating-radio-group, menubar-editor, quantity-spin-button, all four landmark types, form. Run `npm run calibrate` to verify. Exported from `tactual/playwright`.
+- **Cross-AT divergence as a penalty** — automatically flags targets where NVDA/JAWS/VoiceOver produce materially different announcements (e.g., combobox with aria-expanded that VoiceOver renders differently).
+- **Navigation transcript** — new `tactual transcript <url> [--at nvda|jaws|voiceover]` command prints the linear sequence of announcements an SR user hears as they Tab through a page. Text and JSON output formats. Library API also exposes `buildNavigationTranscript(targets, options)` for multi-target navigation modes (linear, by-heading, by-landmark, by-form-control) with `from`/`to` ranges — models the ARIA-AT "navigate from X into landmark Y" scenarios.
+- **ARIA reference enrichment** — capture pipeline now resolves `aria-describedby` IDs to their text content (appended to announcements) and validates `aria-labelledby` IDs (silently-broken labels surface as penalties).
+- **Heading hierarchy skip diagnostic** — new `heading-skip` warning detects `h1 → h3` jumps that break SR users' mental model of structure.
+- **Live-region detection** — captures `aria-live` value on every target. Excessive `aria-live="assertive"` (which interrupts the user) on non-status content surfaces as a penalty suggesting `polite`.
+- **State-aware penalties** — finding-builder now reads captured ARIA state and emits penalties for: label-state mismatch (e.g., button labeled "Collapse" with `aria-expanded="true"` produces confusing announcements), disabled-but-discoverable controls, tab missing `aria-selected`, combobox/listbox/menu missing `aria-expanded`, orphaned `aria-labelledby`/`aria-describedby` references, and assertive live-region misuse.
+- **Stateful interaction simulation** — new `simulateAction(target, key)` and `simulateSequence(target, keys[])` functions model how a target's ARIA state changes in response to keyboard input per the ARIA APG specs. Patterns modeled: checkbox, switch, menuitemcheckbox (tri-state), toggle button (`aria-pressed`), disclosure button (`aria-expanded`), combobox, slider/spinbutton (with step/min/max clamping), tab, radio. Single-target only; multi-target effects (radio group selection across siblings, tab list navigation) deliberately not modeled. Exported from `tactual/playwright`.
+- **Pattern-deviation detection** — when probes are enabled, finding-builder compares the actual probe-observed state change to the ARIA APG spec's expected behavior. Emits a high-signal penalty like *"Pattern deviation: pressing Enter on a toggle button should toggle aria-pressed from 'false' to 'true' per the ARIA APG toggle-button pattern, but probe observed aria-pressed='false'."* Catches broken implementations of toggle buttons, disclosure buttons, checkboxes, and switches. Novel: axe-core checks rule conformance, not implementation correctness.
+- **`--allow-action`** — override the safe-action policy for specific controls during exploration (glob patterns).
+- **`--probe-budget`** — configurable max targets to probe (default: 20).
+- **Nested focusable detection** (`--probe`) — flags elements with focusable descendants causing duplicate tab stops.
+- **Focus indicator suppression** (`--probe`) — detects when CSS suppresses the focus outline without a visible alternative.
+- **Skipped elements reporting** — exploration now lists which elements were skipped by the safety policy.
+- **`--also-json`** — write JSON output alongside the primary format from a single analysis run. Eliminates double Playwright capture in CI workflows.
+- **PR comment action** — `comment-on-pr: "true"` input posts a summary comment on pull requests. Supports multiple URLs/profiles per PR via hidden markers. Updates existing comment on re-run. Comment template is in `scripts/pr-comment.js` (testable, editable).
+
+### Performance
+
+- **Dijkstra with binary min-heap** — `shortestPath` and `reachableWithin` go from O(V²) to O((V+E) log V).
+- **Focus filter** — O(n²) loop replaced with Map lookup.
+- **Single-pass diagnostics** — `diagnoseCapture` results cached via `states.map()` instead of called twice.
+- **Deduplicated globToRegex** — `filter.ts` imports from `trace-helpers.ts` instead of maintaining a separate copy.
+- **Action double-run mitigation** — second analysis pass (for score extraction) uses `--summary-only`.
+
+### Bug Fixes
+
+- Slider/spinbutton value suffix parsing in ariaSnapshot capture
+- Convergence polling `prevCount` initialized to -1 (was 0, causing false convergence on empty pages)
+- P10 score calculation off-by-one
+- `escapeRestoresFocus` probe logic inverted
+- Activatable semantics: only `stateChanged` probes count, not all probes
+- Login-wall false positive from partial path match (`/oauth` matching `/login`)
+- Console reporter TTY detection
+- Browser/page leak in CLI save-auth and MCP tools
+- `checkThreshold` on empty findings
+- SARIF sort using `scores.overall` consistently
+- `modelAnnouncement` for searchbox/contentinfo roles
+- Unicode first-letter support in graph builder
+- `stateCount: 0` on graph failure (now uses actual state count)
+- Markdown reporter missing selector field
+- SR simulator targetId collision for multiple demoted landmarks of the same role
+
+### Security
+
+- MCP HTTP body size limit (1MB) and request timeout (30s)
+- Browser pool cleanup on HTTP server shutdown
+- Path traversal protection in MCP storage state
+- Wait step capped at 60s in `save_auth`
+- Storage state file permissions (0o600)
+- `save_auth` rejects unknown step types
+- Submit buttons moved to "unsafe" tier in safety policy
+- Snapshot parsing hard cap at 5,000 targets (DoS prevention for hosted MCP)
+
+### Scoring Drift
+
+Score outputs may differ from v0.2.x on unchanged pages due to bug fixes in probe logic (`escapeRestoresFocus` inversion), activatable semantics, and P10 calculation. Regenerate baselines after upgrading.
+
+### Rules
+
+- Removed `hiddenBranchRule`, `missingAccessibleNameRule`, `excessiveControlSequenceRule` — these overlapped with graph-derived penalties in finding-builder.ts, causing duplicate output. 1 built-in rule remains (`noHeadingAnchorRule`).
+
+### Documentation
+
+- `docs/MCP-TOOLS.md` — full reference for all 7 MCP tools with parameter tables, return shapes, and workflow examples
+- `docs/AGENT-RECIPES.md` — prompt templates for Claude Code, Cursor, Windsurf, Cline, GitHub Copilot. Includes CLAUDE.md snippet.
+- `docs/CALIBRATION.md` — added working end-to-end example with 2-observation dataset
+- `CONTRIBUTING.md` — link to profile types for new profile authors
+- README: scoring presets section, regression tracking section, expanded diagnostics table, "who is this for" framing, shortened MCP tools table with link to full reference
+- Scoring documentation clarified: floor-at-1 behavior in geometric mean described accurately
+
 ## 0.2.1 (2026-04-06)
 
 Registry readiness, packaging fixes, and SARIF improvements.

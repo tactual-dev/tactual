@@ -75,9 +75,10 @@ export function filterTargets(targets: Target[], filter: AnalysisFilter): Target
         }
       }
 
+      const targetIndexMap = new Map(targets.map((t, i) => [t, i]));
       result = result.filter((t) => {
-        const idx = targets.indexOf(t);
-        return focusIndices.has(idx);
+        const idx = targetIndexMap.get(t);
+        return idx !== undefined && focusIndices.has(idx);
       });
     }
   }
@@ -103,7 +104,10 @@ export function filterFindings(
     });
   }
 
-  // Apply minimum severity filter
+  // Apply minimum severity filter.
+  // "minSeverity" means "show findings at this severity level or worse."
+  // Ranking: severe(1) < high(2) < moderate(3) < acceptable(4) < strong(5).
+  // --min-severity moderate keeps severe, high, and moderate (ranks 1-3).
   if (filter.minSeverity) {
     const minRank = severityRank(filter.minSeverity);
     result = result.filter((f) => severityRank(f.severity) <= minRank);
@@ -149,7 +153,8 @@ export function checkThreshold(
   findings: Finding[],
   threshold: number,
 ): { passed: boolean; average: number } {
-  if (findings.length === 0) return { passed: true, average: 0 };
+  // No findings = page may be blocked/empty. Fail the threshold to surface the issue.
+  if (findings.length === 0) return { passed: false, average: 0 };
   const average =
     findings.reduce((sum, f) => sum + f.scores.overall, 0) / findings.length;
   return { passed: average >= threshold, average };
@@ -159,14 +164,8 @@ export function checkThreshold(
 // Helpers
 // ---------------------------------------------------------------------------
 
-function globToRegex(pattern: string): RegExp {
-  const escaped = pattern
-    .toLowerCase()
-    .replace(/[.+^${}()|[\]\\]/g, "\\$&")
-    .replace(/\*/g, ".*")
-    .replace(/\?/g, ".");
-  return new RegExp(`^${escaped}$`, "i");
-}
+// Re-export from trace-helpers to avoid duplicate implementations.
+import { globToRegex } from "../mcp/trace-helpers.js";
 
 function severityRank(severity: string): number {
   const ranks: Record<string, number> = {

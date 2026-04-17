@@ -37,7 +37,7 @@ Tactual launches a Chromium browser, navigates to user-specified URLs, and captu
 
 - The `--http` transport binds to `127.0.0.1` by default (localhost only). Network exposure requires explicitly setting `--host=0.0.0.0` or `HOST=0.0.0.0`.
 - No authentication or TLS. The HTTP transport is intended for local development and trusted container environments, not public exposure. Use a reverse proxy with TLS and auth for any network-facing deployment.
-- Request body size is not capped. Malicious clients could send arbitrarily large payloads.
+- Request body size is capped at 1 MB to prevent memory exhaustion from oversized payloads.
 
 ### Output safety
 
@@ -48,7 +48,8 @@ Tactual launches a Chromium browser, navigates to user-specified URLs, and captu
 
 | Version | Supported |
 |---|---|
-| 0.2.x | Yes (current) |
+| 0.3.x | Yes (current) |
+| 0.2.x | No |
 | 0.1.x | No |
 
 ## Dependencies

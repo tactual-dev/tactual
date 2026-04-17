@@ -45,7 +45,7 @@ function makeResult(findings: Finding[], stateOverrides: Partial<PageState> = {}
     }],
     findings,
     diagnostics: [],
-    metadata: { version: "0.1.0", profile: "test-profile", duration: 100, stateCount: 1, targetCount: findings.length, edgeCount: 0 },
+    metadata: { version: "0.1.0", profile: "test-profile", duration: 100, stateCount: 1, targetCount: findings.length, findingCount: findings.length, edgeCount: 0 },
   };
 }
 
@@ -66,7 +66,7 @@ describe("SARIF validation", () => {
     expect(sarif.runs).toHaveLength(1);
     expect(sarif.runs[0].tool.driver.name).toBe("Tactual");
     expect(Array.isArray(sarif.runs[0].tool.driver.rules)).toBe(true);
-    expect(sarif.runs[0].tool.driver.rules).toHaveLength(4);
+    expect(sarif.runs[0].tool.driver.rules).toHaveLength(5);
   });
 
   it("rule IDs match severity levels", () => {
@@ -131,7 +131,7 @@ describe("SARIF validation", () => {
 
     expect(sarif.version).toBe("2.1.0");
     expect(sarif.runs[0].results).toHaveLength(0);
-    expect(sarif.runs[0].tool.driver.rules).toHaveLength(4);
+    expect(sarif.runs[0].tool.driver.rules).toHaveLength(5);
   });
 
   it("empty states — no crash, valid JSON", () => {
@@ -140,7 +140,7 @@ describe("SARIF validation", () => {
       states: [],
       findings: [makeFinding()],
       diagnostics: [],
-      metadata: { version: "0.1.0", profile: "test-profile", duration: 100, stateCount: 0, targetCount: 1, edgeCount: 0 },
+      metadata: { version: "0.1.0", profile: "test-profile", duration: 100, stateCount: 0, targetCount: 1, findingCount: 1, edgeCount: 0 },
     };
 
     const raw = formatSARIF(result);

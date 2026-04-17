@@ -8,7 +8,7 @@ coverage/
 *.log
 .DS_Store
 Thumbs.db
-.vscode/
+.vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
 .idea/
@@ -17,3 +17,4 @@ Thumbs.db
 tmp-analysis.json
 *-analysis/
 .mcpregistry_*
+.playwright-mcp/

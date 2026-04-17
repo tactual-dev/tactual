@@ -30,7 +30,7 @@ export function computePathsFromEntries(
   const paths: PathResult[] = [];
   for (const entry of entryPoints) {
     const path = graph.shortestPath(entry, targetNodeId);
-    if (path && path.totalCost > 0) paths.push(path);
+    if (path && path.totalCost >= 0) paths.push(path);
   }
   paths.sort((a, b) => a.totalCost - b.totalCost);
   return paths;
@@ -112,6 +112,7 @@ export function formatPath(graph: NavigationGraph, path: PathResult | null): str
 }
 
 export function median(values: number[]): number {
+  if (values.length === 0) return 0;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
   return sorted.length % 2 === 0

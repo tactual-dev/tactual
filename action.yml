@@ -1,5 +1,5 @@
 name: "Tactual Accessibility Analysis"
-description: "Screen-reader navigation cost analysis. Scores how hard AT users find, reach, and operate web content."
+description: "Screen-reader navigation cost analysis. Scores how hard it is for AT users to find, reach, and operate web content."
 author: "Ben Matar"
 
 branding:
@@ -26,6 +26,10 @@ inputs:
     description: "Fail if average score is below this threshold (0 to disable)"
     required: false
     default: "0"
+  comment-on-pr:
+    description: "Post a summary comment on pull requests (requires GITHUB_TOKEN with pull-requests: write)"
+    required: false
+    default: "false"
   node-version:
     description: "Node.js version to use"
     required: false
@@ -50,7 +54,7 @@ runs:
     - name: Install Tactual and Playwright
       shell: bash
       run: |
-        npm install tactual playwright
+        npm install tactual@0.3.0 playwright
         npx playwright install chromium --with-deps
 
     - name: Run analysis
@@ -62,33 +66,38 @@ runs:
           EXPLORE_FLAG="--explore"
         fi
 
+        FORMAT="${{ inputs.format }}"
+
+        # Single analysis run — produce the user's format + JSON sidecar for score extraction.
+        # --also-json writes JSON from the same analysis without a second Playwright capture.
         EXT="txt"
-        if [ "${{ inputs.format }}" = "sarif" ]; then EXT="sarif"; fi
-        if [ "${{ inputs.format }}" = "json" ]; then EXT="json"; fi
+        if [ "$FORMAT" = "sarif" ]; then EXT="sarif"; fi
+        if [ "$FORMAT" = "json" ]; then EXT="json"; fi
+        if [ "$FORMAT" = "markdown" ]; then EXT="md"; fi
         RESULT_FILE="tactual-results.${EXT}"
+
+        ALSO_JSON_FLAG=""
+        if [ "$FORMAT" != "json" ]; then
+          ALSO_JSON_FLAG="--also-json tactual-results.json"
+        fi
 
         npx tactual analyze-url "${{ inputs.url }}" \
           --profile "${{ inputs.profile }}" \
-          --format "${{ inputs.format }}" \
+          --format "$FORMAT" \
           $EXPLORE_FLAG \
-          --output "$RESULT_FILE"
+          --output "$RESULT_FILE" \
+          $ALSO_JSON_FLAG
 
         echo "result-file=${RESULT_FILE}" >> "$GITHUB_OUTPUT"
 
-        # Generate JSON for score extraction (skip if already JSON)
-        if [ "${{ inputs.format }}" != "json" ]; then
-          npx tactual analyze-url "${{ inputs.url }}" \
-            --profile "${{ inputs.profile }}" \
-            $EXPLORE_FLAG \
-            --format json \
-            --output tactual-results.json
+        JSON_FILE="tactual-results.json"
+        if [ "$FORMAT" = "json" ]; then
+          JSON_FILE="$RESULT_FILE"
         fi
 
         AVG=$(node -e "
-          const r = JSON.parse(require('fs').readFileSync('tactual-results.json','utf8'));
-          if (!r.findings || r.findings.length === 0) { console.log('0'); process.exit(0); }
-          const avg = r.findings.reduce((s,f) => s + f.scores.overall, 0) / r.findings.length;
-          console.log(Math.round(avg * 10) / 10);
+          const r = JSON.parse(require('fs').readFileSync('${JSON_FILE}','utf8'));
+          console.log(r.stats?.averageScore ?? 0);
         ")
         echo "average-score=${AVG}" >> "$GITHUB_OUTPUT"
         echo "Average score: ${AVG}"
@@ -99,7 +108,8 @@ runs:
       run: |
         AVG="${{ steps.analysis.outputs.average-score }}"
         THRESHOLD="${{ inputs.fail-below }}"
-        if (( $(echo "$AVG < $THRESHOLD" | bc -l) )); then
+        BELOW=$(node -e "console.log(Number('$AVG') < Number('$THRESHOLD') ? '1' : '0')")
+        if [ "$BELOW" = "1" ]; then
           echo "::error::Average score $AVG is below threshold $THRESHOLD"
           exit 1
         fi
@@ -110,6 +120,39 @@ runs:
       with:
         sarif_file: tactual-results.sarif
         category: tactual-a11y
+
+    - name: Post PR comment
+      if: inputs.comment-on-pr == 'true' && github.event_name == 'pull_request'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        if [ ! -f "tactual-results.json" ]; then
+          echo "No JSON results available for PR comment"
+          exit 0
+        fi
+
+        AVG="${{ steps.analysis.outputs.average-score }}"
+        URL="${{ inputs.url }}"
+        PROFILE="${{ inputs.profile }}"
+
+        COMMENT=$(node "${{ github.action_path }}/scripts/pr-comment.js" \
+          tactual-results.json "$AVG" "$URL" "$PROFILE")
+
+        # Find existing comment for this URL+profile, or create new one
+        # Use | separator (URLs contain : but rarely |); strip HTML-breaking chars
+        PR_NUM="${{ github.event.pull_request.number }}"
+        MARKER="tactual-pr-comment|$(printf '%s' "$URL" | sed 's/[<>|]//g')|$(printf '%s' "$PROFILE" | sed 's/[<>|]//g')"
+        EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
+          --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
+          2>/dev/null | head -1)
+
+        if [ -n "$EXISTING" ]; then
+          gh api "repos/${{ github.repository }}/issues/comments/${EXISTING}" \
+            -X PATCH -f body="$COMMENT"
+        else
+          gh pr comment "$PR_NUM" --body "$COMMENT"
+        fi
 
     - name: Upload analysis artifact
       if: always()

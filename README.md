@@ -14,7 +14,11 @@ Tactual measures **navigation cost** — how many actions does it take a screen-
 
 It works by capturing Playwright accessibility snapshots, building a navigation graph, and scoring each target under an assistive-technology profile.
 
+Tactual is a developer tool for analyzing your own sites and staging environments. Run it locally, in CI, or via the MCP server in your editor. It is not a public scanning service.
+
 ## Install
+
+Requires Node.js 20 or later.
 
 ```bash
 npm install tactual playwright
@@ -38,6 +42,10 @@ npx tactual analyze-url https://example.com --profile voiceover-ios-v0
 # Explore hidden UI (menus, tabs, dialogs, disclosures)
 npx tactual analyze-url https://example.com --explore
 
+# Use a scoring preset for your use case
+npx tactual analyze-url https://shop.com --preset ecommerce-checkout
+npx tactual analyze-url https://docs.example.com --preset docs-site
+
 # Output as JSON, Markdown, or SARIF
 npx tactual analyze-url https://example.com --format json --output report.json
 npx tactual analyze-url https://example.com --format sarif --output report.sarif
@@ -45,8 +53,13 @@ npx tactual analyze-url https://example.com --format sarif --output report.sarif
 # Compare two analysis runs
 npx tactual diff baseline.json candidate.json
 
-# List available AT profiles
+# Print what NVDA would say as you Tab through the page
+npx tactual transcript https://example.com
+npx tactual transcript https://example.com --at voiceover
+
+# List available AT profiles and scoring presets
 npx tactual profiles
+npx tactual presets
 
 # Run benchmark suite
 npx tactual benchmark
@@ -77,6 +90,62 @@ for (const finding of result.findings) {
 }
 ```
 
+**Screen-reader announcement simulator** — predict what NVDA, JAWS, or VoiceOver would announce for every target, with state info (checked, expanded, selected, modal, value, required, invalid, etc.):
+
+```typescript
+import {
+  simulateScreenReader, buildAnnouncement,
+  buildMultiATAnnouncement, buildTranscript,
+} from "tactual/playwright";
+
+const report = await simulateScreenReader(page, state.targets);
+
+for (const a of report.formFields) {
+  console.log(a.announcement);
+  // → "Subscribe, check box, checked"
+  // → "Country, combo box, collapsed"
+  // → "Email, edit, invalid entry, required, you must use a work address"
+}
+
+// Compare across screen readers
+const tx = state.targets[5];
+buildAnnouncement(tx, "nvda");      // → "Country, combo box, collapsed"
+buildAnnouncement(tx, "voiceover"); // → "Country, popup button"
+
+// All three at once
+buildMultiATAnnouncement(tx);
+// → { nvda: "...", jaws: "...", voiceover: "..." }
+
+// Linear navigation transcript — what an SR user hears Tabbing through
+const transcript = buildTranscript(state.targets, "nvda");
+// → [{ step: 1, kind: "landmark", announcement: "Main, main landmark" }, ...]
+
+// Multi-target navigation modes (linear, by-heading, by-landmark, by-form-control)
+import { buildNavigationTranscript } from "tactual/playwright";
+
+// Heading-only navigation (NVDA: H key)
+const headings = buildNavigationTranscript(state.targets, { mode: "by-heading" });
+
+// Navigate from one element to another
+const path = buildNavigationTranscript(state.targets, {
+  from: "link:before-main", to: "heading:welcome", mode: "linear",
+});
+
+// Demoted landmarks (in DOM but stripped by HTML rules, e.g. <header> in <section>)
+for (const d of report.demotedLandmarks) {
+  console.warn(d.demotionReason);
+}
+```
+
+Or from the CLI:
+```bash
+npx tactual transcript https://example.com --at voiceover
+```
+
+The simulator is heuristic prediction, not real screen-reader output. It runs in milliseconds and is cross-platform — analysis happens in a headless browser by default, so nothing pops up while you work. (Use `--no-headless` if you need a visible browser, e.g., for bot-blocked sites.)
+
+**Data quality.** Calibrated against the [W3C ARIA-AT project](https://aria-at.w3.org): **77/77 assertions pass at 100% across all three ATs (NVDA, JAWS, VoiceOver)**, covering 36 single-target patterns (button, toggle button, all menu button variants, disclosure, accordion, checkbox/tri-state, switch, sliders, dialog, alert, links, tabs, comboboxes, radiogroups, spin button, menubar) plus 4 multi-target landmark scenarios. Run `npm run calibrate` after `npm run build` to verify against the latest upstream assertions. AT-specific overrides outside the calibrated set are labeled HIGH/MEDIUM/LOW confidence in the source.
+
 ### MCP Server
 
 Tactual includes an MCP server for AI agent consumption:
@@ -95,13 +164,15 @@ npx tactual-mcp --http --host=0.0.0.0  # bind to all interfaces (default: 127.0.
 
 | Tool | Description |
 |---|---|
-| `analyze_url` | Analyze a web page for SR navigation cost. Default format is `sarif`. Supports `waitForSelector`, `waitTime`, `minSeverity`, `focus`, `excludeSelector`, `exclude`, `maxFindings`, `summaryOnly`, `timeout`, `storageState` params. Findings include Playwright locator selectors. Pass `probe: true` for keyboard probes. Pass `includeStates: true` to get captured states for offline `trace_path`. |
-| `trace_path` | Trace the step-by-step navigation path to a specific target. Shows each action, cost, and modeled SR announcement. Accepts target ID or glob pattern (e.g., `*search*`). Pass `statesJson` from a prior `analyze_url` to skip browser launch. Supports `storageState` for authenticated pages. |
-| `list_profiles` | List available AT profiles |
-| `diff_results` | Compare two analysis results. Shows penalties resolved/added, severity changes, and status per target. |
-| `suggest_remediations` | Ranked fix suggestions by impact. Redundant for SARIF output (fixes are inline). |
-| `save_auth` | Authenticate with a web app and save session state. Pass the output file path as `storageState` to other tools for analyzing authenticated content. |
-| `analyze_pages` | Analyze multiple pages in one call with site-level aggregation. Returns ~200 bytes per page. Use for site triage before diving into individual pages. |
+| `analyze_url` | Analyze a page for SR navigation cost (SARIF default). Supports exploration, keyboard probes, filtering. |
+| `trace_path` | Step-by-step navigation path to a target with modeled SR announcements. |
+| `list_profiles` | List available AT profiles. |
+| `diff_results` | Compare two analysis results — improvements, regressions, severity changes. |
+| `suggest_remediations` | Ranked fix suggestions by impact. |
+| `save_auth` | Authenticate and save session state for analyzing protected content. |
+| `analyze_pages` | Multi-page site triage with aggregated stats (~200 bytes/page). |
+
+Full parameter reference: [docs/MCP-TOOLS.md](docs/MCP-TOOLS.md)
 
 #### Setup by AI tool
 
@@ -162,16 +233,20 @@ Use the composite action from the GitHub Actions Marketplace:
 jobs:
   a11y:
     runs-on: ubuntu-latest
+    permissions:
+      security-events: write   # for SARIF upload
+      pull-requests: write     # for comment-on-pr
     steps:
       - name: Analyze accessibility
-        uses: tactual-dev/tactual@v0.2.1
+        uses: tactual-dev/tactual@v0.3.0
         with:
           url: https://your-app.com
           explore: "true"
           fail-below: "70"
+          comment-on-pr: "true"
 ```
 
-The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Outputs `average-score` and `result-file` for downstream steps.
+The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Set `comment-on-pr: "true"` to post a summary comment on pull requests (updates on re-run). Outputs `average-score` and `result-file` for downstream steps. Action version tracks Tactual version — bump the `uses:` line to pick up patches.
 
 Or use the CLI directly for more control:
 
@@ -205,6 +280,7 @@ Options:
   --explore-depth <n>             Max exploration depth (default: 3)
   --explore-budget <n>            Max exploration actions (default: 50)
   --explore-max-targets <n>       Max accumulated targets before stopping (default: 2000)
+  --allow-action <patterns...>    Allow exploring controls matching these patterns (overrides safety)
   --exclude <patterns...>         Exclude targets by name/role glob
   --exclude-selector <css...>     Exclude elements by CSS selector
   --focus <landmarks...>          Only analyze within these landmarks
@@ -212,13 +288,16 @@ Options:
   --top <n>                       Show only worst N findings
   --min-severity <level>          Minimum severity to report
   --threshold <n>                 Exit non-zero if avg score < N
+  --preset <name>                 Scoring preset (ecommerce-checkout, docs-site, dashboard, form-heavy)
   --config <path>                 Path to tactual.json
   --no-headless                   Headed browser (for bot-blocked sites)
   --timeout <ms>                  Page load timeout (default: 30000)
   --probe                         Run keyboard probes (focus, activation, Escape, Tab)
+  --probe-budget <n>              Max targets to probe (default: 20)
   --wait-for-selector <css>       Wait for selector before capturing (for SPAs)
   --wait-time <ms>                Additional wait after page load
   --storage-state <path>          Playwright storageState JSON for authenticated pages
+  --also-json <path>              Also write JSON to this path (single analysis run for CI)
   --summary-only                  Return only summary stats, no individual findings
   -q, --quiet                     Suppress info diagnostics
 ```
@@ -229,6 +308,7 @@ Create with `tactual init` or manually:
 
 ```json
 {
+  "preset": "ecommerce-checkout",
   "profile": "voiceover-ios-v0",
   "exclude": ["easter*", "admin*", "debug*"],
   "excludeSelectors": ["#easter-egg", ".admin-only", ".third-party-widget"],
@@ -257,6 +337,26 @@ Config is auto-detected from the working directory (`tactual.json` or `.tactualr
 
 Profiles define the cost of each navigation action, score dimension weights, `costSensitivity` (scales the reachability decay curve), and context-dependent modifiers. See `src/profiles/` for implementation details.
 
+**Mobile profile limitation.** The `voiceover-ios-v0` and `talkback-android-v0` profiles model action costs and SR announcement phrasing accurately, but Tactual's keyboard probes (`--probe`) only test desktop interactions (Tab, Enter, Escape). They do NOT simulate touch gestures (single-tap, double-tap, swipe-right, three-finger swipe, rotor rotation, etc.). For mobile profiles, score dimensions reflect predicted cost from the profile model — not measured behavior. Real device testing remains necessary to verify mobile a11y.
+
+## Scoring Presets
+
+Presets bundle focus filters and priority mappings for common use cases. They layer under config files and CLI flags (preset → tactual.json → CLI flags).
+
+| Preset | Use case | Focus | Critical targets |
+|---|---|---|---|
+| `ecommerce-checkout` | Shopping flows | main | checkout, cart, payment, buy |
+| `docs-site` | Documentation | main, navigation | search, nav |
+| `dashboard` | Web apps | main, navigation | save, submit, create, delete, search |
+| `form-heavy` | Form pages | main | submit, save, next, continue, error |
+
+```bash
+npx tactual analyze-url https://shop.com --preset ecommerce-checkout
+npx tactual presets  # list all presets with details
+```
+
+Presets suppress cookie banners and analytics targets by default. To override, use `--exclude` or set `priority` in `tactual.json`. Presets do not compose — only one `--preset` can be active.
+
 ## Scoring
 
 Each target receives a **5-dimension score vector**:
@@ -279,7 +379,7 @@ Dimension weights vary by profile:
 | nvda-desktop-v0 | 0.35 | 0.25 | 0.30 | 0.10 | 0.7 |
 | jaws-desktop-v0 | 0.30 | 0.25 | 0.35 | 0.10 | 0.6 |
 
-**Composite:** Weighted geometric mean: `overall = exp(sum(w_i * ln(score_i)) / sum(w_i)) - interopRisk`. Each dimension is floored at 1 before the log to avoid log(0). This means a zero in any dimension drags the overall score down sharply -- you cannot operate what you cannot reach.
+**Composite:** Weighted geometric mean: `overall = exp(sum(w_i * ln(score_i)) / sum(w_i)) - interopRisk`. Each dimension is floored at 1 before the log to avoid log(0). A zero in any dimension eliminates that dimension's contribution to the geometric mean, significantly dragging the overall score down -- you cannot operate what you cannot reach.
 
 **Severity bands:**
 
@@ -305,7 +405,17 @@ Tactual detects and reports when analysis may be unreliable:
 | `possible-cookie-wall` | info | Cookie consent may obscure content |
 | `redirect-detected` | warning | Landed on different domain |
 | `no-headings` | warning | No heading elements found |
+| `heading-skip` | warning | Heading hierarchy skips a level (e.g., h1 → h3) |
 | `no-landmarks` | warning | No landmark regions found |
+| `no-skip-link` | warning | No skip-to-content link on pages with 5+ targets |
+| `no-main-landmark` | warning | Missing `<main>` landmark |
+| `no-banner-landmark` | info | Missing `<header>` / banner landmark |
+| `no-contentinfo-landmark` | info | Missing `<footer>` / contentinfo landmark |
+| `no-nav-landmark` | info | Missing `<nav>` / navigation landmark |
+| `structural-summary` | info | One-line structural overview (headings, landmarks, skip link) |
+| `shared-structural-issue` | warning | Penalty affecting >50% of targets promoted to page-level |
+| `landmark-demoted` | warning | HTML landmark exists but demoted by nesting context |
+| `timeout-during-render` | warning | A `waitForSelector` did not appear in time during MCP capture |
 
 ## Exploration
 
@@ -330,11 +440,38 @@ Exploration candidates are sorted by a stable key (role + name) before iterating
 | Targets | `--explore-max-targets` | 2000 | Stop if accumulated targets exceed this |
 | Time | (library only) | 120s | Global wall-clock timeout |
 
+**Sizing guidance:**
+
+| Page type | Suggested settings | Why |
+|---|---|---|
+| Marketing site, docs page, blog | defaults | Small surface, defaults rarely hit |
+| Dashboard with sidebar/menu | `--explore-depth 3 --explore-budget 50` (defaults) | Captures one level of menu opens |
+| Complex app (Figma, Notion, etc.) | `--explore-depth 4 --explore-budget 100 --explore-max-targets 5000` | Deeper menus, more state |
+| Pages with very large hidden UI (emoji pickers, color grids) | `--explore-max-targets 10000` plus `--exclude "emoji-*"` | Cap or filter out the firehose |
+| Quick triage of unknown page | `--explore-depth 1 --explore-budget 10` | Just open obvious branches, fast |
+
+If exploration takes more than 60s, raise `--explore-budget` slowly — each extra click adds ~1-2s. If output has duplicate-looking targets, lower `--explore-depth` (deep recursion can re-discover the same elements through different paths).
+
 ### SPA framework detection
 
 Tactual detects when SPA content has rendered before capturing the accessibility tree. Detected frameworks: React, Next.js, Vue, Nuxt, Angular, Svelte, and SvelteKit. Generic HTML5 content signals (landmarks, headings, navigation, links) are also checked. For SPAs not covered by auto-detection, use `--wait-for-selector` (CLI) or `waitForSelector` (MCP/API) to specify a CSS selector that indicates your app has hydrated.
 
 After initial framework detection, Tactual uses convergence-based polling — repeatedly snapshotting the accessibility tree until the target count stabilizes — which works regardless of framework.
+
+## Regression Tracking
+
+Compare two analysis runs to catch regressions:
+
+```bash
+# Save a baseline
+npx tactual analyze-url https://your-app.com --format json --output baseline.json
+
+# After changes, run again and diff
+npx tactual analyze-url https://your-app.com --format json --output candidate.json
+npx tactual diff baseline.json candidate.json
+```
+
+The diff shows targets that improved, regressed, or changed severity, plus penalties resolved and added. In CI, use the `comment-on-pr` action input to post results on every pull request automatically.
 
 ## Interop Risk
 
@@ -401,3 +538,9 @@ All URLs are validated before navigation. Private/internal IP ranges and non-HTT
 ## License
 
 Apache-2.0
+
+### Attribution
+
+The simulator's role/state phrasing is calibrated against the [W3C ARIA-AT project](https://github.com/w3c/aria-at), which is licensed under [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/). Tactual does not bundle ARIA-AT data; the calibration script (`npm run calibrate`) fetches assertions from the upstream repository at run time. If you publish Tactual calibration results, please attribute the W3C ARIA-AT project as the source of the ground-truth assertions.
+
+ARIA role/attribute support data referenced in interop risk scoring is derived from [a11ysupport.io](https://a11ysupport.io) and the same ARIA-AT project.

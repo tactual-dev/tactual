@@ -8,6 +8,7 @@ import {
   filterDiagnostics,
   type AnalysisFilter,
 } from "./filter.js";
+import { globToRegex } from "../mcp/trace-helpers.js";
 import type { ATProfile } from "../profiles/types.js";
 import { VERSION } from "../version.js";
 
@@ -38,13 +39,16 @@ export function analyze(
 
   // Run diagnostics on captured states, deduplicating across explored states
   let diagnostics: CaptureDiagnostic[] = [];
-  const diagCounts = new Map<string, number>();
-  for (const state of states) {
-    const stateDiags = diagnoseCapture(
+  const allStateDiags = states.map((state) =>
+    diagnoseCapture(
       state,
       options.requestedUrl ?? options.name ?? state.url,
       options.snapshotText ?? "",
-    );
+    ),
+  );
+  // Count occurrences of each diagnostic across states
+  const diagCounts = new Map<string, number>();
+  for (const stateDiags of allStateDiags) {
     for (const d of stateDiags) {
       if (d.code === "ok") continue;
       const key = `${d.code}:${d.message}`;
@@ -53,12 +57,7 @@ export function analyze(
   }
   // Emit each unique diagnostic once, with count if it appeared in multiple states
   const seenCodes = new Set<string>();
-  for (const state of states) {
-    const stateDiags = diagnoseCapture(
-      state,
-      options.requestedUrl ?? options.name ?? state.url,
-      options.snapshotText ?? "",
-    );
+  for (const stateDiags of allStateDiags) {
     for (const d of stateDiags) {
       if (d.code === "ok") continue;
       const key = `${d.code}:${d.message}`;
@@ -80,7 +79,47 @@ export function analyze(
     targets: filterTargets(state.targets, filter),
   }));
 
-  const graph = buildGraph(filteredStates, profile);
+  // Warn if --focus patterns match no landmarks at all (filter had no effect)
+  if (filter.focus && filter.focus.length > 0) {
+    const focusPatterns = filter.focus.map((p) => globToRegex(p));
+    const hasMatch = states.some((s) =>
+      s.targets.some(
+        (t) =>
+          (t.kind === "landmark" || t.kind === "search") &&
+          focusPatterns.some(
+            (re) =>
+              re.test((t.name ?? "").toLowerCase()) ||
+              re.test((t.role ?? "").toLowerCase()),
+          ),
+      ),
+    );
+    if (!hasMatch) {
+      const totalAfter = filteredStates.reduce((n, s) => n + s.targets.length, 0);
+      diagnostics.push({
+        level: "warning",
+        code: "no-landmarks",
+        message: `Focus filter (${filter.focus.join(", ")}) had no effect — no matching landmarks found. All ${totalAfter} targets were analyzed.`,
+      });
+    }
+  }
+
+  let graph: ReturnType<typeof buildGraph>;
+  try {
+    graph = buildGraph(filteredStates, profile);
+  } catch (e) {
+    diagnostics.push({
+      level: "error",
+      code: "empty-page",
+      message: `Graph construction failed: ${e instanceof Error ? e.message : "unknown error"}`,
+    });
+    return {
+      flow: { id: `flow-${startTime}`, name: options.name ?? "Analysis", states: [], profile: profile.id, timestamp: startTime },
+      states: filteredStates,
+      findings: [],
+      diagnostics,
+      metadata: { version: VERSION, profile: profile.id, duration: Date.now() - startTime, stateCount: filteredStates.length, targetCount: 0, findingCount: 0, edgeCount: 0 },
+    };
+  }
 
   let findings: ReturnType<typeof buildFinding>[] = [];
   const allStateIds: string[] = [];
@@ -95,11 +134,20 @@ export function analyze(
     for (const target of state.targets) {
       const nodeId = `${state.id}:${target.id}`;
       if (!graph.hasNode(nodeId)) continue;
-      const finding = buildFinding(graph, state, nodeId, target, profile);
-      // Keep the best (highest) score per target ID
-      const existing = bestByTargetId.get(target.id);
-      if (!existing || finding.scores.overall > existing.scores.overall) {
-        bestByTargetId.set(target.id, finding);
+      try {
+        const finding = buildFinding(graph, state, nodeId, target, profile);
+        // Keep the best (highest) score per target ID
+        const existing = bestByTargetId.get(target.id);
+        if (!existing || finding.scores.overall > existing.scores.overall) {
+          bestByTargetId.set(target.id, finding);
+        }
+      } catch (e) {
+        // Degrade gracefully — emit diagnostic rather than crash entire analysis
+        diagnostics.push({
+          level: "warning",
+          code: "possibly-degraded-content",
+          message: `Failed to analyze target "${target.id}": ${e instanceof Error ? e.message : "unknown error"}`,
+        });
       }
     }
   }
@@ -107,6 +155,58 @@ export function analyze(
 
   findings.sort((a, b) => a.scores.overall - b.scores.overall);
   findings = filterFindings(findings, filter);
+
+  // --- Shared-cause deduplication ---
+  // When >50% of findings share the same penalty, promote it to a
+  // page-level diagnostic instead of repeating it on every finding.
+  if (findings.length >= 10) {
+    const penaltyFrequency = new Map<string, number>();
+    for (const f of findings) {
+      for (const p of f.penalties) {
+        const key = p.replace(/(?<=\s|^)\d+(?=\s|$)/g, "N");
+        penaltyFrequency.set(key, (penaltyFrequency.get(key) ?? 0) + 1);
+      }
+    }
+
+    const threshold = findings.length * 0.5;
+    const promotedKeys = new Set<string>();
+    for (const [normalizedKey, count] of penaltyFrequency) {
+      if (count > threshold) {
+        promotedKeys.add(normalizedKey);
+        // Find a representative un-normalized penalty
+        let representative = normalizedKey;
+        for (const f of findings) {
+          for (const p of f.penalties) {
+            if (p.replace(/(?<=\s|^)\d+(?=\s|$)/g, "N") === normalizedKey) {
+              representative = p;
+              break;
+            }
+          }
+          if (representative !== normalizedKey) break;
+        }
+        diagnostics.push({
+          level: "warning",
+          code: "shared-structural-issue",
+          message:
+            `${count} of ${findings.length} targets share the same issue: ` +
+            `"${representative}". This is a page-level structural problem — ` +
+            `fixing the root cause will improve all affected targets.`,
+        });
+      }
+    }
+
+    // Strip promoted penalties from individual findings to reduce noise
+    if (promotedKeys.size > 0) {
+      for (const f of findings) {
+        const sharedPenalties = f.penalties.filter(
+          (p) => promotedKeys.has(p.replace(/(?<=\s|^)\d+(?=\s|$)/g, "N")),
+        );
+        if (sharedPenalties.length > 0) {
+          (f as Record<string, unknown>)._sharedCause = sharedPenalties;
+        }
+      }
+    }
+  }
 
   // Synthesize a page-level finding when no targets are found.
   // This ensures users always get actionable output, even for the worst pages.
@@ -158,7 +258,8 @@ export function analyze(
       profile: profile.id,
       duration: Date.now() - startTime,
       stateCount: allStateIds.length,
-      targetCount: findings.length,
+      targetCount: filteredStates.reduce((sum, s) => sum + s.targets.length, 0),
+      findingCount: findings.length,
       edgeCount: graph.edgeCount,
     },
   };

@@ -4,7 +4,7 @@ import { probeTargets, type ProbeResults } from "./probes.js";
 import { captureState } from "./capture.js";
 
 describe("probes", () => {
-  it("probes a button and reports focusable + activatable", async () => {
+  it("probes a button and reports focusable + stateChanged", async () => {
     const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`

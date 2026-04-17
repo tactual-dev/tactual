@@ -127,7 +127,13 @@ describe("globToRegex", () => {
 // ---------------------------------------------------------------------------
 
 describe("modelAnnouncement", () => {
-  it("announces headings", () => {
+  it("announces headings with level", () => {
+    expect(modelAnnouncement("nextHeading", "heading", "Introduction", 2)).toBe(
+      "Introduction, heading level 2",
+    );
+  });
+
+  it("announces headings without level", () => {
     expect(modelAnnouncement("nextHeading", "heading", "Introduction")).toBe(
       "Introduction, heading",
     );

@@ -21,7 +21,7 @@ function makeResult(findings: Finding[], overrides: Partial<AnalysisResult> = {}
     diagnostics: [],
     metadata: {
       version: "0.1.0", profile: "generic-mobile-web-sr-v0", duration: 100,
-      stateCount: 1, targetCount: findings.length, edgeCount: 0,
+      stateCount: 1, targetCount: findings.length, findingCount: findings.length, edgeCount: 0,
     },
     ...overrides,
   };

@@ -5,7 +5,7 @@ import { summarize, type DetailedFinding, type IssueGroup } from "./summarize.js
 // ANSI color helpers (no external dependencies)
 // ---------------------------------------------------------------------------
 
-const isColorSupported = process.stdout.isTTY !== false && !process.env.NO_COLOR;
+const isColorSupported = process.stdout.isTTY === true && !process.env.NO_COLOR;
 
 const c = {
   reset: isColorSupported ? "\x1b[0m" : "",
@@ -35,7 +35,7 @@ function severityColor(severity: string): string {
 function scoreBar(score: number, width = 10): string {
   const filled = Math.round((score / 100) * width);
   const empty = width - filled;
-  const color = score >= 90 ? c.green : score >= 75 ? c.green : score >= 60 ? c.yellow : c.red;
+  const color = score >= 75 ? c.green : score >= 60 ? c.yellow : c.red;
   return `${color}${"█".repeat(filled)}${c.gray}${"░".repeat(empty)}${c.reset} ${score}`;
 }
 
@@ -46,8 +46,8 @@ function scoreBar(score: number, width = 10): string {
 /** Maximum findings to show in console (only non-strong) */
 const MAX_CONSOLE_FINDINGS = 8;
 
-export function formatConsole(result: AnalysisResult): string {
-  const s = summarize(result);
+export function formatConsole(result: AnalysisResult, options?: { maxDetailedFindings?: number }): string {
+  const s = summarize(result, options);
   const lines: string[] = [];
 
   // ── Header ──
@@ -102,6 +102,9 @@ export function formatConsole(result: AnalysisResult): string {
     for (const g of s.issueGroups.slice(0, 5)) {
       formatIssueGroup(lines, g);
     }
+    if (s.issueGroups.length > 5) {
+      lines.push(`  ${c.dim}  ... and ${s.issueGroups.length - 5} more issue groups${c.reset}`);
+    }
   }
 
   // ── Findings (only actionable: severe, high, moderate) ──
@@ -110,7 +113,8 @@ export function formatConsole(result: AnalysisResult): string {
   );
 
   if (actionable.length > 0) {
-    const shown = actionable.slice(0, MAX_CONSOLE_FINDINGS);
+    const maxShown = options?.maxDetailedFindings ?? MAX_CONSOLE_FINDINGS;
+    const shown = actionable.slice(0, maxShown);
     const remaining = actionable.length - shown.length;
 
     lines.push("");
