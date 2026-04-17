@@ -134,6 +134,16 @@ export function createMcpServer(): McpServer {
             "Adds ~30-60s but detects real focus management issues. Off by default — use for deep investigation, " +
             "not for triage or fix-verify loops. analyze_pages never probes.",
           ),
+        probeBudget: z
+          .number()
+          .int()
+          .min(1)
+          .max(200)
+          .optional()
+          .describe(
+            "Maximum number of targets to probe when probe=true. Default 20. Increase for deeper keyboard testing on " +
+            "large pages; decrease to keep total analysis time bounded. Each probe adds ~1-3s.",
+          ),
         summaryOnly: z
           .boolean()
           .default(false)
@@ -156,7 +166,7 @@ export function createMcpServer(): McpServer {
           ),
       },
     },
-    async ({ url, profile: profileId, device, explore, allowAction, format, minSeverity, waitForSelector, waitTime, timeout, focus, excludeSelector, exclude, maxFindings, probe, summaryOnly, includeStates, storageState }) => {
+    async ({ url, profile: profileId, device, explore, allowAction, format, minSeverity, waitForSelector, waitTime, timeout, focus, excludeSelector, exclude, maxFindings, probe, probeBudget, summaryOnly, includeStates, storageState }) => {
       const profile = getProfile(profileId);
       if (!profile) {
         return {
@@ -240,7 +250,7 @@ export function createMcpServer(): McpServer {
         let targets = rawState.targets;
         if (probe) {
           const { probeTargets } = await import("../playwright/probes.js");
-          targets = await probeTargets(page, rawState.targets);
+          targets = await probeTargets(page, rawState.targets, probeBudget);
         }
         const state = { ...rawState, targets };
 
