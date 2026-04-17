@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { simulateAction, simulateSequence } from "./state-machine.js";
-import type { Target } from "../core/types.js";
+import type { Target } from "./types.js";
 
 const t = (overrides: Partial<Target> & { kind: Target["kind"]; role: string }): Target =>
   ({ id: "t1", name: "", requiresBranchOpen: false, ...overrides } as Target);

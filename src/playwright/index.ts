@@ -28,10 +28,12 @@ export {
   type NavigationOptions,
   type NestingContext,
 } from "./sr-simulator.js";
+// State machine lives in core/ (no Playwright deps); re-exported here
+// for backward compatibility with the v0.3.0 publish path.
 export {
   simulateAction,
   simulateSequence,
   type Key,
   type ActionResult,
   type AttributeChange,
-} from "./state-machine.js";
+} from "../core/state-machine.js";

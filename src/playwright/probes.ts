@@ -10,13 +10,11 @@ import type { Target } from "../core/types.js";
 export interface ProbeResults {
   /** Element received focus via Tab or click */
   focusable: boolean;
-  /** Element responded to Enter/Space activation */
-  activatable: boolean;
   /** After activation, Escape returned focus to the trigger or a logical position */
   escapeRestoresFocus: boolean;
   /** After activation, focus was not trapped (Tab moves focus forward) */
   focusNotTrapped: boolean;
-  /** After activation, aria-expanded or similar state changed */
+  /** After activation, an ARIA state attribute (expanded/checked/pressed/selected) changed */
   stateChanged: boolean;
   /** Element is reachable via Tab key (not tabindex="-1") */
   tabbable: boolean;
@@ -140,7 +138,7 @@ function probeWeight(role: string): number {
  */
 async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
   const fail: ProbeResults = {
-    focusable: false, activatable: false, escapeRestoresFocus: false,
+    focusable: false, escapeRestoresFocus: false,
     focusNotTrapped: false, stateChanged: false, tabbable: false,
     hasPositiveTabindex: false, nestedFocusable: false,
     focusIndicatorSuppressed: false, probeSucceeded: false,
@@ -312,7 +310,6 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
 
     return {
       focusable: hasFocus,
-      activatable: stateChanged,
       escapeRestoresFocus,
       focusNotTrapped,
       stateChanged,

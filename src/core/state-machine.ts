@@ -17,7 +17,7 @@
  * Sources: https://www.w3.org/WAI/ARIA/apg/patterns/
  */
 
-import type { Target } from "../core/types.js";
+import type { Target } from "./types.js";
 
 export type Key =
   | "Space" | "Enter"
