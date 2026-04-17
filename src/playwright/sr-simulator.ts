@@ -776,3 +776,37 @@ export async function simulateScreenReader(
     totalTargets: targets.length,
   };
 }
+
+/**
+ * Aggregate demoted-landmark warnings by role + reason for diagnostic
+ * surfacing. A page with 13 unlabeled `<section role="region">` elements
+ * should produce ONE diagnostic ("13 elements with role=region lack
+ * aria-labels"), not 13 near-identical warnings that drown out other
+ * findings. Used by both the CLI and MCP server when surfacing
+ * SR-simulator output as analyzer diagnostics.
+ */
+export function aggregateDemotedLandmarks(
+  demoted: SimulatedAnnouncement[],
+): Array<{ level: "warning"; code: "landmark-demoted"; message: string }> {
+  if (demoted.length === 0) return [];
+  const groups = new Map<string, { role: string; reason: string; ids: string[] }>();
+  for (const d of demoted) {
+    const reason = d.demotionReason ?? "(unspecified)";
+    const key = `${d.role}|${reason}`;
+    const existing = groups.get(key);
+    if (existing) existing.ids.push(d.targetId);
+    else groups.set(key, { role: d.role, reason, ids: [d.targetId] });
+  }
+  return [...groups.values()].map((g) => {
+    const exampleIds = g.ids.slice(0, 3).join(", ");
+    const more = g.ids.length > 3 ? ` and ${g.ids.length - 3} more` : "";
+    const prefix = g.ids.length === 1
+      ? g.ids[0]
+      : `${g.ids.length} elements with role="${g.role}" (${exampleIds}${more})`;
+    return {
+      level: "warning" as const,
+      code: "landmark-demoted" as const,
+      message: `${prefix}: ${g.reason}`,
+    };
+  });
+}

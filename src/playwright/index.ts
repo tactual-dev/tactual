@@ -19,6 +19,7 @@ export {
   buildTranscript,
   buildNavigationTranscript,
   isLandmarkDemoted,
+  aggregateDemotedLandmarks,
   type ATKind,
   type SimulatorReport,
   type SimulatedAnnouncement,

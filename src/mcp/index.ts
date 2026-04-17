@@ -255,15 +255,12 @@ export function createMcpServer(): McpServer {
         const state = { ...rawState, targets };
 
         // SR announcement simulation — detect demoted landmarks
-        const { simulateScreenReader } = await import("../playwright/sr-simulator.js");
+        const { simulateScreenReader, aggregateDemotedLandmarks } =
+          await import("../playwright/sr-simulator.js");
         const srSim = await simulateScreenReader(page, targets);
-        // Note: srDiagnostics use code "landmark-demoted", not the
-        // captureWarnings bucket which is for timeout-during-render.
-        const srDiagnostics = srSim.demotedLandmarks.map((d) => ({
-          level: "warning" as const,
-          code: "landmark-demoted" as const,
-          message: `${d.targetId}: ${d.demotionReason}`,
-        }));
+        // Aggregate by role + reason so 13 unlabeled regions emit
+        // one diagnostic instead of 13 near-identical warnings.
+        const srDiagnostics = aggregateDemotedLandmarks(srSim.demotedLandmarks);
 
         let states = [state];
 

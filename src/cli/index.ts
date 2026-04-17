@@ -218,14 +218,12 @@ program
         // SR announcement simulation — runs automatically (instant, non-invasive)
         // Catches landmarks that the AT tree reports but NVDA would not announce
         // (e.g., <header> inside <section> loses its implicit banner role)
-        const { simulateScreenReader } = await import("../playwright/sr-simulator.js");
+        const { simulateScreenReader, aggregateDemotedLandmarks } =
+          await import("../playwright/sr-simulator.js");
         const srSim = await simulateScreenReader(page, targets);
-        // Store demoted landmarks as extra diagnostics for the analyzer
-        const srDiagnostics = srSim.demotedLandmarks.map((d) => ({
-          level: "warning" as const,
-          code: "landmark-demoted" as const,
-          message: `${d.targetId}: ${d.demotionReason}`,
-        }));
+        // Aggregate demoted landmarks by role + reason so a page with
+        // 13 unlabeled regions emits one diagnostic instead of 13.
+        const srDiagnostics = aggregateDemotedLandmarks(srSim.demotedLandmarks);
 
 
         const snapshotText = await page.ariaSnapshot().catch(() => "");
@@ -777,13 +775,30 @@ program
   .option("-f, --format <format>", "Output format: json, markdown, console, sarif", "console")
   .action(async (baseline: string, candidate: string, opts: { format: string }) => {
     const fs = await import("fs/promises");
+    const readJson = async (path: string, label: string) => {
+      try {
+        return JSON.parse(await fs.readFile(path, "utf-8")) as Record<string, unknown>;
+      } catch (err) {
+        const code = (err as NodeJS.ErrnoException).code;
+        if (code === "ENOENT") {
+          console.error(`Error: ${label} file not found: ${path}`);
+        } else if (err instanceof SyntaxError) {
+          console.error(`Error: ${label} file is not valid JSON: ${path}`);
+        } else {
+          const msg = err instanceof Error ? err.message : String(err);
+          console.error(`Error reading ${label} (${path}): ${msg}`);
+        }
+        process.exit(1);
+      }
+    };
+    const baseData = await readJson(baseline, "baseline");
+    const candData = await readJson(candidate, "candidate");
     try {
-      const baseData = JSON.parse(await fs.readFile(baseline, "utf-8")) as Record<string, unknown>;
-      const candData = JSON.parse(await fs.readFile(candidate, "utf-8")) as Record<string, unknown>;
       const diff = computeDiff(baseData, candData);
       console.log(formatDiff(diff, opts.format as ReportFormat));
     } catch (err) {
-      console.error(`Error: ${err}`);
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`Error computing diff: ${msg}`);
       process.exit(1);
     }
   });
@@ -795,11 +810,16 @@ program
   .description("List available AT profiles")
   .action(() => {
     const profiles = listProfiles();
+    const idWidth = Math.max(...profiles.map((id) => id.length));
     console.log("Available profiles:");
+    console.log("");
     for (const id of profiles) {
       const p = getProfile(id);
-      console.log(`  ${id}  ${p?.platform ?? ""} — ${p?.description?.slice(0, 60) ?? ""}`);
+      const platform = (p?.platform ?? "").padEnd(7);
+      console.log(`  ${id.padEnd(idWidth)}  ${platform}  ${p?.description ?? ""}`);
     }
+    console.log("");
+    console.log("Usage: npx tactual analyze-url <url> --profile <id>");
   });
 
 // ---- presets ----
@@ -1027,3 +1047,4 @@ function formatDiff(diff: DiffResult, _format: ReportFormat): string {
 
   return lines.join("\n");
 }
+
