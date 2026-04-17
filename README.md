@@ -142,7 +142,7 @@ Or from the CLI:
 npx tactual transcript https://example.com --at voiceover
 ```
 
-The simulator is heuristic prediction, not real screen-reader output. It runs in milliseconds, cross-platform, no OS focus stealing.
+The simulator is heuristic prediction, not real screen-reader output. It runs in milliseconds and is cross-platform — analysis happens in a headless browser by default, so nothing pops up while you work. (Use `--no-headless` if you need a visible browser, e.g., for bot-blocked sites.)
 
 **Data quality.** Calibrated against the [W3C ARIA-AT project](https://aria-at.w3.org): **77/77 assertions pass at 100% across all three ATs (NVDA, JAWS, VoiceOver)**, covering 36 single-target patterns (button, toggle button, all menu button variants, disclosure, accordion, checkbox/tri-state, switch, sliders, dialog, alert, links, tabs, comboboxes, radiogroups, spin button, menubar) plus 4 multi-target landmark scenarios. Run `npm run calibrate` after `npm run build` to verify against the latest upstream assertions. AT-specific overrides outside the calibrated set are labeled HIGH/MEDIUM/LOW confidence in the source.
 
