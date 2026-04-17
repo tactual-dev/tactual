@@ -337,6 +337,8 @@ Config is auto-detected from the working directory (`tactual.json` or `.tactualr
 
 Profiles define the cost of each navigation action, score dimension weights, `costSensitivity` (scales the reachability decay curve), and context-dependent modifiers. See `src/profiles/` for implementation details.
 
+**Mobile profile limitation.** The `voiceover-ios-v0` and `talkback-android-v0` profiles model action costs and SR announcement phrasing accurately, but Tactual's keyboard probes (`--probe`) only test desktop interactions (Tab, Enter, Escape). They do NOT simulate touch gestures (single-tap, double-tap, swipe-right, three-finger swipe, rotor rotation, etc.). For mobile profiles, score dimensions reflect predicted cost from the profile model — not measured behavior. Real device testing remains necessary to verify mobile a11y.
+
 ## Scoring Presets
 
 Presets bundle focus filters and priority mappings for common use cases. They layer under config files and CLI flags (preset → tactual.json → CLI flags).
@@ -437,6 +439,18 @@ Exploration candidates are sorted by a stable key (role + name) before iterating
 | Actions | `--explore-budget` | 50 | Total click budget across all branches |
 | Targets | `--explore-max-targets` | 2000 | Stop if accumulated targets exceed this |
 | Time | (library only) | 120s | Global wall-clock timeout |
+
+**Sizing guidance:**
+
+| Page type | Suggested settings | Why |
+|---|---|---|
+| Marketing site, docs page, blog | defaults | Small surface, defaults rarely hit |
+| Dashboard with sidebar/menu | `--explore-depth 3 --explore-budget 50` (defaults) | Captures one level of menu opens |
+| Complex app (Figma, Notion, etc.) | `--explore-depth 4 --explore-budget 100 --explore-max-targets 5000` | Deeper menus, more state |
+| Pages with very large hidden UI (emoji pickers, color grids) | `--explore-max-targets 10000` plus `--exclude "emoji-*"` | Cap or filter out the firehose |
+| Quick triage of unknown page | `--explore-depth 1 --explore-budget 10` | Just open obvious branches, fast |
+
+If exploration takes more than 60s, raise `--explore-budget` slowly — each extra click adds ~1-2s. If output has duplicate-looking targets, lower `--explore-depth` (deep recursion can re-discover the same elements through different paths).
 
 ### SPA framework detection
 

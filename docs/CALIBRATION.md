@@ -30,7 +30,7 @@ Good calibration pages have a mix of:
 - Poorly-structured sections (deep nesting, missing labels)
 - Interactive widgets (menus, dialogs, tabs, forms)
 
-The `fixtures/` directory has HTML files suitable for local testing. Real-world pages (GitHub, Wikipedia, your own app) are even better.
+The `fixtures/` directory in the [Tactual GitHub repo](https://github.com/tactual-dev/tactual/tree/main/fixtures) has HTML files suitable for local testing (not shipped with the npm package — clone the repo if you want them). Real-world pages (GitHub, Wikipedia, your own app) are even better.
 
 ### 2. Run Tactual on each page
 

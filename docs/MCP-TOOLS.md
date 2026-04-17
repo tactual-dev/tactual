@@ -22,7 +22,7 @@ Analyze a web page for screen-reader navigation cost. Returns scored findings sh
 | `excludeSelector` | string[] | no | | CSS selectors to hide from analysis |
 | `exclude` | string[] | no | | Glob patterns to exclude targets by name/role |
 | `maxFindings` | number | no | 15/25 | Max detailed findings (15 for JSON/markdown, 25 for SARIF) |
-| `probe` | boolean | no | `false` | Run keyboard probes (focus, activation, Escape, Tab) |
+| `probe` | boolean | no | `false` | Run keyboard probes (focus, activation, Escape, Tab). **Note:** links are not probed — clicking would navigate away from the page, breaking subsequent analysis. Link operability is assumed correct. |
 | `probeBudget` | number | no | `20` | Max targets to probe when `probe=true` (1-200) |
 | `summaryOnly` | boolean | no | `false` | Return only summary stats, no individual findings |
 | `includeStates` | boolean | no | `false` | Include captured states for passing to `trace_path` |
