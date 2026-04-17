@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 (2026-04-17)
+
+Same-day patch — caught by post-publish stress test.
+
+### Bug Fixes
+
+- **JSON output preserves `diagnostic.code`** — the JSON reporter was stripping the `code` field from diagnostics, leaving only `{level, message}`. Programmatic consumers (LLMs filtering by code, CI scripts checking specific diagnostic types, suppression rules in `tactual.json`) had to fall back to fragile message-text matching. Now `{level, code, message}` is preserved. Console / markdown / SARIF reporters were already correct; only JSON was lossy.
+
 ## 0.3.0 (2026-04-16)
 
 New diagnostics, scoring presets, SR simulator, performance improvements, security hardening, and documentation overhaul.
