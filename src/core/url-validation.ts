@@ -64,19 +64,3 @@ export function validateUrl(input: string): ValidationResult {
 
   return { valid: true, url: parsed.href };
 }
-
-/**
- * Validate an output file path for safety.
- * Blocks path traversal and writing to system directories.
- */
-export function validateOutputPath(path: string): ValidationResult {
-  const trimmed = path.trim();
-  if (!trimmed) return { valid: false, error: "Output path is empty" };
-
-  // Block null bytes (path traversal primitive)
-  if (trimmed.includes("\0")) {
-    return { valid: false, error: "Output path contains null bytes" };
-  }
-
-  return { valid: true, url: trimmed };
-}

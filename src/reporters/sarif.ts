@@ -133,6 +133,10 @@ export function formatSARIF(result: AnalysisResult): string {
     if (finding.suggestedFixes.length > 0) {
       messageParts.push(`Fixes: ${finding.suggestedFixes.join("; ")}`);
     }
+    if (finding.evidenceSummary) {
+      const e = finding.evidenceSummary;
+      messageParts.push(`Evidence: measured ${e.measured}, validated ${e.validated}, modeled ${e.modeled}, heuristic ${e.heuristic}`);
+    }
 
     const url = result.states[0]?.url ?? "";
 
@@ -159,6 +163,8 @@ export function formatSARIF(result: AnalysisResult): string {
         selector: finding.selector,
         bestPath: finding.bestPath,
         confidence: finding.confidence,
+        evidence: finding.evidence ?? [],
+        evidenceSummary: finding.evidenceSummary,
       },
     });
   }

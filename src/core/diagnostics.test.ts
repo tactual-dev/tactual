@@ -90,6 +90,25 @@ describe("diagnoseCapture", () => {
     expect(diags.some((d) => d.code === "blocked-by-bot-protection")).toBe(true);
   });
 
+  it("does NOT flag bot-protection when 'cloudflare' appears on a content-rich page", () => {
+    // Regression: astro.build mentions Cloudflare Pages as a deploy target.
+    // The word alone triggered a false positive.
+    const targets = Array.from({ length: 40 }, (_, i) => ({
+      id: `t${i}`,
+      kind: "link" as const,
+      role: "link",
+      name: `Link ${i}`,
+      requiresBranchOpen: false,
+    }));
+    const state = makeState({ targets });
+    const diags = diagnoseCapture(
+      state,
+      "https://astro.build/",
+      "Deploy anywhere — Vercel, Netlify, Cloudflare Pages, AWS...",
+    );
+    expect(diags.some((d) => d.code === "blocked-by-bot-protection")).toBe(false);
+  });
+
   it("detects sparse content", () => {
     const state = makeState({
       targets: [
@@ -280,6 +299,45 @@ describe("diagnoseCapture", () => {
     });
     const diags = diagnoseCapture(state, "https://example.com", "");
     expect(diags.some((d) => d.code === "no-skip-link")).toBe(false);
+  });
+
+  it("quantifies bypass depth when controls precede <main>", () => {
+    // 5 controls before main, 2 after. Skip link would bypass 5.
+    const state = makeState({
+      targets: [
+        { id: "h1", kind: "heading", role: "heading", name: "T", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "Nav 1", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "Nav 2", requiresBranchOpen: false },
+        { id: "b1", kind: "button", role: "button", name: "Menu", requiresBranchOpen: false },
+        { id: "l3", kind: "link", role: "link", name: "Nav 3", requiresBranchOpen: false },
+        { id: "b2", kind: "button", role: "button", name: "Search", requiresBranchOpen: false },
+        { id: "m1", kind: "landmark", role: "main", name: "Main", requiresBranchOpen: false },
+        { id: "b3", kind: "button", role: "button", name: "Submit", requiresBranchOpen: false },
+        { id: "l4", kind: "link", role: "link", name: "Learn more", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    const skipDiag = diags.find((d) => d.code === "no-skip-link");
+    expect(skipDiag).toBeDefined();
+    expect(skipDiag?.message).toMatch(/skip link would bypass 5 controls/);
+    expect(skipDiag?.affectedCount).toBe(5);
+    expect(skipDiag?.totalCount).toBe(7);
+  });
+
+  it("adds a 'no <main> too' callout when main landmark is missing", () => {
+    const state = makeState({
+      targets: [
+        { id: "h1", kind: "heading", role: "heading", name: "T", requiresBranchOpen: false },
+        { id: "l1", kind: "link", role: "link", name: "A", requiresBranchOpen: false },
+        { id: "l2", kind: "link", role: "link", name: "B", requiresBranchOpen: false },
+        { id: "b1", kind: "button", role: "button", name: "X", requiresBranchOpen: false },
+        { id: "b2", kind: "button", role: "button", name: "Y", requiresBranchOpen: false },
+      ],
+    });
+    const diags = diagnoseCapture(state, "https://example.com", "");
+    const skipDiag = diags.find((d) => d.code === "no-skip-link");
+    expect(skipDiag).toBeDefined();
+    expect(skipDiag?.message).toMatch(/no <main> landmark found/);
   });
 
   // --- Landmark completeness ---

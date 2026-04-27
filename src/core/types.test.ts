@@ -6,6 +6,7 @@ import {
   TargetSchema,
   PageStateSchema,
   EdgeSchema,
+  EvidenceItemSchema,
   FindingSchema,
 } from "./types.js";
 
@@ -118,6 +119,16 @@ describe("Zod schemas", () => {
     expect(parsed.confidence).toBe(1); // default
   });
 
+  it("validates evidence items", () => {
+    const evidence = {
+      kind: "measured",
+      source: "keyboard-probe",
+      description: "Runtime keyboard probe completed successfully.",
+      confidence: 0.95,
+    };
+    expect(EvidenceItemSchema.parse(evidence)).toEqual(evidence);
+  });
+
   it("validates a finding", () => {
     const finding = {
       targetId: "checkout.primary",
@@ -136,6 +147,15 @@ describe("Zod schemas", () => {
       penalties: ["Primary action is not grouped under a heading"],
       suggestedFixes: ["Add a task heading above cart actions"],
       confidence: 0.81,
+      evidence: [
+        {
+          kind: "heuristic",
+          source: "tactual-scoring-rules",
+          description: "Scoring rules assigned the severity.",
+          confidence: 0.81,
+        },
+      ],
+      evidenceSummary: { measured: 0, validated: 0, modeled: 0, heuristic: 1 },
     };
     expect(() => FindingSchema.parse(finding)).not.toThrow();
   });

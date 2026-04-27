@@ -16,5 +16,5 @@ export default defineConfig({
   clean: true,
   target: "node20",
   splitting: true,
-  external: ["playwright", "@modelcontextprotocol/sdk", "@guidepup/virtual-screen-reader"],
+  external: ["playwright", "@modelcontextprotocol/sdk", "@guidepup/virtual-screen-reader", "jsdom"],
 });

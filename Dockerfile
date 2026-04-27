@@ -1,10 +1,10 @@
 FROM node:22-slim
 
-RUN npx playwright install chromium --with-deps
-
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --omit=dev && npm install @modelcontextprotocol/sdk playwright
+RUN npx playwright install chromium --with-deps
+
 COPY dist/ dist/
 COPY LICENSE README.md ./
 

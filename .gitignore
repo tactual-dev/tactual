@@ -16,5 +16,15 @@ Thumbs.db
 *.swo
 tmp-analysis.json
 *-analysis/
+PR_BODY.md
 .mcpregistry_*
 .playwright-mcp/
+
+# Local audit / work-product dirs — stress-test writeups, corpus outputs,
+# screenshot captures. Kept on disk for reference but not committed so
+# feature branches stay clean.
+.audit/
+.pr-screenshots/
+build/
+# Claude Code local state (plan files, worktrees, etc.)
+.claude/

@@ -139,6 +139,86 @@ describe("summarize", () => {
     expect(result.issueGroups[0].count).toBe(3);
     expect(result.issueGroups[0].fix).toBe("Add skip link");
     expect(result.issueGroups[0].examples.length).toBeLessThanOrEqual(3);
+    expect(result.remediationCandidates).toHaveLength(1);
+    expect(result.remediationCandidates[0].category).toBe("navigation-structure");
+    expect(result.remediationCandidates[0].affectedCount).toBe(3);
+    expect(result.remediationCandidates[0].primaryFix).toBe("Add skip link");
+  });
+
+  it("computes estimatedScoreUplift + averageScore per issue group", () => {
+    // 3 targets sharing the same penalty at scores 40, 60, 80.
+    // FIX_CEILING is 90 → uplift = (90-40) + (90-60) + (90-80) = 90.
+    // averageScore = 60.
+    const findings = [
+      makeFinding({
+        targetId: "t1",
+        scores: { discoverability: 40, reachability: 40, operability: 40, recovery: 40, interopRisk: 40, overall: 40 },
+        penalties: ["Shared issue"],
+        suggestedFixes: ["Fix shared issue"],
+      }),
+      makeFinding({
+        targetId: "t2",
+        scores: { discoverability: 60, reachability: 60, operability: 60, recovery: 60, interopRisk: 60, overall: 60 },
+        penalties: ["Shared issue"],
+        suggestedFixes: ["Fix shared issue"],
+      }),
+      makeFinding({
+        targetId: "t3",
+        scores: { discoverability: 80, reachability: 80, operability: 80, recovery: 80, interopRisk: 80, overall: 80 },
+        penalties: ["Shared issue"],
+        suggestedFixes: ["Fix shared issue"],
+      }),
+    ];
+    const result = summarize(makeResult(findings));
+    expect(result.issueGroups).toHaveLength(1);
+    const g = result.issueGroups[0];
+    expect(g.averageScore).toBe(60);
+    expect(g.estimatedScoreUplift).toBe(90);
+  });
+
+  it("sorts issue groups by estimatedScoreUplift descending", () => {
+    // Group A: 10 targets at score 80 (uplift 10 * 10 = 100)
+    // Group B: 2 targets at score 20 (uplift 70 * 2 = 140) ← should win
+    const findings = [
+      ...Array.from({ length: 10 }, (_, i) =>
+        makeFinding({
+          targetId: `a${i}`,
+          scores: { discoverability: 80, reachability: 80, operability: 80, recovery: 80, interopRisk: 80, overall: 80 },
+          penalties: ["Group A penalty"],
+          suggestedFixes: ["Fix A"],
+        }),
+      ),
+      ...Array.from({ length: 2 }, (_, i) =>
+        makeFinding({
+          targetId: `b${i}`,
+          scores: { discoverability: 20, reachability: 20, operability: 20, recovery: 20, interopRisk: 20, overall: 20 },
+          penalties: ["Group B penalty"],
+          suggestedFixes: ["Fix B"],
+        }),
+      ),
+    ];
+    const result = summarize(makeResult(findings));
+    // Group B is higher-leverage even though it has fewer targets.
+    expect(result.issueGroups[0].issue).toBe("Group B penalty");
+    expect(result.issueGroups[0].estimatedScoreUplift).toBe(140);
+    expect(result.remediationCandidates[0].issue).toBe("Group B penalty");
+  });
+
+  it("adds a remediation candidate for redundant tab stop diagnostics", () => {
+    const result = summarize(makeResult([], [
+      {
+        level: "warning",
+        code: "redundant-tab-stops",
+        message: "3 redundant tab stops across 1 destination.",
+        affectedCount: 3,
+        totalCount: 1,
+        affectedTargetIds: ["link:a", "link:b"],
+      },
+    ]));
+    expect(result.remediationCandidates).toHaveLength(1);
+    expect(result.remediationCandidates[0].title).toContain("Consolidate repeated links");
+    expect(result.remediationCandidates[0].category).toBe("navigation-cost");
+    expect(result.remediationCandidates[0].evidenceSummary.measured).toBe(1);
   });
 
   it("does not create issue groups for single occurrences", () => {
@@ -189,6 +269,15 @@ describe("summarize", () => {
       suggestedFixes: ["F1"],
       bestPath: ["s1:entry", "t1"],
       confidence: 0.85,
+      evidence: [
+        {
+          kind: "measured",
+          source: "keyboard-probe",
+          description: "Runtime keyboard probe completed successfully.",
+          confidence: 0.95,
+        },
+      ],
+      evidenceSummary: { measured: 1, validated: 0, modeled: 0, heuristic: 0 },
     })];
     const result = summarize(makeResult(findings));
     const d = result.worstFindings[0];
@@ -201,6 +290,8 @@ describe("summarize", () => {
     expect(d.penalties).toEqual(["P1"]);
     expect(d.suggestedFixes).toEqual(["F1"]);
     expect(d.confidence).toBe(0.85);
+    expect(d.evidence).toHaveLength(1);
+    expect(d.evidenceSummary.measured).toBe(1);
   });
 
   it("truncation note includes severity breakdown of omitted findings", () => {

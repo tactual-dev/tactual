@@ -102,4 +102,16 @@ export const nvdaDesktopV0: ATProfile = {
         "of NVDA-specific commands.",
     },
   ],
+
+  // Windows users running NVDA frequently use High Contrast Mode, often
+  // in dark scheme. Author SVGs with hardcoded fill literals stay at the
+  // author color under HCM (Chromium's `forced-color-adjust: preserve-parent-color`
+  // default for SVG), which can render icons invisible against the
+  // HCM-substituted Canvas background.
+  visualModes: [
+    { colorScheme: "light", forcedColors: "none" },
+    { colorScheme: "light", forcedColors: "active" },
+    { colorScheme: "dark", forcedColors: "none" },
+    { colorScheme: "dark", forcedColors: "active" },
+  ],
 };

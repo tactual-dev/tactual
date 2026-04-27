@@ -165,6 +165,41 @@ export const EdgeSchema = z.object({
 export type Edge = z.infer<typeof EdgeSchema>;
 
 // ---------------------------------------------------------------------------
+// Evidence — why a finding should be trusted and where it came from
+// ---------------------------------------------------------------------------
+
+export const EvidenceKindSchema = z.enum([
+  "measured",
+  "validated",
+  "modeled",
+  "heuristic",
+]);
+
+export type EvidenceKind = z.infer<typeof EvidenceKindSchema>;
+
+export const EvidenceItemSchema = z.object({
+  /** Evidence category: runtime measurement, validation, model output, or heuristic rule. */
+  kind: EvidenceKindSchema,
+  /** Stable producer name, e.g. playwright-accessibility-tree or navigation-graph. */
+  source: z.string(),
+  /** Short human-readable explanation of what this evidence contributes. */
+  description: z.string(),
+  /** Confidence in this evidence item when known. */
+  confidence: z.number().min(0).max(1).optional(),
+}).passthrough();
+
+export type EvidenceItem = z.infer<typeof EvidenceItemSchema>;
+
+export const EvidenceSummarySchema = z.object({
+  measured: z.number().int().nonnegative().default(0),
+  validated: z.number().int().nonnegative().default(0),
+  modeled: z.number().int().nonnegative().default(0),
+  heuristic: z.number().int().nonnegative().default(0),
+}).passthrough();
+
+export type EvidenceSummary = z.infer<typeof EvidenceSummarySchema>;
+
+// ---------------------------------------------------------------------------
 // Finding — a scored result for a target under a profile
 // ---------------------------------------------------------------------------
 
@@ -182,6 +217,8 @@ export const FindingSchema = z.object({
   penalties: z.array(z.string()),
   suggestedFixes: z.array(z.string()),
   confidence: z.number().min(0).max(1),
+  evidence: z.array(EvidenceItemSchema).optional(),
+  evidenceSummary: EvidenceSummarySchema.optional(),
 }).passthrough();
 
 export type Finding = z.infer<typeof FindingSchema>;
@@ -209,6 +246,12 @@ export const DiagnosticSchema = z.object({
   level: z.enum(["info", "warning", "error"]),
   code: z.string(),
   message: z.string(),
+  /** Structured aggregation fields. Populated for diagnostics that collate
+   *  multiple target failures (`shared-structural-issue`, `redundant-tab-stops`). */
+  affectedCount: z.number().int().nonnegative().optional(),
+  totalCount: z.number().int().nonnegative().optional(),
+  affectedTargetIds: z.array(z.string()).optional(),
+  representativeFix: z.string().optional(),
 });
 
 export const AnalysisResultSchema = z.object({

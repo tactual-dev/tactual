@@ -2,6 +2,8 @@
 
 Tactual's scoring model uses weights and decay curves that are currently based on informed estimates, not empirical data. The calibration framework lets us systematically improve these weights using ground-truth observations from real screen-reader users.
 
+The built-in `npm run calibrate` gate compares the simulator against curated ARIA-AT role/name/state-token assertions. Passing those assertions is useful regression protection for covered patterns, but it is not a claim of full screen-reader fidelity. It does not cover every browse mode, verbosity setting, timing behavior, user strategy, browser/AT pairing, or valid widget implementation variant.
+
 ## Why calibrate?
 
 The scoring model makes predictions like "this button has reachability score 70" — meaning it thinks the button takes moderate effort to reach. But is that prediction accurate? Does a reachability score of 70 actually correspond to moderate difficulty for a real NVDA user?

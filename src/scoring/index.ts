@@ -63,6 +63,43 @@ export interface OperabilityInputs {
   focusCorrectAfterActivation: boolean;
   /** Keyboard/action compatible with the pattern? */
   keyboardCompatible: boolean;
+  /**
+   * Menu-pattern probe flagged at least one APG invariant broken
+   * (ArrowDown navigation, Escape-restore, outside-click-close, or
+   * the menu didn't open on Enter at all). Deducts operability on a
+   * per-invariant basis — a menu that fails all four is a very
+   * broken menu.
+   */
+  menuInvariantFailures?: number;
+  /**
+   * Non-menu widget and form probes found broken APG/runtime invariants.
+   * Deducts per invariant like menuInvariantFailures.
+   */
+  widgetInvariantFailures?: number;
+  /**
+   * Target is smaller than WCAG 2.5.8 minimum (24×24 CSS pixels). Affects
+   * touch / pointer users with motor impairments and small-screen device
+   * users — they have a harder time hitting small targets reliably.
+   */
+  targetTooSmall?: boolean;
+  /**
+   * Icon renders with contrast <1.5:1 under a profile-declared visual
+   * mode. Caps operability at 60 — sighted HCM/dark users can't see
+   * the affordance even if AT can find and activate it.
+   */
+  iconInvisibleUnderHCM?: boolean;
+  /**
+   * Icon contrast is below WCAG 1.4.11 non-text 3:1 threshold but above
+   * the invisible cutoff. Soft deduction (−5).
+   */
+  iconLowContrast?: boolean;
+  /**
+   * Playwright read the author-set fill at ≥3:1 contrast in forced-colors
+   * mode, but real Windows HCM may substitute at paint time. Small
+   * deduction (−2) with the finding telling the user to verify in real
+   * Edge rather than trust the screenshot.
+   */
+  iconHCMSubstitutionRisk?: boolean;
 }
 
 export interface RecoveryInputs {
@@ -199,6 +236,32 @@ function scoreOperability(inputs: OperabilityInputs): number {
   if (inputs.stateChangesAnnounced) score += 25;
   if (inputs.focusCorrectAfterActivation) score += 25;
   if (inputs.keyboardCompatible) score += 20;
+  // Menu-pattern probe: each failed APG invariant deducts 8 points.
+  // A fully-broken menu (4 invariants) drops operability by 32.
+  if (inputs.menuInvariantFailures && inputs.menuInvariantFailures > 0) {
+    score -= inputs.menuInvariantFailures * 8;
+  }
+  if (inputs.widgetInvariantFailures && inputs.widgetInvariantFailures > 0) {
+    score -= inputs.widgetInvariantFailures * 8;
+  }
+  // WCAG 2.5.8 target-size (< 24×24 CSS pixels) — small deduction. Not every
+  // user is pointer-impaired but a meaningful minority are, so this is a
+  // real signal, not a style preference.
+  if (inputs.targetTooSmall) {
+    score -= 5;
+  }
+  // Visibility tier. A hardcoded-invisible icon caps operability at 60 —
+  // sighted HCM users can't see the affordance even if AT can activate it.
+  // Low-contrast (WCAG 1.4.11 < 3:1) deducts 5. HCM-substitution risk (fine
+  // in Playwright but author-set literal in forced-colors mode) deducts 2
+  // since it's uncertainty across user themes, not measured low contrast.
+  if (inputs.iconInvisibleUnderHCM) {
+    score = Math.min(score, 60);
+  } else if (inputs.iconLowContrast) {
+    score -= 5;
+  } else if (inputs.iconHCMSubstitutionRisk) {
+    score -= 2;
+  }
   return Math.max(0, Math.min(100, score));
 }
 

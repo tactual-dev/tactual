@@ -1,5 +1,11 @@
 # Contributing to Tactual
 
+## Pull Requests
+
+Keep PRs focused and describe the user-facing behavior they change. Include the commands you ran, update documentation for public behavior changes, and avoid committing generated artifacts such as `dist`, `coverage`, screenshots, or temporary reports.
+
+For accessibility behavior changes, include the route or fixture you tested and the relevant keyboard or screen-reader validation when practical. Tactual's own reports are useful evidence, but manual checks with platform assistive technology are still valuable for interaction changes.
+
 ## Adding an AT Profile
 
 1. Create `src/profiles/your-profile.ts` implementing the `ATProfile` interface (see `src/profiles/types.ts` for the full type definition and `src/profiles/generic-mobile.ts` for a complete example):
@@ -37,6 +43,17 @@ export const yourProfileV0: ATProfile = {
   costSensitivity: 1.0,
   modifiers: [
     // Add context-dependent cost adjustments
+  ],
+  // Optional: declare visual modes to capture per-icon contrast under HCM
+  // and dark schemes. Desktop profiles typically opt in to the full 4-cell
+  // matrix because Windows users frequently run High Contrast Mode in dark
+  // scheme. Mobile profiles should leave this off — HCM isn't a realistic
+  // mobile concern.
+  visualModes: [
+    { colorScheme: "light", forcedColors: "none" },
+    { colorScheme: "light", forcedColors: "active" },
+    { colorScheme: "dark", forcedColors: "none" },
+    { colorScheme: "dark", forcedColors: "active" },
   ],
 };
 ```

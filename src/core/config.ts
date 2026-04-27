@@ -3,19 +3,40 @@ import { resolve } from "path";
 import { z } from "zod";
 import type { AnalysisFilter } from "./filter.js";
 
-export const TactualConfigSchema = z.object({
-  exclude: z.array(z.string()).optional(),
-  excludeSelectors: z.array(z.string()).optional(),
-  focus: z.array(z.string()).optional(),
-  suppress: z.array(z.string()).optional(),
-  priority: z.record(z.string(), z.enum(["critical", "normal", "low", "ignore"])).optional(),
-  profile: z.string().optional(),
-  device: z.string().optional(),
-  explore: z.boolean().optional(),
-  threshold: z.number().optional(),
-  maxFindings: z.number().int().min(0).optional(),
-  minSeverity: z.enum(["severe", "high", "moderate", "acceptable", "strong"]).optional(),
-}).passthrough();
+export const TactualConfigSchema = z
+  .object({
+    exclude: z.array(z.string()).optional(),
+    excludeSelectors: z.array(z.string()).optional(),
+    scopeSelectors: z.array(z.string()).optional(),
+    probeSelectors: z.array(z.string()).optional(),
+    focus: z.array(z.string()).optional(),
+    suppress: z.array(z.string()).optional(),
+    priority: z.record(z.string(), z.enum(["critical", "normal", "low", "ignore"])).optional(),
+    profile: z.string().optional(),
+    device: z.string().optional(),
+    explore: z.boolean().optional(),
+    entrySelector: z.string().optional(),
+    goalTarget: z.string().optional(),
+    goalPattern: z.string().optional(),
+    probeStrategy: z
+      .enum([
+        "all",
+        "overlay",
+        "composite-widget",
+        "form",
+        "navigation",
+        "modal-return-focus",
+        "menu-pattern",
+      ])
+      .optional(),
+    threshold: z.number().optional(),
+    maxFindings: z.number().int().min(0).optional(),
+    minSeverity: z.enum(["severe", "high", "moderate", "acceptable", "strong"]).optional(),
+    /** Opt-in / opt-out of the per-icon visibility probe. Undefined means
+     *  the active profile's `visualModes` decides (declared = on, omitted = off). */
+    checkVisibility: z.boolean().optional(),
+  })
+  .passthrough();
 
 /**
  * Tactual configuration file format (tactual.json).
@@ -27,9 +48,7 @@ export type TactualConfig = z.infer<typeof TactualConfigSchema>;
  * Searches the given path, or auto-detects from CWD.
  */
 export function loadConfig(configPath?: string): TactualConfig {
-  const path = configPath
-    ? resolve(configPath)
-    : findConfigFile();
+  const path = configPath ? resolve(configPath) : findConfigFile();
 
   if (!path) return {};
 
@@ -43,7 +62,9 @@ export function loadConfig(configPath?: string): TactualConfig {
       throw new Error(`Failed to load config from ${path}: ${err}`, { cause: err });
     }
     // Auto-detected config exists but failed to parse — warn rather than silently ignore
-    process.stderr.write(`Warning: Found ${path} but failed to parse it: ${err instanceof Error ? err.message : err}\n`);
+    process.stderr.write(
+      `Warning: Found ${path} but failed to parse it: ${err instanceof Error ? err.message : err}\n`,
+    );
     return {};
   }
 }
@@ -58,12 +79,12 @@ export function mergeConfigWithFlags(
 ): TactualConfig {
   return {
     ...config,
-    ...Object.fromEntries(
-      Object.entries(flags).filter(([_, v]) => v !== undefined),
-    ),
+    ...Object.fromEntries(Object.entries(flags).filter(([_, v]) => v !== undefined)),
     // Arrays merge (CLI adds to config, doesn't replace)
     exclude: mergeArrays(config.exclude, flags.exclude),
     excludeSelectors: mergeArrays(config.excludeSelectors, flags.excludeSelectors),
+    scopeSelectors: mergeArrays(config.scopeSelectors, flags.scopeSelectors),
+    probeSelectors: mergeArrays(config.probeSelectors, flags.probeSelectors),
     focus: mergeArrays(config.focus, flags.focus),
     suppress: mergeArrays(config.suppress, flags.suppress),
     priority: { ...config.priority, ...flags.priority },
@@ -95,10 +116,7 @@ function findConfigFile(): string | null {
   return null;
 }
 
-function mergeArrays(
-  base?: string[],
-  override?: string[],
-): string[] | undefined {
+function mergeArrays(base?: string[], override?: string[]): string[] | undefined {
   if (!base && !override) return undefined;
   return [...(base ?? []), ...(override ?? [])];
 }

@@ -28,6 +28,26 @@ export interface ExploreOptions extends CaptureOptions {
   allowActionPatterns?: RegExp[];
   /** Callback fired after each exploration step */
   onStep?: (step: ExplorationStep) => void;
+  /**
+   * Hook called immediately after each new state is captured, while the
+   * page is still live in that state. Lets callers run probes (keyboard,
+   * menu, modal) against newly-revealed targets without restructuring
+   * the exploration flow. The returned state replaces the captured one
+   * in the result. Used by the CLI / MCP to probe targets that only
+   * exist inside revealed branches (menu items, dialog content, tab
+   * panel contents).
+   *
+   * The hook receives the captured state plus the set of target IDs
+   * that are NEW to this state (not seen in prior states) — probes
+   * typically only need to run against the new delta, since initial-state
+   * targets were already probed before explore started.
+   */
+  onStateRevealed?: (
+    state: PageState,
+    newTargetIds: Set<string>,
+    page: Page,
+    budget: { remainingMs: () => number },
+  ) => Promise<PageState>;
 }
 
 export interface ExplorationStep {
@@ -73,7 +93,10 @@ type ExploreType =
   | "dialog-trigger"
   | "accordion"
   | "expandable"
-  | "interactive";
+  | "interactive"
+  | "pagination"
+  | "load-more"
+  | "step-next";
 
 /**
  * Explore bounded interactive branches from the current page state.
@@ -109,21 +132,43 @@ export async function explore(
   const skippedElements: Array<{ id: string; reason: string }> = [];
   let skippedBudget = 0;
 
+  const remainingMs = (): number =>
+    Math.max(0, totalTimeout - (Date.now() - explorationStart));
+
+  const hasBudget = (): boolean => remainingMs() > 0;
+
+  const boundedTimeout = (requested: number): number =>
+    Math.max(1, Math.min(requested, remainingMs()));
+
+  const waitWithinBudget = async (ms: number): Promise<void> => {
+    if (!hasBudget()) return;
+    await page.waitForTimeout(boundedTimeout(ms));
+  };
+
   async function exploreAt(depth: number): Promise<void> {
     const totalTargets = states.reduce((sum, s) => sum + s.targets.length, 0);
-    const elapsed = Date.now() - explorationStart;
-    if (depth >= maxDepth || actionsPerformed >= maxActions || totalTargets >= maxTotalTargets || elapsed >= totalTimeout) return;
+    if (depth >= maxDepth || actionsPerformed >= maxActions || totalTargets >= maxTotalTargets || !hasBudget()) return;
 
-    // Wait for the page to settle before discovering candidates.
-    // SPAs may still be rendering after navigation/activation.
-    await page.waitForLoadState("domcontentloaded").catch(() => {});
-    await page.waitForTimeout(300);
+    // Wait for page to settle before discovering candidates.
+    // 300ms is the minimum observed for framework hydration to attach
+    // click handlers — dropping this causes flake on React/Vue fixtures
+    // where the event listener isn't wired when we query.
+    await page
+      .waitForLoadState("domcontentloaded", { timeout: boundedTimeout(1000) })
+      .catch(() => {});
+    await waitWithinBudget(300);
+    if (!hasBudget()) {
+      skippedBudget++;
+      return;
+    }
 
     let explorables = await findExplorableElements(page);
 
-    // Retry once if no candidates found — catches SPA timing gaps
-    if (explorables.length === 0 && depth === 0) {
-      await page.waitForTimeout(1000);
+    // Retry once at depth 0 if no candidates — catches SPA hydration
+    // windows longer than the 300ms baseline. 1s is the empirically-
+    // observed upper bound for mainstream SPAs to hydrate visibly.
+    if (explorables.length === 0 && depth === 0 && hasBudget()) {
+      await waitWithinBudget(1000);
       explorables = await findExplorableElements(page);
     }
 
@@ -136,6 +181,10 @@ export async function explore(
       }
       if (actionsPerformed >= maxActions) {
         skippedBudget++;
+        break;
+      }
+      if (!hasBudget()) {
+        skippedBudget += explorables.length - branchCount;
         break;
       }
 
@@ -158,18 +207,27 @@ export async function explore(
 
       // Activate the element
       try {
-        await activateElement(page, el, actionTimeout);
+        await activateElement(page, el, boundedTimeout(actionTimeout));
         actionsPerformed++;
         branchCount++;
         branchesExplored++;
 
-        // Wait for animations / SPA state transitions
-        await page.waitForTimeout(500);
+        // Wait for animations / SPA state transitions. 300ms (reduced
+        // from 500ms) because captureState's own convergence polling
+        // catches slower renders anyway — this is just the initial
+        // debounce to avoid sampling mid-animation.
+        await waitWithinBudget(300);
+        if (!hasBudget()) {
+          skippedBudget++;
+          break;
+        }
 
         // Capture the new state
+        const captureSpaWaitTimeout = Math.min(options.spaWaitTimeout ?? 5000, remainingMs());
         const newState = await captureState(page, {
           ...options,
           provenance: "explored",
+          spaWaitTimeout: captureSpaWaitTimeout,
         });
 
         // Check novelty
@@ -182,9 +240,15 @@ export async function explore(
             el.hasPopup && el.name.length > 0 ? "well-labeled" :
             el.name.length > 0 ? "labeled" : "unlabeled";
 
+          // Capture the set of IDs that are new to this revealed state.
+          // Must be computed BEFORE knownTargetIds is updated below.
+          const newIds = new Set(
+            newState.targets.filter((t) => !knownTargetIds.has(t.id)).map((t) => t.id),
+          );
+
           // Mark targets in explored states as requiring branch open,
           // and annotate with the trigger quality for scoring
-          const markedState: PageState = {
+          let markedState: PageState = {
             ...newState,
             targets: newState.targets.map((t) => ({
               ...t,
@@ -193,6 +257,25 @@ export async function explore(
               ...(!knownTargetIds.has(t.id) ? { _branchTriggerQuality: triggerQuality } : {}),
             })),
           };
+
+          // Give the caller a chance to probe the new state while the
+          // page is still live. Keeps probe data attached to the correct
+          // state without requiring state replay. Typically used to run
+          // keyboard / menu / modal probes against targets that only
+          // exist inside this revealed branch (menu items, dialog body).
+          if (options.onStateRevealed && hasBudget()) {
+            try {
+              markedState = await options.onStateRevealed(
+                markedState,
+                newIds,
+                page,
+                { remainingMs },
+              );
+            } catch {
+              // Hook errors must not break exploration — the unprobed
+              // state is still useful data.
+            }
+          }
 
           states.push(markedState);
           seenHashes.add(newState.snapshotHash);
@@ -210,18 +293,18 @@ export async function explore(
           });
 
           // Recurse into the new state if there are novel targets
-          if (newTargets.length > 0 || !stopOnNoNovelty) {
+          if (hasBudget() && (newTargets.length > 0 || !stopOnNoNovelty)) {
             await exploreAt(depth + 1);
           }
         }
 
         // Try to restore previous state
-        await restoreState(page, el);
-        await page.waitForTimeout(100);
+        await restoreState(page, el, boundedTimeout(actionTimeout));
+        await waitWithinBudget(100);
       } catch {
         // Element may have become stale or action failed — continue
         try {
-          await restoreState(page, el);
+          await restoreState(page, el, boundedTimeout(actionTimeout));
         } catch {
           // Best effort restoration
         }
@@ -300,6 +383,28 @@ async function findExplorableElements(page: Page): Promise<ExplorableElement[]> 
     });
   }
 
+  // Pagination / load-more / step-next triggers. Detected via a combination
+  // of accessible-name patterns AND structural hints. These reveal new
+  // content without opening an overlay — instead they update the page's
+  // main content region with the next page / additional items / the next
+  // step of a multi-step flow. Safe to activate because:
+  //   - they're non-destructive (no "Submit", "Delete", etc. — see safety.ts)
+  //   - they typically don't leave the current URL
+  //   - restoration: we can click again to go back, or accept the new state
+  //     as a valid revealed state in the exploration tree
+  //
+  // Detection uses a "flow pattern" classifier that matches accname against
+  // well-known English patterns. Future: i18n via profile-specific patterns.
+  const flowPatterns = await discoverFlowTriggers(page);
+  for (const trig of flowPatterns) {
+    // Dedup: skip if we already added this locator as a menu-trigger or similar.
+    const alreadyQueued = explorables.some((e) =>
+      e.name === trig.name && e.role === trig.role,
+    );
+    if (alreadyQueued) continue;
+    explorables.push(trig);
+  }
+
   // Sort by stable key (role + name) to make exploration deterministic
   // across page loads where DOM order may vary due to React rendering.
   explorables.sort((a, b) => {
@@ -309,6 +414,85 @@ async function findExplorableElements(page: Page): Promise<ExplorableElement[]> 
   });
 
   return explorables;
+}
+
+/**
+ * Discover pagination / load-more / step-next triggers.
+ *
+ * These UI patterns don't use standard ARIA roles — they're typically
+ * `<button>` or `<a>` whose only signal is their accessible name. A
+ * checkout's "Continue to payment" button is role=button just like a
+ * destructive "Delete account" button, and we can't tell them apart by
+ * role alone. Detection uses a pattern list matched against accname.
+ *
+ * Kept conservative: we only match phrases that appear on a narrow set of
+ * navigation patterns. Adjacent-to-destructive phrases ("Submit order",
+ * "Confirm purchase") are excluded so we don't auto-click them during
+ * exploration.
+ */
+async function discoverFlowTriggers(page: Page): Promise<ExplorableElement[]> {
+  // Patterns are grouped by the kind of flow they implement. Grouping
+  // lets us attach the right ExploreType to each match, so finding-builder
+  // can reason about what kind of state change happened.
+  const PAGINATION_PATTERNS = [
+    /^next(\s+page)?$/i,
+    /^prev(ious)?(\s+page)?$/i,
+    /^page\s+\d+$/i,
+    /^go\s+to\s+page\s+\d+$/i,
+  ];
+  const LOAD_MORE_PATTERNS = [
+    /^load\s+more/i,
+    /^show\s+more/i,
+    /^view\s+more/i,
+    /^see\s+more/i,
+    /^more\s+results/i,
+  ];
+  const STEP_PATTERNS = [
+    /^continue(\s+to\s+\w+)?$/i,
+    /^next(\s+step)?$/i,
+    /^proceed(\s+to\s+\w+)?$/i,
+    // "Step N" or "Go to step N"
+    /^step\s+\d+/i,
+  ];
+
+  const classify = (name: string): ExploreType | null => {
+    if (PAGINATION_PATTERNS.some((p) => p.test(name))) return "pagination";
+    if (LOAD_MORE_PATTERNS.some((p) => p.test(name))) return "load-more";
+    if (STEP_PATTERNS.some((p) => p.test(name))) return "step-next";
+    return null;
+  };
+
+  const results: ExplorableElement[] = [];
+  // Scope to button-like elements. role=link also counts because pagination
+  // is often anchors (`<a href="?page=2">`).
+  const candidates = page.locator(
+    'button, [role="button"], a[href], [role="link"]',
+  );
+  const count = Math.min(await candidates.count(), 200); // cap discovery work
+  for (let i = 0; i < count; i++) {
+    const el = candidates.nth(i);
+    const accname = (
+      (await el.getAttribute("aria-label")) ??
+      (await el.textContent()) ??
+      ""
+    ).trim();
+    if (!accname || accname.length > 50) continue; // skip unreadable/generic
+    const type = classify(accname);
+    if (!type) continue;
+    // Skip disabled / aria-disabled — they won't activate anyway.
+    const disabled = await el.isDisabled().catch(() => false);
+    if (disabled) continue;
+    const ariaDisabled =
+      (await el.getAttribute("aria-disabled")) === "true";
+    if (ariaDisabled) continue;
+    results.push({
+      locator: el,
+      role: (await el.getAttribute("role")) === "link" ? "link" : "button",
+      name: accname,
+      type,
+    });
+  }
+  return results;
 }
 
 // ---------------------------------------------------------------------------
@@ -332,7 +516,11 @@ async function activateElement(
   }
 }
 
-async function restoreState(page: Page, el: ExplorableElement): Promise<void> {
+async function restoreState(
+  page: Page,
+  el: ExplorableElement,
+  timeout: number = 2000,
+): Promise<void> {
   switch (el.type) {
     case "menu-trigger": {
       // Press Escape to close menu
@@ -345,7 +533,7 @@ async function restoreState(page: Page, el: ExplorableElement): Promise<void> {
     case "expandable": {
       // Click again to collapse, or press Escape
       try {
-        await el.locator.click({ timeout: 2000 });
+        await el.locator.click({ timeout });
       } catch {
         await page.keyboard.press("Escape");
       }
@@ -359,6 +547,24 @@ async function restoreState(page: Page, el: ExplorableElement): Promise<void> {
     case "dialog-trigger": {
       await page.keyboard.press("Escape");
       await page.waitForTimeout(100);
+      break;
+    }
+    case "pagination":
+    case "load-more":
+    case "step-next": {
+      // These reveal new content without opening an overlay. Restoration
+      // approach depends on the pattern:
+      //  - pagination: a "Previous" link typically exists; easiest is to
+      //    accept the new state (we've captured it) and let subsequent
+      //    exploration queries the fresh DOM.
+      //  - load-more: appends items to the list; the previous state is
+      //    a prefix of the current, so no restoration needed.
+      //  - step-next: reaches the next step of a flow; the previous step
+      //    may or may not be reachable (some flows are one-way). We don't
+      //    try to go back — downstream exploration works with the new step.
+      // Net: all three are "fire-and-keep" — no explicit restore. The
+      // explorer's novelty check ensures we don't re-activate the same
+      // trigger if it's still present after.
       break;
     }
     default: {

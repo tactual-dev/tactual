@@ -44,6 +44,15 @@ function makeResult(overrides: Partial<AnalysisResult> = {}): AnalysisResult {
         penalties: ["Target is not under a heading"],
         suggestedFixes: ["Add a heading before the form"],
         confidence: 0.8,
+        evidence: [
+          {
+            kind: "measured",
+            source: "keyboard-probe",
+            description: "Runtime keyboard probe completed successfully.",
+            confidence: 0.95,
+          },
+        ],
+        evidenceSummary: { measured: 1, validated: 0, modeled: 0, heuristic: 0 },
       },
     ],
     diagnostics: [],
@@ -57,6 +66,31 @@ function makeResult(overrides: Partial<AnalysisResult> = {}): AnalysisResult {
       edgeCount: 5,
     },
     ...overrides,
+  };
+}
+
+function makeRemediationCandidateResult(): AnalysisResult {
+  const base = makeResult();
+  return {
+    ...base,
+    findings: [
+      {
+        ...base.findings[0],
+        targetId: "t1",
+        scores: { ...base.findings[0].scores, overall: 40 },
+        severity: "high",
+        penalties: ["12 controls precede this target"],
+        suggestedFixes: ["Add skip navigation"],
+      },
+      {
+        ...base.findings[0],
+        targetId: "t2",
+        scores: { ...base.findings[0].scores, overall: 45 },
+        severity: "high",
+        penalties: ["20 controls precede this target"],
+        suggestedFixes: ["Add skip navigation"],
+      },
+    ],
   };
 }
 
@@ -79,6 +113,48 @@ describe("formatReport", () => {
       expect(f.suggestedFixes).toBeDefined();
       expect(f.bestPath).toBeDefined();
       expect(f.confidence).toBeDefined();
+      expect(f.evidence).toHaveLength(1);
+      expect(f.evidenceSummary.measured).toBe(1);
+    });
+
+    it("keeps the summarized JSON contract compact and structured", () => {
+      const base = makeResult();
+      const findings = Array.from({ length: 20 }, (_, i) => ({
+        ...base.findings[0],
+        targetId: `t${i}`,
+        scores: { ...base.findings[0].scores, overall: 20 + i },
+        severity: i < 3 ? "severe" as const : "high" as const,
+        penalties: [`${10 + i} controls precede this target`],
+      }));
+      const output = formatReport(
+        makeResult({
+          findings,
+          diagnostics: [
+            { level: "info", code: "ok", message: "healthy" },
+            { level: "warning", code: "no-skip-link", message: "No skip link" },
+          ],
+        }),
+        "json",
+      );
+      const parsed = JSON.parse(output);
+
+      expect(parsed).toMatchObject({
+        name: "Test Analysis",
+        profile: "generic-mobile-web-sr-v0",
+        truncated: true,
+        totalFindings: 20,
+      });
+      expect(parsed.states).toBeUndefined();
+      expect(parsed.worstFindings).toHaveLength(15);
+      expect(parsed.truncationNote).toMatchObject({ shown: 15, omitted: 5 });
+      expect(parsed.diagnostics).toEqual([
+        { level: "warning", code: "no-skip-link", message: "No skip link" },
+      ]);
+      expect(parsed.issueGroups[0]).toMatchObject({
+        issue: "Controls precede this target",
+        count: 20,
+      });
+      expect(parsed.remediationCandidates).toEqual(expect.any(Array));
     });
   });
 
@@ -94,6 +170,11 @@ describe("formatReport", () => {
       expect(output).toContain("D:80 R:60 O:90 Rec:70 IR:0");
     });
 
+    it("includes evidence summary", () => {
+      const output = formatReport(makeResult(), "markdown");
+      expect(output).toContain("**Evidence:** measured: 1");
+    });
+
     it("includes penalties and fixes", () => {
       const output = formatReport(makeResult(), "markdown");
       expect(output).toContain("Target is not under a heading");
@@ -104,6 +185,12 @@ describe("formatReport", () => {
       const output = formatReport(makeResult(), "markdown");
       expect(output).toContain("## Worst Findings");
       expect(output).toContain("### t1");
+    });
+
+    it("includes remediation candidates for repeated issues", () => {
+      const output = formatReport(makeRemediationCandidateResult(), "markdown");
+      expect(output).toContain("## Remediation Candidates");
+      expect(output).toContain("Reduce repeated screen-reader navigation cost");
     });
 
     it("includes severity in finding header", () => {
@@ -130,9 +217,43 @@ describe("formatReport", () => {
       expect(output).toContain("R:60");
     });
 
+    it("includes compact evidence summary", () => {
+      const output = formatReport(makeResult(), "console");
+      expect(output).toContain("Evidence: measured 1");
+    });
+
+    it("includes compact remediation candidates", () => {
+      const output = formatReport(makeRemediationCandidateResult(), "console");
+      expect(output).toContain("Remediation Candidates");
+      expect(output).toContain("Reduce repeated screen-reader navigation cost");
+    });
+
     it("includes target ID", () => {
       const output = formatReport(makeResult(), "console");
       expect(output).toContain("t1");
+    });
+
+    it("renders compacted bestPath as an SR-command line", () => {
+      // nextItem × 3 should collapse to "Tab ×3" and then "Enter" after activate.
+      const output = formatReport(makeResult({
+        findings: [{
+          ...makeResult().findings[0],
+          bestPath: ["nextItem: Nav 1", "nextItem: Nav 2", "nextItem: Submit", "activate: Submit"],
+        }],
+      }), "console");
+      expect(output).toContain("Tab ×3");
+      expect(output).toContain("Enter");
+    });
+
+    it("renders heading-skip commands as H", () => {
+      const output = formatReport(makeResult({
+        findings: [{
+          ...makeResult().findings[0],
+          bestPath: ["nextHeading: Cart", "nextItem: Checkout", "activate: Checkout"],
+        }],
+      }), "console");
+      expect(output).toContain("H");
+      expect(output).toContain('"Cart"');
     });
   });
 
@@ -184,6 +305,8 @@ describe("formatReport", () => {
       const result = parsed.runs[0].results[0];
       expect(result.properties.scores).toBeDefined();
       expect(result.properties.confidence).toBe(0.8);
+      expect(result.properties.evidence).toHaveLength(1);
+      expect(result.properties.evidenceSummary.measured).toBe(1);
     });
   });
 

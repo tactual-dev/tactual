@@ -21,7 +21,7 @@ describe("computeInteropRisk", () => {
   it("returns high risk for combobox", () => {
     const result = computeInteropRisk("combobox");
     expect(result.risk).toBe(8);
-    expect(result.issues[0]).toContain("most interop-problematic");
+    expect(result.issues[0]).toContain("verify critical flows");
   });
 
   it("returns high risk for tree", () => {

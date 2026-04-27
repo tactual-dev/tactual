@@ -80,7 +80,8 @@ export const roleInteropRisk: Record<string, InteropEntry> = {
   },
   combobox: {
     risk: 8,
-    issue: "Combobox is the most interop-problematic ARIA pattern — behavior varies widely",
+    issue:
+      "Combobox behavior varies across AT/browser pairs — verify critical flows with target assistive technologies",
     affectedCombos: ["NVDA+Firefox", "JAWS+Chrome", "TalkBack+Chrome", "VoiceOver+Safari"],
   },
   listbox: {

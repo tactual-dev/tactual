@@ -11,6 +11,20 @@ export { captureState, parseAriaSnapshot, type CaptureOptions } from "./capture.
 export { attachToFlow, type AttachOptions, type FlowRecorder } from "./attach.js";
 export { explore, type ExploreOptions, type ExploreResult, type ExplorationStep } from "./explorer.js";
 export { checkActionSafety, type ElementInfo, type SafetyCheck, type ActionSafety } from "./safety.js";
+export { probeTargets, type ProbeResults } from "./probes.js";
+export { probeMenuPatterns, type MenuProbeResults } from "./menu-probe.js";
+export { probeModalDialogs, type ModalProbeResults } from "./modal-probe.js";
+export {
+  probeTabAndDisclosurePatterns,
+  type TabProbeResults,
+  type DisclosureProbeResults,
+} from "./widget-probe.js";
+export {
+  probeComboListboxContracts,
+  type ComboboxProbeResults,
+  type ListboxProbeResults,
+} from "./composite-widget-probe.js";
+export { probeFormErrorFlows, type FormErrorProbeResults } from "./form-error-probe.js";
 export {
   simulateScreenReader,
   buildAnnouncement,
@@ -30,7 +44,7 @@ export {
   type NestingContext,
 } from "./sr-simulator.js";
 // State machine lives in core/ (no Playwright deps); re-exported here
-// for backward compatibility with the v0.3.0 publish path.
+// so existing `tactual/playwright` imports keep working.
 export {
   simulateAction,
   simulateSequence,

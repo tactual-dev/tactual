@@ -1,6 +1,6 @@
 {
   "name": "tactual",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "mcpName": "io.github.tactual-dev/tactual",
   "description": "Screen-reader navigation cost analyzer. Measures how hard it is for AT users to discover, reach, and operate web content.",
   "type": "module",
@@ -48,6 +48,8 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "calibrate": "node scripts/aria-at-calibrate.mjs",
+    "smoke:pack": "node scripts/pack-smoke.mjs",
+    "release:verify": "npm run typecheck && npm run lint && npm test && npm run test:coverage && npm run test:benchmark && npm audit --omit=dev && npm run calibrate && npm run smoke:pack",
     "prepack": "npm run build"
   },
   "publishConfig": {
@@ -81,13 +83,9 @@
     "node": ">=20.0.0"
   },
   "peerDependencies": {
-    "@modelcontextprotocol/sdk": ">=1.0.0",
     "playwright": ">=1.40.0"
   },
   "peerDependenciesMeta": {
-    "@modelcontextprotocol/sdk": {
-      "optional": true
-    },
     "playwright": {
       "optional": true
     }
@@ -95,19 +93,25 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@guidepup/virtual-screen-reader": "^0.32.1",
-    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@types/jsdom": "^28.0.1",
     "@types/node": "^25.5.2",
-    "@typescript-eslint/eslint-plugin": "^8.58.0",
-    "@typescript-eslint/parser": "^8.58.0",
-    "eslint": "^10.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
+    "@vitest/coverage-v8": "^4.1.4",
+    "eslint": "^10.2.1",
     "playwright": "^1.59.1",
-    "prettier": "^3.8.1",
+    "prettier": "^3.8.3",
     "tsup": "^8.5.1",
     "typescript": "^5.7.0",
     "vitest": "^4.1.2"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "commander": "^14.0.3",
     "zod": "^4.3.6"
+  },
+  "optionalDependencies": {
+    "@guidepup/virtual-screen-reader": "^0.32.1",
+    "jsdom": "^29.0.2"
   }
 }
