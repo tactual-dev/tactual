@@ -3,7 +3,7 @@ import type { Command } from "commander";
 export function registerBenchmark(program: Command): void {
   program
     .command("benchmark")
-    .description("Run benchmark suite against local validation fixtures")
+    .description("Run benchmark suite against packaged validation fixtures")
     .option(
       "-s, --suite <name>",
       "Benchmark suite to run: public-fixtures | stress-fixtures | multi-profile | all",

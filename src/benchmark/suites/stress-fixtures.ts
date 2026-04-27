@@ -1,4 +1,5 @@
 import type { BenchmarkSuite } from "../types.js";
+import { fixturePath } from "../fixture-path.js";
 
 /**
  * Stress fixtures benchmark suite.
@@ -21,7 +22,7 @@ export const stressFixturesSuite: BenchmarkSuite = {
       name: "Large page with many targets (stress-large-page.html)",
       description:
         "Page with a high volume of headings, landmarks, links, buttons, and form fields",
-      source: { type: "file", path: "fixtures/stress-large-page.html" },
+      source: { type: "file", path: fixturePath("stress-large-page.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "targetCountInRange", min: 100, max: 500 },
@@ -39,7 +40,7 @@ export const stressFixturesSuite: BenchmarkSuite = {
       name: "Deeply nested DOM (stress-deep-nesting.html)",
       description:
         "Page with extremely deep element nesting to stress tree traversal",
-      source: { type: "file", path: "fixtures/stress-deep-nesting.html" },
+      source: { type: "file", path: fixturePath("stress-deep-nesting.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "targetCountInRange", min: 20, max: 300 },
@@ -53,7 +54,7 @@ export const stressFixturesSuite: BenchmarkSuite = {
       name: "Minimal semantic structure (stress-minimal-structure.html)",
       description:
         "Page with almost no semantic HTML — should produce few or zero targets",
-      source: { type: "file", path: "fixtures/stress-minimal-structure.html" },
+      source: { type: "file", path: fixturePath("stress-minimal-structure.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         // Zero targets is correct: divs without roles produce no ARIA nodes
@@ -66,7 +67,7 @@ export const stressFixturesSuite: BenchmarkSuite = {
       name: "Special characters in content (stress-special-chars.html)",
       description:
         "Page with unicode, RTL text, HTML entities, and emoji in names and labels",
-      source: { type: "file", path: "fixtures/stress-special-chars.html" },
+      source: { type: "file", path: fixturePath("stress-special-chars.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "targetCountInRange", min: 5, max: 50 },
@@ -80,7 +81,7 @@ export const stressFixturesSuite: BenchmarkSuite = {
       name: "Dialog-heavy page (stress-dialogs.html)",
       description:
         "Page with multiple dialogs, modals, and overlay patterns",
-      source: { type: "file", path: "fixtures/stress-dialogs.html" },
+      source: { type: "file", path: fixturePath("stress-dialogs.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "targetCountInRange", min: 10, max: 100 },
