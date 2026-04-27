@@ -1,5 +1,6 @@
 import type { Target, Finding } from "./types.js";
 import type { CaptureDiagnostic, DiagnosticCode } from "./diagnostics.js";
+import { globToRegex } from "./glob.js";
 
 /**
  * Analysis filter configuration.
@@ -163,9 +164,6 @@ export function checkThreshold(
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-// Re-export from trace-helpers to avoid duplicate implementations.
-import { globToRegex } from "../mcp/trace-helpers.js";
 
 function severityRank(severity: string): number {
   const ranks: Record<string, number> = {

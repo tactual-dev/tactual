@@ -170,4 +170,40 @@ describe("analyze", () => {
     );
     expect(sharedDiag).toBeUndefined();
   });
+
+  it("emits redundant-tab-stops diagnostic when multiple links share one href", () => {
+    // 5 links: 3 to /about (redundant), 2 to /contact (redundant).
+    // Expected: 1 diagnostic reporting 3 savings (2 excess at /about + 1 at /contact)
+    // across 2 duplicated destinations.
+    const targets = [
+      { id: "heading-1", kind: "heading" as const, role: "heading", name: "T", headingLevel: 1, requiresBranchOpen: false },
+      { id: "link-a1", kind: "link" as const, role: "link", name: "About", requiresBranchOpen: false, _href: "https://example.com/about" },
+      { id: "link-a2", kind: "link" as const, role: "link", name: "About us", requiresBranchOpen: false, _href: "https://example.com/about" },
+      { id: "link-a3", kind: "link" as const, role: "link", name: "About", requiresBranchOpen: false, _href: "https://example.com/about" },
+      { id: "link-c1", kind: "link" as const, role: "link", name: "Contact", requiresBranchOpen: false, _href: "https://example.com/contact" },
+      { id: "link-c2", kind: "link" as const, role: "link", name: "Contact us", requiresBranchOpen: false, _href: "https://example.com/contact" },
+      { id: "link-u", kind: "link" as const, role: "link", name: "Home", requiresBranchOpen: false, _href: "https://example.com/" },
+    ];
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    const diag = result.diagnostics.find((d) => d.code === "redundant-tab-stops");
+    expect(diag).toBeDefined();
+    expect(diag?.affectedCount).toBe(3); // 2 excess at /about + 1 at /contact
+    expect(diag?.totalCount).toBe(2); // /about and /contact are the 2 duplicated destinations
+    expect(diag?.message).toMatch(/3 redundant tab stops/);
+    expect(diag?.message).toMatch(/2 duplicated link destinations/);
+    expect(diag?.affectedTargetIds?.length).toBeGreaterThan(0);
+  });
+
+  it("does NOT emit redundant-tab-stops when every link has a unique href", () => {
+    const targets = [
+      { id: "heading-1", kind: "heading" as const, role: "heading", name: "T", headingLevel: 1, requiresBranchOpen: false },
+      { id: "l-1", kind: "link" as const, role: "link", name: "A", requiresBranchOpen: false, _href: "https://example.com/a" },
+      { id: "l-2", kind: "link" as const, role: "link", name: "B", requiresBranchOpen: false, _href: "https://example.com/b" },
+    ];
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+    expect(result.diagnostics.find((d) => d.code === "redundant-tab-stops")).toBeUndefined();
+  });
 });

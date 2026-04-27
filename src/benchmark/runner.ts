@@ -24,25 +24,39 @@ const SEVERITY_RANK: Record<string, number> = {
 
 /**
  * Run a benchmark suite and return results.
+ *
+ * `concurrency` controls how many cases run in parallel against the shared
+ * Browser (each case uses its own BrowserContext via `browser.newPage()`,
+ * so isolation is preserved). Defaults to 1 for deterministic serial runs;
+ * tests pass a higher value to cut wall time.
  */
 export async function runBenchmarkSuite(
   suite: BenchmarkSuite,
   browser: Browser,
   onProgress?: (msg: string) => void,
+  concurrency: number = 1,
 ): Promise<BenchmarkSuiteResult> {
   const suiteStart = Date.now();
-  const caseResults: BenchmarkCaseResult[] = [];
   const analyses = new Map<string, AnalysisResult>();
+  const caseResults: BenchmarkCaseResult[] = new Array(suite.cases.length);
 
-  // Run individual cases
-  for (const benchCase of suite.cases) {
-    onProgress?.(`Running case: ${benchCase.name}...`);
-    const result = await runBenchmarkCase(benchCase, browser);
-    caseResults.push(result);
-    if (result.analysis) {
-      analyses.set(benchCase.id, result.analysis);
+  // Worker pool: each worker pulls the next case index off a shared counter.
+  // Preserves input order in caseResults regardless of completion order.
+  let nextIdx = 0;
+  const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
+    while (true) {
+      const idx = nextIdx++;
+      if (idx >= suite.cases.length) return;
+      const benchCase = suite.cases[idx];
+      onProgress?.(`Running case: ${benchCase.name}...`);
+      const result = await runBenchmarkCase(benchCase, browser);
+      caseResults[idx] = result;
+      if (result.analysis) {
+        analyses.set(benchCase.id, result.analysis);
+      }
     }
-  }
+  });
+  await Promise.all(workers);
 
   // Run comparisons
   const comparisonResults: BenchmarkComparisonResult[] = [];

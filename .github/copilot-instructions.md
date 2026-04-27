@@ -67,10 +67,3 @@ npx playwright install chromium
 ```
 
 Use benchmark/integration coverage when changing Playwright capture, browser timing, exploration, probes, or other behavior that depends on live page interaction.
-
-## Release and Marketplace Hygiene
-
-- Keep versioned references aligned across `package.json`, `CHANGELOG.md`, README snippets, and the GitHub Action example.
-- Runtime dependencies should stay lean: `commander` and `zod` ship in the package; `playwright` and `@modelcontextprotocol/sdk` are optional peers. Do not introduce self-dependencies or move peer/dev-only packages into runtime dependencies without an intentional packaging change.
-- Before a release or marketplace submission, verify description, repository, homepage, keywords, transport claims, and install instructions across `package.json`, `README.md`, `glama.json`, `smithery.yaml`, `Dockerfile`, and MCP metadata files.
-- Tactual's marketplace-facing differentiators are: read-only analysis (except `save_auth`), stdio + HTTP transport, summarized LLM-friendly output, and explicit safety disclosures. Preserve those claims when editing docs or metadata.

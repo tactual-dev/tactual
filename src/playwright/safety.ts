@@ -182,6 +182,16 @@ const SAFE_BUTTON_PATTERNS = [
   /\bcopy\b/,
   /\bview\b/,
   /\bpreview\b/,
+  // Pagination / load-more / multi-step flow verbs. Activating these
+  // reveals additional content (page N, more items, next step) without
+  // the destructive connotations of "submit" or "purchase". Multi-step
+  // flows on marketing sites (tutorial wizards, feature walkthroughs)
+  // benefit from exploration since later steps often have their own
+  // interactive controls that would otherwise be invisible.
+  /\bcontinue\b/,
+  /\bproceed\b/,
+  /\bpage\s+\d+\b/,
+  /\bstep\s+\d+\b/,
 ];
 
 const SAFE_ROLES = new Set([

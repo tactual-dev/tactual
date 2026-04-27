@@ -39,6 +39,27 @@ export interface ATProfile {
 
   /** Cost modifiers applied in specific contexts */
   modifiers: CostModifier[];
+
+  /**
+   * Visual modes the profile wants captured per page (light/dark × forced-colors).
+   *
+   * When set and the user hasn't disabled visibility checks, the analyzer
+   * re-emulates each mode after capture and samples per-icon contrast against
+   * ancestor backgrounds. Findings flag icons that render invisible (contrast
+   * <1.5:1) or low-contrast (<3.0:1) under any declared mode.
+   *
+   * Desktop AT profiles typically declare the full 4-cell matrix because
+   * Windows users frequently run High Contrast Mode in dark scheme — the
+   * combination where author `fill="#000"` SVGs become invisible. Mobile
+   * profiles leave this off.
+   */
+  visualModes?: VisualMode[];
+}
+
+/** A single (color-scheme, forced-colors) combination to capture. */
+export interface VisualMode {
+  colorScheme: "light" | "dark";
+  forcedColors: "active" | "none";
 }
 
 export interface CostModifier {

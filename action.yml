@@ -6,6 +6,11 @@ branding:
   icon: "eye"
   color: "blue"
 
+# This action is a thin passthrough over the `tactual analyze-url` CLI.
+# Every CLI flag is exposed here as an input so features stay in sync
+# without manual action-yml edits every time a CLI option is added.
+# Parameter parity is asserted by a CLI↔Action contract test.
+
 inputs:
   url:
     description: "URL to analyze"
@@ -14,18 +19,171 @@ inputs:
     description: "AT profile ID (generic-mobile-web-sr-v0, nvda-desktop-v0, jaws-desktop-v0, voiceover-ios-v0, talkback-android-v0)"
     required: false
     default: "generic-mobile-web-sr-v0"
-  explore:
-    description: "Explore hidden branches (menus, tabs, dialogs, disclosures)"
+  device:
+    description: "Playwright device name for emulation (e.g., 'iPhone 14')"
     required: false
-    default: "false"
+    default: ""
+  # Output
   format:
     description: "Output format: json, markdown, console, sarif"
     required: false
     default: "sarif"
+  max-findings:
+    description: "Max detailed findings in the report (CLI --top)"
+    required: false
+    default: ""
+  min-severity:
+    description: "Minimum severity to report: severe|high|moderate|acceptable|strong"
+    required: false
+    default: ""
+  summary-only:
+    description: "Output only summary stats (~500 bytes)"
+    required: false
+    default: "false"
+  # Exploration
+  explore:
+    description: "Explore hidden branches (menus, tabs, dialogs, disclosures)"
+    required: false
+    default: "false"
+  explore-depth:
+    description: "Max exploration depth (CLI default: 3)"
+    required: false
+    default: ""
+  explore-budget:
+    description: "Max exploration actions (CLI default: 50)"
+    required: false
+    default: ""
+  explore-max-targets:
+    description: "Max accumulated targets before stopping exploration (CLI default: 2000)"
+    required: false
+    default: ""
+  explore-timeout:
+    description: "Total exploration timeout in milliseconds; includes probe time when combined with probe (CLI default: 60000)"
+    required: false
+    default: ""
+  allow-action:
+    description: "Space-separated glob patterns for controls explorable despite safety policy"
+    required: false
+    default: ""
+  # Filtering
+  exclude:
+    description: "Space-separated patterns to exclude targets by name/role"
+    required: false
+    default: ""
+  exclude-selector:
+    description: "Space-separated CSS selectors to exclude from capture"
+    required: false
+    default: ""
+  scope-selector:
+    description: "Space-separated CSS selectors that define subtree(s) to capture, score, and probe"
+    required: false
+    default: ""
+  focus:
+    description: "Space-separated landmarks to focus analysis on"
+    required: false
+    default: ""
+  suppress:
+    description: "Space-separated diagnostic codes to suppress"
+    required: false
+    default: ""
+  # Probing
+  probe:
+    description: "Opt-in runtime keyboard probes for interactive targets (focus, activation, Escape recovery, Tab trapping). Adds ~30-60s."
+    required: false
+    default: "false"
+  probe-budget:
+    description: "Maximum targets for generic probe (overrides --probe-mode)"
+    required: false
+    default: ""
+  probe-mode:
+    description: "Probe depth preset: fast | standard | deep"
+    required: false
+    default: "standard"
+  probe-selector:
+    description: "Space-separated CSS selectors that narrow probing without changing capture/scoring"
+    required: false
+    default: ""
+  entry-selector:
+    description: "CSS selector for a trigger to activate before capture/probe"
+    required: false
+    default: ""
+  goal-target:
+    description: "Exact-ish target id, name, role, kind, or selector hint for goal-directed probing"
+    required: false
+    default: ""
+  goal-pattern:
+    description: "Glob pattern matched against target id/name/role/kind/selector for goal-directed probing"
+    required: false
+    default: ""
+  probe-strategy:
+    description: "Probe strategy: all | overlay | composite-widget | form | navigation | modal-return-focus | menu-pattern"
+    required: false
+    default: "all"
+  # Inline validation
+  validate:
+    description: "Run @guidepup/virtual-screen-reader against the captured DOM for predicted-vs-validated step comparison. Requires jsdom + @guidepup/virtual-screen-reader."
+    required: false
+    default: "false"
+  validate-max-targets:
+    description: "Maximum findings to validate when validate=true (CLI default: 10)"
+    required: false
+    default: ""
+  validate-strategy:
+    description: "Navigation strategy for the virtual SR: linear | semantic"
+    required: false
+    default: ""
+  check-visibility:
+    description: "Run per-icon visibility probe across profile-declared color-scheme × forced-colors modes. 'true' to force-enable, 'false' to disable, empty to defer to profile default (desktop AT profiles declare the matrix, mobile/generic do not)."
+    required: false
+    default: ""
+  # Baseline / regression gate
+  baseline:
+    description: "Path to a previously-saved analysis JSON. Diffs against current run; prints regression summary."
+    required: false
+    default: ""
+  fail-on-regression:
+    description: "Exit non-zero when N or more findings regressed vs baseline. Set '1' (or higher) with baseline=path.json to enable a strict CI gate."
+    required: false
+    default: ""
+  # Score threshold
   fail-below:
     description: "Fail if average score is below this threshold (0 to disable)"
     required: false
     default: "0"
+  # Browser
+  channel:
+    description: "Browser channel: chrome, chrome-beta, msedge. Uses the installed browser instead of bundled Chromium."
+    required: false
+    default: ""
+  stealth:
+    description: "Apply anti-bot-detection defaults (realistic UA, override navigator.webdriver, spoof plugins/languages). Pair with channel=chrome for Cloudflare-protected sites."
+    required: false
+    default: "false"
+  user-agent:
+    description: "Override the User-Agent string sent with requests"
+    required: false
+    default: ""
+  headless:
+    description: "Run browser in headed mode (CLI --no-headless). Set to 'false' for headed, anything else for headless."
+    required: false
+    default: "true"
+  timeout:
+    description: "Page load timeout in milliseconds"
+    required: false
+    default: "30000"
+  wait-for-selector:
+    description: "CSS selector to wait for before capturing (essential for SPAs)"
+    required: false
+    default: ""
+  wait-time:
+    description: "Additional milliseconds to wait after page load"
+    required: false
+    default: ""
+  storage-state:
+    description: "Path to Playwright storageState JSON for authenticated pages"
+    required: false
+    default: ""
+  # CI ergonomics
   comment-on-pr:
     description: "Post a summary comment on pull requests (requires GITHUB_TOKEN with pull-requests: write)"
     required: false
@@ -54,44 +212,163 @@ runs:
     - name: Install Tactual and Playwright
       shell: bash
       run: |
-        npm install tactual@0.3.0 playwright
+        npm install tactual@0.4.0 playwright
         npx playwright install chromium --with-deps
 
     - name: Run analysis
       id: analysis
       shell: bash
+      # Pass ALL inputs via env: so they become shell variables that can
+      # be safely double-quoted. Never use ${{ inputs.X }} directly inside
+      # the script — that substitutes at workflow-render time, before bash
+      # sees it, so a malicious value would be inlined raw.
+      env:
+        TACTUAL_URL: ${{ inputs.url }}
+        TACTUAL_PROFILE: ${{ inputs.profile }}
+        TACTUAL_DEVICE: ${{ inputs.device }}
+        TACTUAL_FORMAT: ${{ inputs.format }}
+        TACTUAL_MAX_FINDINGS: ${{ inputs.max-findings }}
+        TACTUAL_MIN_SEVERITY: ${{ inputs.min-severity }}
+        TACTUAL_SUMMARY_ONLY: ${{ inputs.summary-only }}
+        TACTUAL_EXPLORE: ${{ inputs.explore }}
+        TACTUAL_EXPLORE_DEPTH: ${{ inputs.explore-depth }}
+        TACTUAL_EXPLORE_BUDGET: ${{ inputs.explore-budget }}
+        TACTUAL_EXPLORE_MAX_TARGETS: ${{ inputs.explore-max-targets }}
+        TACTUAL_EXPLORE_TIMEOUT: ${{ inputs.explore-timeout }}
+        TACTUAL_ALLOW_ACTION: ${{ inputs.allow-action }}
+        TACTUAL_EXCLUDE: ${{ inputs.exclude }}
+        TACTUAL_EXCLUDE_SELECTOR: ${{ inputs.exclude-selector }}
+        TACTUAL_SCOPE_SELECTOR: ${{ inputs.scope-selector }}
+        TACTUAL_FOCUS: ${{ inputs.focus }}
+        TACTUAL_SUPPRESS: ${{ inputs.suppress }}
+        TACTUAL_PROBE: ${{ inputs.probe }}
+        TACTUAL_PROBE_BUDGET: ${{ inputs.probe-budget }}
+        TACTUAL_PROBE_MODE: ${{ inputs.probe-mode }}
+        TACTUAL_PROBE_SELECTOR: ${{ inputs.probe-selector }}
+        TACTUAL_ENTRY_SELECTOR: ${{ inputs.entry-selector }}
+        TACTUAL_GOAL_TARGET: ${{ inputs.goal-target }}
+        TACTUAL_GOAL_PATTERN: ${{ inputs.goal-pattern }}
+        TACTUAL_PROBE_STRATEGY: ${{ inputs.probe-strategy }}
+        TACTUAL_VALIDATE: ${{ inputs.validate }}
+        TACTUAL_VALIDATE_MAX_TARGETS: ${{ inputs.validate-max-targets }}
+        TACTUAL_VALIDATE_STRATEGY: ${{ inputs.validate-strategy }}
+        TACTUAL_CHECK_VISIBILITY: ${{ inputs.check-visibility }}
+        TACTUAL_BASELINE: ${{ inputs.baseline }}
+        TACTUAL_FAIL_ON_REGRESSION: ${{ inputs.fail-on-regression }}
+        TACTUAL_CHANNEL: ${{ inputs.channel }}
+        TACTUAL_STEALTH: ${{ inputs.stealth }}
+        TACTUAL_USER_AGENT: ${{ inputs.user-agent }}
+        TACTUAL_HEADLESS: ${{ inputs.headless }}
+        TACTUAL_TIMEOUT: ${{ inputs.timeout }}
+        TACTUAL_WAIT_FOR_SELECTOR: ${{ inputs.wait-for-selector }}
+        TACTUAL_WAIT_TIME: ${{ inputs.wait-time }}
+        TACTUAL_STORAGE_STATE: ${{ inputs.storage-state }}
       run: |
-        EXPLORE_FLAG=""
-        if [ "${{ inputs.explore }}" = "true" ]; then
-          EXPLORE_FLAG="--explore"
+        # Build the CLI command as a bash array. Array expansion with "${arr[@]}"
+        # preserves argument boundaries even when values contain spaces, and
+        # values stay in single array slots so shell metacharacters can't
+        # break out into fresh commands.
+        ARGS=(analyze-url "$TACTUAL_URL"
+              --profile "$TACTUAL_PROFILE"
+              --format "$TACTUAL_FORMAT")
+
+        # --- boolean flags ---
+        [ "$TACTUAL_EXPLORE" = "true" ] && ARGS+=(--explore)
+        [ "$TACTUAL_PROBE" = "true" ] && ARGS+=(--probe)
+        [ "$TACTUAL_STEALTH" = "true" ] && ARGS+=(--stealth)
+        [ "$TACTUAL_VALIDATE" = "true" ] && ARGS+=(--validate)
+        [ "$TACTUAL_SUMMARY_ONLY" = "true" ] && ARGS+=(--summary-only)
+        [ "$TACTUAL_HEADLESS" = "false" ] && ARGS+=(--no-headless)
+        [ "$TACTUAL_CHECK_VISIBILITY" = "true" ] && ARGS+=(--check-visibility)
+        [ "$TACTUAL_CHECK_VISIBILITY" = "false" ] && ARGS+=(--no-check-visibility)
+
+        # --- single-value flags ---
+        [ -n "$TACTUAL_DEVICE" ] && ARGS+=(--device "$TACTUAL_DEVICE")
+        [ -n "$TACTUAL_CHANNEL" ] && ARGS+=(--channel "$TACTUAL_CHANNEL")
+        [ -n "$TACTUAL_USER_AGENT" ] && ARGS+=(--user-agent "$TACTUAL_USER_AGENT")
+        [ -n "$TACTUAL_WAIT_FOR_SELECTOR" ] && ARGS+=(--wait-for-selector "$TACTUAL_WAIT_FOR_SELECTOR")
+        [ -n "$TACTUAL_WAIT_TIME" ] && ARGS+=(--wait-time "$TACTUAL_WAIT_TIME")
+        [ -n "$TACTUAL_STORAGE_STATE" ] && ARGS+=(--storage-state "$TACTUAL_STORAGE_STATE")
+        [ -n "$TACTUAL_TIMEOUT" ] && [ "$TACTUAL_TIMEOUT" != "30000" ] && ARGS+=(--timeout "$TACTUAL_TIMEOUT")
+        [ -n "$TACTUAL_MIN_SEVERITY" ] && ARGS+=(--min-severity "$TACTUAL_MIN_SEVERITY")
+        [ -n "$TACTUAL_MAX_FINDINGS" ] && ARGS+=(--top "$TACTUAL_MAX_FINDINGS")
+        [ -n "$TACTUAL_EXPLORE_DEPTH" ] && ARGS+=(--explore-depth "$TACTUAL_EXPLORE_DEPTH")
+        [ -n "$TACTUAL_EXPLORE_BUDGET" ] && ARGS+=(--explore-budget "$TACTUAL_EXPLORE_BUDGET")
+        [ -n "$TACTUAL_EXPLORE_MAX_TARGETS" ] && ARGS+=(--explore-max-targets "$TACTUAL_EXPLORE_MAX_TARGETS")
+        [ -n "$TACTUAL_EXPLORE_TIMEOUT" ] && ARGS+=(--explore-timeout "$TACTUAL_EXPLORE_TIMEOUT")
+        [ -n "$TACTUAL_PROBE_BUDGET" ] && ARGS+=(--probe-budget "$TACTUAL_PROBE_BUDGET")
+        [ -n "$TACTUAL_ENTRY_SELECTOR" ] && ARGS+=(--entry-selector "$TACTUAL_ENTRY_SELECTOR")
+        [ -n "$TACTUAL_GOAL_TARGET" ] && ARGS+=(--goal-target "$TACTUAL_GOAL_TARGET")
+        [ -n "$TACTUAL_GOAL_PATTERN" ] && ARGS+=(--goal-pattern "$TACTUAL_GOAL_PATTERN")
+        [ -n "$TACTUAL_VALIDATE_MAX_TARGETS" ] && ARGS+=(--validate-max-targets "$TACTUAL_VALIDATE_MAX_TARGETS")
+        [ -n "$TACTUAL_VALIDATE_STRATEGY" ] && ARGS+=(--validate-strategy "$TACTUAL_VALIDATE_STRATEGY")
+        [ -n "$TACTUAL_BASELINE" ] && ARGS+=(--baseline "$TACTUAL_BASELINE")
+        [ -n "$TACTUAL_FAIL_ON_REGRESSION" ] && ARGS+=(--fail-on-regression "$TACTUAL_FAIL_ON_REGRESSION")
+
+        if [ -n "$TACTUAL_PROBE_MODE" ] && [ "$TACTUAL_PROBE_MODE" != "standard" ]; then
+          ARGS+=(--probe-mode "$TACTUAL_PROBE_MODE")
+        fi
+        if [ -n "$TACTUAL_PROBE_STRATEGY" ] && [ "$TACTUAL_PROBE_STRATEGY" != "all" ]; then
+          ARGS+=(--probe-strategy "$TACTUAL_PROBE_STRATEGY")
         fi
 
-        FORMAT="${{ inputs.format }}"
+        # --- space-separated list flags ---
+        # These inputs accept multiple values separated by spaces. bash word-
+        # splitting via `read -a` keeps each value a separate array slot.
+        if [ -n "$TACTUAL_ALLOW_ACTION" ]; then
+          read -r -a _a <<< "$TACTUAL_ALLOW_ACTION"
+          ARGS+=(--allow-action "${_a[@]}")
+        fi
+        if [ -n "$TACTUAL_EXCLUDE" ]; then
+          read -r -a _e <<< "$TACTUAL_EXCLUDE"
+          ARGS+=(--exclude "${_e[@]}")
+        fi
+        if [ -n "$TACTUAL_EXCLUDE_SELECTOR" ]; then
+          read -r -a _es <<< "$TACTUAL_EXCLUDE_SELECTOR"
+          ARGS+=(--exclude-selector "${_es[@]}")
+        fi
+        if [ -n "$TACTUAL_SCOPE_SELECTOR" ]; then
+          read -r -a _scope <<< "$TACTUAL_SCOPE_SELECTOR"
+          ARGS+=(--scope-selector "${_scope[@]}")
+        fi
+        if [ -n "$TACTUAL_PROBE_SELECTOR" ]; then
+          read -r -a _probe_scope <<< "$TACTUAL_PROBE_SELECTOR"
+          ARGS+=(--probe-selector "${_probe_scope[@]}")
+        fi
+        if [ -n "$TACTUAL_FOCUS" ]; then
+          read -r -a _f <<< "$TACTUAL_FOCUS"
+          ARGS+=(--focus "${_f[@]}")
+        fi
+        if [ -n "$TACTUAL_SUPPRESS" ]; then
+          read -r -a _s <<< "$TACTUAL_SUPPRESS"
+          ARGS+=(--suppress "${_s[@]}")
+        fi
 
-        # Single analysis run — produce the user's format + JSON sidecar for score extraction.
-        # --also-json writes JSON from the same analysis without a second Playwright capture.
+        # Output file. --also-json eliminates a second Playwright run when
+        # the primary format is non-JSON but we still need JSON for the
+        # score-extraction step below.
         EXT="txt"
-        if [ "$FORMAT" = "sarif" ]; then EXT="sarif"; fi
-        if [ "$FORMAT" = "json" ]; then EXT="json"; fi
-        if [ "$FORMAT" = "markdown" ]; then EXT="md"; fi
+        if [ "$TACTUAL_FORMAT" = "sarif" ]; then EXT="sarif"; fi
+        if [ "$TACTUAL_FORMAT" = "json" ]; then EXT="json"; fi
+        if [ "$TACTUAL_FORMAT" = "markdown" ]; then EXT="md"; fi
         RESULT_FILE="tactual-results.${EXT}"
+        ARGS+=(--output "$RESULT_FILE")
 
-        ALSO_JSON_FLAG=""
-        if [ "$FORMAT" != "json" ]; then
-          ALSO_JSON_FLAG="--also-json tactual-results.json"
+        if [ "$TACTUAL_FORMAT" != "json" ]; then
+          ARGS+=(--also-json tactual-results.json)
         fi
 
-        npx tactual analyze-url "${{ inputs.url }}" \
-          --profile "${{ inputs.profile }}" \
-          --format "$FORMAT" \
-          $EXPLORE_FLAG \
-          --output "$RESULT_FILE" \
-          $ALSO_JSON_FLAG
+        # Install optional validation deps on demand.
+        if [ "$TACTUAL_VALIDATE" = "true" ]; then
+          npm install --no-save jsdom @guidepup/virtual-screen-reader
+        fi
+
+        npx tactual "${ARGS[@]}"
 
         echo "result-file=${RESULT_FILE}" >> "$GITHUB_OUTPUT"
 
         JSON_FILE="tactual-results.json"
-        if [ "$FORMAT" = "json" ]; then
+        if [ "$TACTUAL_FORMAT" = "json" ]; then
           JSON_FILE="$RESULT_FILE"
         fi
 
@@ -105,10 +382,15 @@ runs:
     - name: Check score threshold
       if: inputs.fail-below != '0'
       shell: bash
+      env:
+        AVG: ${{ steps.analysis.outputs.average-score }}
+        THRESHOLD: ${{ inputs.fail-below }}
       run: |
-        AVG="${{ steps.analysis.outputs.average-score }}"
-        THRESHOLD="${{ inputs.fail-below }}"
-        BELOW=$(node -e "console.log(Number('$AVG') < Number('$THRESHOLD') ? '1' : '0')")
+        BELOW=$(node -e '
+          const avg = Number(process.env.AVG);
+          const th = Number(process.env.THRESHOLD);
+          console.log(avg < th ? "1" : "0");
+        ')
         if [ "$BELOW" = "1" ]; then
           echo "::error::Average score $AVG is below threshold $THRESHOLD"
           exit 1
@@ -126,29 +408,33 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
+        AVG: ${{ steps.analysis.outputs.average-score }}
+        URL: ${{ inputs.url }}
+        PROFILE: ${{ inputs.profile }}
+        ACTION_PATH: ${{ github.action_path }}
+        REPO: ${{ github.repository }}
+        PR_NUM: ${{ github.event.pull_request.number }}
       run: |
         if [ ! -f "tactual-results.json" ]; then
           echo "No JSON results available for PR comment"
           exit 0
         fi
 
-        AVG="${{ steps.analysis.outputs.average-score }}"
-        URL="${{ inputs.url }}"
-        PROFILE="${{ inputs.profile }}"
-
-        COMMENT=$(node "${{ github.action_path }}/scripts/pr-comment.js" \
+        COMMENT=$(node "$ACTION_PATH/scripts/pr-comment.js" \
           tactual-results.json "$AVG" "$URL" "$PROFILE")
 
-        # Find existing comment for this URL+profile, or create new one
-        # Use | separator (URLs contain : but rarely |); strip HTML-breaking chars
-        PR_NUM="${{ github.event.pull_request.number }}"
-        MARKER="tactual-pr-comment|$(printf '%s' "$URL" | sed 's/[<>|]//g')|$(printf '%s' "$PROFILE" | sed 's/[<>|]//g')"
-        EXISTING=$(gh api "repos/${{ github.repository }}/issues/${PR_NUM}/comments" \
-          --jq ".[] | select(.body | contains(\"${MARKER}\")) | .id" \
+        # Find existing comment for this URL+profile, or create new one.
+        # Strip HTML-breakers (< > |) plus " because MARKER goes into a jq
+        # filter string at the next line — a `"` in URL/PROFILE would otherwise
+        # break out of the jq string literal. Not a shell-injection vector
+        # (values are env-quoted), but jq-filter malforming is avoided here.
+        MARKER="tactual-pr-comment|$(printf '%s' "$URL" | sed 's/[<>|"]//g')|$(printf '%s' "$PROFILE" | sed 's/[<>|"]//g')"
+        EXISTING=$(gh api "repos/$REPO/issues/$PR_NUM/comments" \
+          --jq ".[] | select(.body | contains(\"$MARKER\")) | .id" \
           2>/dev/null | head -1)
 
         if [ -n "$EXISTING" ]; then
-          gh api "repos/${{ github.repository }}/issues/comments/${EXISTING}" \
+          gh api "repos/$REPO/issues/comments/$EXISTING" \
             -X PATCH -f body="$COMMENT"
         else
           gh pr comment "$PR_NUM" --body "$COMMENT"

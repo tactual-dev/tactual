@@ -1,6 +1,58 @@
 /// <reference lib="dom" />
 import type { Finding, PageState, Target } from "../core/types.js";
 
+/**
+ * Serializes validation calls across the process. @guidepup/virtual-screen-reader
+ * is imported as a module-shared `virtual` object whose internal state is
+ * mutated by start()/stop()/perform() — concurrent callers would corrupt
+ * each other. On top of that, both entry points (the standalone
+ * validate-url pipeline and inline --validate inside analyze-url) swap
+ * globalThis.window/document across awaited work; without a lock, an
+ * await boundary in call A lets call B set the globals before A has
+ * restored them, so A sees B's DOM. The lock closes both races at once.
+ */
+let _validationLock: Promise<unknown> = Promise.resolve();
+
+export function withValidationLock<T>(fn: () => Promise<T>): Promise<T> {
+  const next = _validationLock.then(fn, fn);
+  _validationLock = next.catch(() => {});
+  return next;
+}
+
+/**
+ * Run validateFindings against a JSDOM instance with the globalThis swap
+ * and the virtual-SR mutation serialized under a process-wide lock.
+ * Both the standalone validate-url pipeline and inline --validate
+ * should use this rather than hand-rolling the global swap — otherwise
+ * concurrent MCP calls can corrupt each other.
+ */
+export async function validateFindingsInJsdom(
+  dom: { window: { document: { body: HTMLElement } } },
+  state: PageState,
+  findings: Finding[],
+  options: ValidationOptions = {},
+): Promise<ValidationResult[]> {
+  return withValidationLock(async () => {
+    const prev = {
+      window: (globalThis as Record<string, unknown>).window,
+      document: (globalThis as Record<string, unknown>).document,
+    };
+    (globalThis as Record<string, unknown>).window = dom.window;
+    (globalThis as Record<string, unknown>).document = dom.window.document;
+    try {
+      return await validateFindings(
+        dom.window.document.body,
+        state,
+        findings,
+        options,
+      );
+    } finally {
+      (globalThis as Record<string, unknown>).window = prev.window;
+      (globalThis as Record<string, unknown>).document = prev.document;
+    }
+  });
+}
+
 export interface ValidationOptions {
   /** Maximum targets to validate (default: 20, worst scores first) */
   maxTargets?: number;
@@ -41,6 +93,13 @@ export interface ValidationResult {
  * - Semantic navigation: moveToNextHeading, moveToNextLandmark,
  *   moveToNextLink (equivalent to rotor/quick keys)
  *
+ * Targets that can't be meaningfully matched against SR announcements
+ * (unnamed non-structural targets like generic buttons, icons, form fields
+ * without labels) are filtered out *before* the worst-N slice — otherwise
+ * the top-N would be full of unvalidatable findings and return all-zero
+ * results even on healthy pages. The filter's job is "can we write a
+ * deterministic matcher for this?", not "is this target important?".
+ *
  * This is designed to be called from tests, not from the CLI.
  */
 export async function validateFindings(
@@ -54,15 +113,18 @@ export async function validateFindings(
 
   const { virtual } = await import("@guidepup/virtual-screen-reader");
 
-  const sorted = [...findings].sort((a, b) => a.scores.overall - b.scores.overall);
-  const toValidate = sorted.slice(0, maxTargets);
+  const findingsWithTargets = findings
+    .map((f) => ({ finding: f, target: state.targets.find((t) => t.id === f.targetId) }))
+    .filter(
+      (pair): pair is { finding: Finding; target: Target } =>
+        pair.target !== undefined && isValidatable(pair.target),
+    );
+  findingsWithTargets.sort((a, b) => a.finding.scores.overall - b.finding.scores.overall);
+  const toValidate = findingsWithTargets.slice(0, maxTargets);
 
   const results: ValidationResult[] = [];
 
-  for (const finding of toValidate) {
-    const target = state.targets.find((t) => t.id === finding.targetId);
-    if (!target) continue;
-
+  for (const { finding, target } of toValidate) {
     const result = strategy === "semantic"
       ? await validateWithSemanticNav(virtual, container, target, finding, options.verbose ?? false)
       : await validateWithLinearNav(virtual, container, target, finding, options.verbose ?? false);
@@ -70,6 +132,31 @@ export async function validateFindings(
   }
 
   return results;
+}
+
+/**
+ * A target is validatable if we can write a deterministic matcher for it
+ * against SR announcement text. With no name, we need a distinctive role
+ * the SR announces verbatim (landmarks, headings). Generic unnamed buttons,
+ * links, and form fields fall through the matcher and always return false,
+ * so we exclude them up-front rather than scoring them "unreachable".
+ */
+export function isValidatable(target: Target): boolean {
+  if (target.name?.trim()) return true;
+  return target.kind === "landmark" || target.kind === "heading";
+}
+
+/**
+ * Match an SR announcement against a target. Primary path is accessible-name
+ * substring; fallback is role word for unnamed landmarks/headings, which SRs
+ * announce as e.g. "navigation landmark" / "heading level 2".
+ */
+export function announcementMatches(announcement: string, target: Target): boolean {
+  const spoken = announcement.toLowerCase();
+  const name = target.name?.toLowerCase().trim() ?? "";
+  if (name) return spoken.includes(name);
+  const role = target.role?.toLowerCase() ?? "";
+  return role.length > 0 && spoken.includes(role);
 }
 
 // ---------------------------------------------------------------------------
@@ -84,7 +171,6 @@ async function validateWithSemanticNav(
   verbose: boolean,
 ): Promise<ValidationResult> {
   const maxSteps = 100;
-  const targetName = target.name?.toLowerCase() ?? "";
 
   try {
     await virtual.start({ container });
@@ -95,7 +181,7 @@ async function validateWithSemanticNav(
 
     // Try heading navigation first (most common strategy)
     if (target.kind === "heading" || hasHeadingInPath(finding)) {
-      found = await navigateByCommand(virtual, "moveToNextHeading", targetName, maxSteps, announcements, verbose);
+      found = await navigateByCommand(virtual, "moveToNextHeading", target, maxSteps, announcements, verbose);
       steps = announcements.length;
     }
 
@@ -104,7 +190,7 @@ async function validateWithSemanticNav(
       await virtual.stop();
       await virtual.start({ container });
       announcements.length = 0;
-      found = await navigateByCommand(virtual, "moveToNextLandmark", targetName, maxSteps, announcements, verbose);
+      found = await navigateByCommand(virtual, "moveToNextLandmark", target, maxSteps, announcements, verbose);
       steps = announcements.length;
     }
 
@@ -113,7 +199,7 @@ async function validateWithSemanticNav(
       await virtual.stop();
       await virtual.start({ container });
       announcements.length = 0;
-      found = await navigateByLinear(virtual, targetName, maxSteps, announcements, verbose);
+      found = await navigateByLinear(virtual, target, maxSteps, announcements, verbose);
       steps = announcements.length;
     }
 
@@ -153,13 +239,12 @@ async function validateWithLinearNav(
   verbose: boolean,
 ): Promise<ValidationResult> {
   const maxSteps = 200;
-  const targetName = target.name?.toLowerCase() ?? "";
 
   try {
     await virtual.start({ container });
 
     const announcements: string[] = [];
-    const found = await navigateByLinear(virtual, targetName, maxSteps, announcements, verbose);
+    const found = await navigateByLinear(virtual, target, maxSteps, announcements, verbose);
 
     await virtual.stop();
 
@@ -192,7 +277,7 @@ async function validateWithLinearNav(
 async function navigateByCommand(
   virtual: VirtualSR,
   command: string,
-  targetName: string,
+  target: Target,
   maxSteps: number,
   announcements: string[],
   verbose: boolean,
@@ -207,7 +292,7 @@ async function navigateByCommand(
       const spoken = await virtual.lastSpokenPhrase();
       announcements.push(spoken || "");
       if (verbose) process.stderr?.write?.(`  [${command} ${i + 1}] ${spoken}\n`);
-      if (targetName && spoken.toLowerCase().includes(targetName)) return true;
+      if (announcementMatches(spoken || "", target)) return true;
     } catch {
       break;
     }
@@ -217,7 +302,7 @@ async function navigateByCommand(
 
 async function navigateByLinear(
   virtual: VirtualSR,
-  targetName: string,
+  target: Target,
   maxSteps: number,
   announcements: string[],
   verbose: boolean,
@@ -230,7 +315,7 @@ async function navigateByLinear(
       const announcement = spoken || text || "";
       announcements.push(announcement);
       if (verbose) process.stderr?.write?.(`  [next ${i + 1}] ${announcement}\n`);
-      if (targetName && announcement.toLowerCase().includes(targetName)) return true;
+      if (announcementMatches(announcement, target)) return true;
     } catch {
       break;
     }

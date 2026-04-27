@@ -1,14 +1,15 @@
 /**
- * ARIA-AT calibration scaffolding.
+ * ARIA-AT calibration utilities.
  *
  * Compares Tactual's simulator output against ground-truth recordings
  * from the W3C ARIA-AT project (https://aria-at.w3.org). ARIA-AT publishes
  * systematic test results showing what each AT actually announced under
  * each test condition.
  *
- * STATUS: scaffolding. Tactual ships without bundled ARIA-AT data — the
- * data is large, license-encumbered (CC-BY 4.0 with attribution
- * requirements), and updated independently of Tactual releases.
+ * STATUS: active release check. Tactual ships a curated assertion fixture
+ * for `npm run calibrate`; it does not bundle the full upstream ARIA-AT
+ * dataset because the source data is large, attribution-sensitive
+ * (CC-BY 4.0), and updated independently of Tactual releases.
  *
  * To use:
  *   1. Download ARIA-AT test reports from

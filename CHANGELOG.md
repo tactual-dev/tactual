@@ -1,5 +1,77 @@
 # Changelog
 
+## 0.4.0 (2026-04-26)
+
+A release focused on deeper AT-navigation evidence, runtime interaction probes, and more consistent CLI/MCP/GitHub Action surfaces.
+
+### Highlights
+
+- **Evidence-backed findings** — findings now carry measured, validated, modeled, and heuristic evidence summaries. Console, markdown, SARIF, and JSON outputs expose the evidence so consumers can distinguish direct probe failures from inferred scoring.
+- **Runtime widget and form probes** — `--probe` now checks tabs, disclosures, comboboxes, listboxes, and required-field form-error flows in addition to generic keyboard, menu, and modal probes.
+- **Goal-directed probing** — `scopeSelector`, `probeSelector`, `entrySelector`, `goalTarget`, `goalPattern`, and `probeStrategy` let a run focus on one subtree, trigger, target, or behavior family instead of spending the whole budget page-wide.
+- **Forced-colors and icon visibility checks** — desktop profiles can declare `visualModes`; `nvda-desktop-v0` and `jaws-desktop-v0` now sample light/dark and forced-colors combinations for invisible icons, low icon contrast, and author-set SVG fills that should be verified in High Contrast Mode.
+- **Remediation candidate summaries** — reports now cluster repeated root causes with affected counts, examples, likely fix direction, estimated uplift, confidence, and suggested validation.
+- **Repeated navigation-cost analysis** — `analyze_pages` now identifies recurring links, buttons, form fields, menus, tabs, pagination, search, and disclosures that impose cost across pages.
+
+### Analysis Correctness
+
+- Probe contract failures now contribute to operability scoring and emit targeted APG/form-flow remediation guidance.
+- Dialog trigger flows now measure opener-to-dialog behavior: activation opens a dialog, focus moves inside, Tab stays contained, Escape closes, and focus returns to the opener.
+- Generic keyboard probes now use Playwright keyboard activation, wait briefly for async ARIA state commits, and detect focus loss when activation leaves focus on `document.body`.
+- Repeated disclosure trigger groups can be sampled from same-structure exemplars, matching the existing menu-trigger sampling approach and bounding runtime on repeated app components.
+- Pattern-deviation findings suppress known false-positive cases where activation re-renders the trigger or a tab is already selected.
+- Hydration-heavy app shells with a small non-empty accessibility tree now get a bounded second convergence window before Tactual accepts the initial snapshot.
+- `--explore` runs that end with `stateCount=1` now emit an `exploration-no-new-states` diagnostic explaining the dominant reason.
+- Combined `--probe --explore` runs now reset the page after initial probes so runtime probing cannot consume or collapse the branch state exploration is meant to inspect.
+- Exploration timeouts now bound initial probe work, per-branch capture waits, and revealed-state probe hooks when `--probe --explore` are combined; `--explore-timeout` is exposed across CLI, MCP, and the GitHub Action.
+- `validate_url` pre-filters unvalidatable targets before selecting the worst-N sample and has role-fallback matching for unnamed landmarks/headings.
+- Unique structural landmarks such as `main`, `banner`, and `contentinfo` no longer emit missing-accessible-name penalties or recommend unnecessary `aria-label`s.
+- Combobox interop guidance now recommends target AT/browser verification for critical flows instead of treating custom combobox replacement as the only effective action.
+- `analyze_pages` now surfaces per-page wait/capture warnings and respects the configured page timeout for `waitForSelector`.
+- Capture-time selector inputs are now syntax-validated with the browser selector parser before scope/exclusion mutations run, so malformed selectors are ignored instead of aborting capture.
+
+### Surfaces and Compatibility
+
+- CLI, MCP, and Action execution now share pipeline modules for analyze-url, validate-url, trace-path, diff-results, save-auth, analyze-pages, and suggest-remediations.
+- CLI internals are split into per-command modules; MCP internals are split into per-tool modules; a surface-parity test keeps CLI, MCP, and Action parameters aligned.
+- Canonical CLI command names are now `validate-url` and `diff-results`; legacy `validate` and `diff` aliases still work. `suggest-remediations --max-suggestions` is canonical; legacy `--max` still works.
+- The GitHub Action mirrors the analyze-url CLI analysis inputs, with safer bash-array argument construction and corrected JSON/SARIF file selection for PR comments.
+- The summary schema now exposes `remediationCandidates` instead of PR-specific public wording.
+
+### Performance and Reliability
+
+- Test runtime is reduced by parallelizing explorer tests, adding benchmark runner concurrency, and raising Vitest `maxConcurrency`.
+- Analysis internals now route command/tool execution, analyzer stages, diagnostic checks, and probe penalty families through focused helpers while preserving the public CLI, MCP, Action, and library surfaces.
+- Stealth mode no longer bypasses the shared browser pool unless a channel or headed browser requires a separate browser instance.
+- One-shot CLI browser commands now close their owned browser instances instead of keeping the shared browser pool alive after output is written.
+- Inline `--validate` and MCP `validate_url` calls are serialized around the virtual screen reader's shared JSDOM/global state.
+- Shared glob matching moved into a core utility used by filters, analyzer logic, and MCP trace helpers.
+- CLI terminal output avoids non-ASCII glyphs in runtime status lines so Windows consoles do not show mojibake for arrows or separators.
+
+### Packaging and Dependencies
+
+- Bump package, action, server, and workflow examples to 0.4.0.
+- Patch dev dependencies from Dependabot: `@typescript-eslint/parser` 8.58.2, `@typescript-eslint/eslint-plugin` 8.58.2, `prettier` 3.8.3, and `eslint` 10.2.1.
+- Keep TypeScript on the 5.x line for this release; the TypeScript 6 major update is deferred for separate evaluation.
+- Update transitive MCP HTTP dependencies; `npm audit --omit=dev` is clean as of the release gate.
+- Promote the MCP SDK to a production dependency so installed-package imports of `tactual/mcp` and the `tactual-mcp` binary work without a separate SDK install.
+- Add an installed-package smoke gate that packs the release, installs it into a fresh project, imports public library/MCP/validation surfaces, and checks CLI entry points.
+- Add V8 coverage provider wiring, `.dockerignore`, and corrected Dockerfile install ordering before Playwright browser installation.
+
+### Compatibility Notes
+
+- Scores can change on unchanged pages because new runtime probes and forced-colors/icon visibility tiers feed into operability scoring. Regenerate 0.3.x JSON baselines before using 0.4.0 as a regression gate.
+- Keyboard probes remain opt-in because they send real keyboard events and add runtime. Forced-colors checks run only when the active profile declares `visualModes` or when `--check-visibility` is used with such a profile.
+
+### Documentation
+
+- Update README and MCP tool reference for deeper probes, evidence summaries, visibility checks, remediation candidates, repeated navigation output, and broad-to-specific analysis workflows.
+- Clarify that calibration is token-level simulator validation for covered ARIA-AT assertions, not a substitute for manual screen-reader validation of critical flows.
+- Add interpretation guidance that separates SR navigation, keyboard operability, structural semantics, interop risk, and pointer-adjacent findings.
+- Add hosted MCP hardening guidance for network-facing HTTP deployments.
+- Update README examples to use canonical `validate-url` and `diff-results` command names, add surface naming guidance, and include brief validation/calibration library examples.
+- Update MCP recipes for focused remediation work without assuming a project's PR standards.
+
 ## 0.3.1 (2026-04-17)
 
 Same-day patch — caught by post-publish stress test.
@@ -28,7 +100,7 @@ New diagnostics, scoring presets, SR simulator, performance improvements, securi
 - **Live-region detection** — captures `aria-live` value on every target. Excessive `aria-live="assertive"` (which interrupts the user) on non-status content surfaces as a penalty suggesting `polite`.
 - **State-aware penalties** — finding-builder now reads captured ARIA state and emits penalties for: label-state mismatch (e.g., button labeled "Collapse" with `aria-expanded="true"` produces confusing announcements), disabled-but-discoverable controls, tab missing `aria-selected`, combobox/listbox/menu missing `aria-expanded`, orphaned `aria-labelledby`/`aria-describedby` references, and assertive live-region misuse.
 - **Stateful interaction simulation** — new `simulateAction(target, key)` and `simulateSequence(target, keys[])` functions model how a target's ARIA state changes in response to keyboard input per the ARIA APG specs. Patterns modeled: checkbox, switch, menuitemcheckbox (tri-state), toggle button (`aria-pressed`), disclosure button (`aria-expanded`), combobox, slider/spinbutton (with step/min/max clamping), tab, radio. Single-target only; multi-target effects (radio group selection across siblings, tab list navigation) deliberately not modeled. Exported from `tactual/playwright`.
-- **Pattern-deviation detection** — when probes are enabled, finding-builder compares the actual probe-observed state change to the ARIA APG spec's expected behavior. Emits a high-signal penalty like *"Pattern deviation: pressing Enter on a toggle button should toggle aria-pressed from 'false' to 'true' per the ARIA APG toggle-button pattern, but probe observed aria-pressed='false'."* Catches broken implementations of toggle buttons, disclosure buttons, checkboxes, and switches. Novel: axe-core checks rule conformance, not implementation correctness.
+- **Pattern-deviation detection** — when probes are enabled, finding-builder compares the actual probe-observed state change to the ARIA APG spec's expected behavior. Emits a high-signal penalty like _"Pattern deviation: pressing Enter on a toggle button should toggle aria-pressed from 'false' to 'true' per the ARIA APG toggle-button pattern, but probe observed aria-pressed='false'."_ Catches broken implementations of toggle buttons, disclosure buttons, checkboxes, and switches. Novel: axe-core checks rule conformance, not implementation correctness.
 - **`--allow-action`** — override the safe-action policy for specific controls during exploration (glob patterns).
 - **`--probe-budget`** — configurable max targets to probe (default: 20).
 - **Nested focusable detection** (`--probe`) — flags elements with focusable descendants causing duplicate tab stops.
@@ -169,12 +241,14 @@ Full CLI/MCP parity, performance improvements, and output polish.
 ### CLI Parity
 
 All 7 MCP tools are now available as CLI commands:
+
 - `trace-path <url> <target>`: step-by-step SR navigation trace with colored output
 - `save-auth <url>`: authenticate and save session state (`--click`, `--fill`, `--wait-for-url`)
 - `analyze-pages <urls...>`: multi-page site analysis with aggregated stats
 - `suggest-remediations <file>`: extract ranked fixes from analysis JSON
 
 New `analyze-url` flags matching MCP parameters:
+
 - `--wait-for-selector`: CSS selector to wait for (essential for SPAs)
 - `--wait-time`: additional milliseconds to wait after page load
 - `--storage-state`: Playwright storageState JSON for authenticated pages

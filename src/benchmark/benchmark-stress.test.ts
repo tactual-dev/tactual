@@ -16,7 +16,7 @@ describe("stress fixtures", { timeout: 120000 }, () => {
   });
 
   it("stress fixtures suite passes all cases and comparisons", async () => {
-    const result = await runBenchmarkSuite(stressFixturesSuite, browser);
+    const result = await runBenchmarkSuite(stressFixturesSuite, browser, undefined, 8);
 
     // Log results for visibility
     const output = formatBenchmarkResults(result);
@@ -55,7 +55,7 @@ describe("multi-profile", { timeout: 120000 }, () => {
   });
 
   it("multi-profile suite passes all cases", async () => {
-    const result = await runBenchmarkSuite(multiProfileSuite, browser);
+    const result = await runBenchmarkSuite(multiProfileSuite, browser, undefined, 8);
 
     // Log results for visibility
     const output = formatBenchmarkResults(result);

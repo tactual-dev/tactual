@@ -1,0 +1,12 @@
+node_modules/
+dist/**/*.map
+coverage/
+.audit/
+.claude/
+.git/
+.github/
+.playwright-mcp/
+.pr-screenshots/
+build/
+*.log
+*.tsbuildinfo

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Contract Corpus</title>
+  <style>
+    [hidden] { display: none; }
+    .panel { border: 1px solid #bbb; padding: 8px; }
+    .option { padding: 4px; }
+    .option[aria-selected="true"] { background: #dceeff; }
+    .custom-field { border: 1px solid #777; min-height: 24px; padding: 4px; width: 260px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Widget Contract Corpus</h1>
+    <nav aria-label="Primary">
+      <a href="#widgets">Widgets</a>
+      <a href="#forms">Forms</a>
+    </nav>
+  </header>
+  <main id="main">
+    <section id="widgets" aria-labelledby="widgets-heading">
+      <h2 id="widgets-heading">Composite Widgets</h2>
+
+      <label for="good-combo">Good combobox</label>
+      <input id="good-combo" role="combobox" aria-expanded="false" aria-controls="good-options" aria-autocomplete="list">
+      <div id="good-options" role="listbox" hidden>
+        <div id="good-option-a" role="option" class="option">Alpha</div>
+        <div id="good-option-b" role="option" class="option">Beta</div>
+      </div>
+
+      <label for="broken-combo">Broken combobox</label>
+      <input id="broken-combo" role="combobox" aria-expanded="false" aria-controls="broken-options" aria-autocomplete="list">
+      <div id="broken-options" role="listbox" hidden>
+        <div role="option" class="option">One</div>
+        <div role="option" class="option">Two</div>
+      </div>
+
+      <div role="listbox" aria-label="Broken listbox" tabindex="0">
+        <div role="option" class="option">Small</div>
+        <div role="option" class="option">Medium</div>
+        <div role="option" class="option">Large</div>
+      </div>
+
+      <button id="broken-disclosure" aria-expanded="false" aria-controls="missing-panel">
+        Broken disclosure
+      </button>
+    </section>
+
+    <section id="forms" aria-labelledby="forms-heading">
+      <h2 id="forms-heading">Form Errors</h2>
+      <form>
+        <div role="textbox" aria-label="Broken custom field" aria-invalid="true" tabindex="0" class="custom-field"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const goodCombo = document.getElementById('good-combo');
+    const goodOptions = document.getElementById('good-options');
+    goodCombo.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        goodCombo.setAttribute('aria-expanded', 'true');
+        goodCombo.setAttribute('aria-activedescendant', 'good-option-a');
+        goodOptions.hidden = false;
+        document.getElementById('good-option-a').setAttribute('aria-selected', 'true');
+      }
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        goodCombo.setAttribute('aria-expanded', 'false');
+        goodCombo.removeAttribute('aria-activedescendant');
+        goodOptions.hidden = true;
+        document.getElementById('good-option-a').removeAttribute('aria-selected');
+      }
+    });
+  </script>
+</body>
+</html>

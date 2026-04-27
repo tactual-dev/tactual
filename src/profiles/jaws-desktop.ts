@@ -106,4 +106,14 @@ export const jawsDesktopV0: ATProfile = {
         "disrupts navigation flow.",
     },
   ],
+
+  // JAWS is Windows-only; HCM is a common configuration. Same rationale
+  // as the NVDA profile: hardcoded SVG fills stay at author color under
+  // forced-colors, often rendering icons invisible in HCM-dark.
+  visualModes: [
+    { colorScheme: "light", forcedColors: "none" },
+    { colorScheme: "light", forcedColors: "active" },
+    { colorScheme: "dark", forcedColors: "none" },
+    { colorScheme: "dark", forcedColors: "active" },
+  ],
 };

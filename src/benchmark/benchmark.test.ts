@@ -20,7 +20,7 @@ describe("benchmarks", { timeout: 120000 }, () => {
   });
 
   it("public fixtures suite passes all cases and comparisons", async () => {
-    const result = await runBenchmarkSuite(publicFixturesSuite, browser);
+    const result = await runBenchmarkSuite(publicFixturesSuite, browser, undefined, 8);
 
     // Log results for visibility
     const output = formatBenchmarkResults(result);

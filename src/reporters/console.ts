@@ -1,5 +1,5 @@
 import type { AnalysisResult } from "../core/types.js";
-import { summarize, type DetailedFinding, type IssueGroup } from "./summarize.js";
+import { summarize, type DetailedFinding, type IssueGroup, type RemediationCandidate } from "./summarize.js";
 
 // ---------------------------------------------------------------------------
 // ANSI color helpers (no external dependencies)
@@ -107,6 +107,17 @@ export function formatConsole(result: AnalysisResult, options?: { maxDetailedFin
     }
   }
 
+  if (s.remediationCandidates.length > 0) {
+    lines.push("");
+    lines.push(`  ${c.bold}Remediation Candidates${c.reset}`);
+    for (const candidate of s.remediationCandidates.slice(0, 3)) {
+      formatRemediationCandidate(lines, candidate);
+    }
+    if (s.remediationCandidates.length > 3) {
+      lines.push(`  ${c.dim}  ... and ${s.remediationCandidates.length - 3} more remediation candidates in JSON output${c.reset}`);
+    }
+  }
+
   // ── Findings (only actionable: severe, high, moderate) ──
   const actionable = s.worstFindings.filter(
     (f) => f.severity === "severe" || f.severity === "high" || f.severity === "moderate",
@@ -133,6 +144,30 @@ export function formatConsole(result: AnalysisResult, options?: { maxDetailedFin
     lines.push(`  ${c.green}${c.bold}All clear${c.reset}${c.green} — no severe, high, or moderate findings.${c.reset}`);
   }
 
+  // ── Validation (when --validate was set) ──
+  if (s.validation) {
+    const v = s.validation;
+    lines.push("");
+    lines.push(`  ${c.bold}Validation${c.reset} ${c.dim}(virtual screen reader, ${v.strategy})${c.reset}`);
+    const reachColor = v.reachable === v.totalValidated ? c.green : c.yellow;
+    const unreachColor = v.unreachable > 0 ? c.red : c.dim;
+    lines.push(
+      `  ${c.dim}  Validated${c.reset} ${v.totalValidated}    ` +
+      `${reachColor}${v.reachable} reachable${c.reset}    ` +
+      `${unreachColor}${v.unreachable} unreachable${c.reset}`,
+    );
+    if (v.meanAccuracy !== null) {
+      // Accuracy near 1.0 = predictions match virtual SR. Low = Tactual is
+      // underestimating steps (the virtual SR needed more).
+      const acc = v.meanAccuracy;
+      const accColor = acc >= 0.8 ? c.green : acc >= 0.5 ? c.yellow : c.red;
+      lines.push(
+        `  ${c.dim}  Predicted/actual step ratio${c.reset} ` +
+        `${accColor}${acc.toFixed(2)}${c.reset} ${c.dim}(1.0 = perfect)${c.reset}`,
+      );
+    }
+  }
+
   // ── Truncation note ──
   if (s.truncationNote) {
     const omittedActionable = (s.truncationNote.omittedBySeverity.severe ?? 0) +
@@ -150,9 +185,29 @@ export function formatConsole(result: AnalysisResult, options?: { maxDetailedFin
 
 function formatIssueGroup(lines: string[], g: IssueGroup): void {
   const color = g.worstScore < 60 ? c.red : g.worstScore < 75 ? c.yellow : c.dim;
-  lines.push(`  ${color}  ${String(g.count).padStart(3)}x${c.reset}  ${g.issue}`);
+  // Impact note: "fixing this lifts 12 targets from avg 55" — lets users
+  // prioritize by aggregate score upside, not just affected-target count.
+  const impact = g.estimatedScoreUplift > 0
+    ? `${c.dim} · fix adds ~${g.estimatedScoreUplift} score pts across ${g.count} targets (avg ${g.averageScore})${c.reset}`
+    : "";
+  lines.push(`  ${color}  ${String(g.count).padStart(3)}x${c.reset}  ${g.issue}${impact}`);
   if (g.fix) {
     lines.push(`  ${c.dim}       ↳ ${g.fix}${c.reset}`);
+  }
+}
+
+function formatRemediationCandidate(lines: string[], candidate: RemediationCandidate): void {
+  const uplift = candidate.estimatedScoreUplift
+    ? `${c.dim} · ~${candidate.estimatedScoreUplift} score pts${c.reset}`
+    : "";
+  lines.push(
+    `  ${c.cyan}  ${candidate.title}${c.reset} ${c.dim}[${candidate.category}, confidence ${candidate.confidence}]${c.reset}${uplift}`,
+  );
+  if (candidate.primaryFix) {
+    lines.push(`  ${c.dim}       Fix: ${candidate.primaryFix}${c.reset}`);
+  }
+  if (candidate.examples.length > 0) {
+    lines.push(`  ${c.dim}       Examples: ${candidate.examples.slice(0, 3).join(", ")}${c.reset}`);
   }
 }
 
@@ -167,10 +222,24 @@ function formatFinding(lines: string[], f: DetailedFinding): void {
   lines.push(
     `  ${c.dim}              D:${f.scores.discoverability} R:${f.scores.reachability} O:${f.scores.operability} Rec:${f.scores.recovery}${f.scores.interopRisk > 0 ? ` IR:${f.scores.interopRisk}` : ""}${c.reset}`,
   );
+  if (f.evidence.length > 0) {
+    lines.push(`  ${c.dim}              Evidence: ${formatEvidenceSummary(f)}${c.reset}`);
+  }
 
   // Selector
   if (f.selector) {
     lines.push(`  ${c.dim}              ${f.selector}${c.reset}`);
+  }
+
+  // How to reach the target — compacted SR-command-style string.
+  // Collapses consecutive same-action steps ("nextItem, nextItem, nextItem" → "Tab ×3")
+  // and translates action names to the shorter form AT users recognize
+  // (H for heading, ; for landmark, Enter for activation). Surfaces
+  // actionability: readers see exactly how many keystrokes reach this
+  // finding's target from the nearest entry point.
+  const pathStr = compactPathForConsole(f.bestPath);
+  if (pathStr) {
+    lines.push(`  ${c.dim}              ↪ ${pathStr}${c.reset}`);
   }
 
   // Penalties
@@ -182,4 +251,84 @@ function formatFinding(lines: string[], f: DetailedFinding): void {
   }
 
   lines.push("");
+}
+
+function formatEvidenceSummary(f: DetailedFinding): string {
+  const parts = [
+    ["measured", f.evidenceSummary.measured],
+    ["validated", f.evidenceSummary.validated],
+    ["modeled", f.evidenceSummary.modeled],
+    ["heuristic", f.evidenceSummary.heuristic],
+  ]
+    .filter(([, count]) => Number(count) > 0)
+    .map(([kind, count]) => `${kind} ${count}`);
+  return parts.join(", ");
+}
+
+/**
+ * Compact a bestPath array ("nextItem: Home", "nextItem: About", ...)
+ * into a single readable SR-command line ("Tab ×2 → H \"Cart\" → Enter").
+ *
+ * Rules:
+ *   - Consecutive same-action steps collapse: "nextItem, nextItem" → "Tab ×2"
+ *   - Action names translate to the short form AT users know:
+ *       nextItem     → Tab
+ *       nextHeading  → H
+ *       nextLandmark → ;
+ *       nextLink     → K
+ *       groupEntry   → enter
+ *       groupExit    → exit
+ *       activate     → Enter
+ *   - A "... (N more steps)" marker from truncatePath renders as "+N more"
+ *   - Empty path (unreachable) returns empty string → caller suppresses line
+ */
+function compactPathForConsole(path: string[]): string {
+  if (path.length === 0) return "";
+  const actionShort: Record<string, string> = {
+    nextItem: "Tab",
+    nextHeading: "H",
+    nextLandmark: ";",
+    nextLink: "K",
+    nextButton: "B",
+    nextControl: "Tab",
+    groupEntry: "→",
+    groupExit: "←",
+    activate: "Enter",
+  };
+  // Parse "action: targetName" back into (action, name) pairs.
+  const parsed = path.map((step) => {
+    if (step.startsWith("... (")) return { action: "_more", name: step.replace(/^\.\.\. \(/, "+").replace(/\)$/, "") };
+    const idx = step.indexOf(": ");
+    return idx >= 0
+      ? { action: step.slice(0, idx), name: step.slice(idx + 2) }
+      : { action: step, name: "" };
+  });
+  // Collapse runs of same action (ignore name differences for "nextItem" etc.).
+  const compacted: Array<{ action: string; name: string; count: number }> = [];
+  for (const p of parsed) {
+    const last = compacted[compacted.length - 1];
+    // Only collapse actions where the name is incidental (Tab ×3 over different
+    // items is meaningful; H "Cart" carries the target name explicitly).
+    const collapsible = p.action === "nextItem" || p.action === "nextControl";
+    if (last && collapsible && last.action === p.action) {
+      last.count++;
+      last.name = p.name; // keep the last name as the landing point
+      continue;
+    }
+    compacted.push({ action: p.action, name: p.name, count: 1 });
+  }
+  // Render each step.
+  return compacted
+    .map(({ action, name, count }) => {
+      if (action === "_more") return name;
+      const short = actionShort[action] ?? action;
+      const countSuffix = count > 1 ? ` ×${count}` : "";
+      const quotedName = name && name !== "element" && name !== "page" ? ` "${name}"` : "";
+      // For Tab runs we show the landing target; for others name is the action target.
+      if (short === "Tab" || short === ";" || short === "H" || short === "K" || short === "B") {
+        return `${short}${countSuffix}${quotedName}`;
+      }
+      return `${short}${quotedName}`;
+    })
+    .join(" → ");
 }

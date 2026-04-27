@@ -6,6 +6,8 @@ import { genericMobileWebSrV0 } from "./profiles/generic-mobile.js";
 import { formatReport } from "./reporters/index.js";
 import { resolve } from "path";
 
+const PLAYWRIGHT_TEST_TIMEOUT = 15_000;
+
 describe("integration: end-to-end analysis", () => {
   let browser: Browser;
 
@@ -44,7 +46,7 @@ describe("integration: end-to-end analysis", () => {
       result.findings.reduce((sum, f) => sum + f.scores.overall, 0) /
       result.findings.length;
     expect(avgScore).toBeGreaterThan(60);
-  });
+  }, PLAYWRIGHT_TEST_TIMEOUT);
 
   it("analyzes a poorly structured page and produces lower scores", async () => {
     const page = await browser.newPage();
@@ -66,7 +68,7 @@ describe("integration: end-to-end analysis", () => {
 
     // Should still find some targets (links, inputs)
     expect(result.findings.length).toBeGreaterThan(0);
-  });
+  }, PLAYWRIGHT_TEST_TIMEOUT);
 
   it("good page scores higher than bad page on average", async () => {
     const goodPage = await browser.newPage();
@@ -90,7 +92,7 @@ describe("integration: end-to-end analysis", () => {
       badResult.findings.length;
 
     expect(goodAvg).toBeGreaterThan(badAvg);
-  });
+  }, PLAYWRIGHT_TEST_TIMEOUT);
 
   it("produces valid report output in all formats", async () => {
     const page = await browser.newPage();
@@ -108,5 +110,5 @@ describe("integration: end-to-end analysis", () => {
 
     const console = formatReport(result, "console");
     expect(console).toContain("Tactual Analysis");
-  });
+  }, PLAYWRIGHT_TEST_TIMEOUT);
 });

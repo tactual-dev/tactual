@@ -126,8 +126,6 @@ const AT_OVERRIDES: Record<ATKind, Record<string, string>> = {
   },
   jaws: {
     // JAWS in default verbosity announces landmarks similarly to NVDA.
-    // I previously claimed "navigation region" vs "navigation landmark" —
-    // removed: cannot verify this is consistent across JAWS versions.
     // Falls through to BASE.
   },
   voiceover: {
