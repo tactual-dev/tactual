@@ -1,4 +1,5 @@
 import type { BenchmarkSuite } from "../types.js";
+import { fixturePath } from "../fixture-path.js";
 
 /**
  * Public fixtures benchmark suite.
@@ -20,7 +21,7 @@ export const publicFixturesSuite: BenchmarkSuite = {
       name: "Well-structured page (good-page.html)",
       description:
         "Page with proper headings, landmarks, ARIA labels, and semantic HTML",
-      source: { type: "file", path: "fixtures/good-page.html" },
+      source: { type: "file", path: fixturePath("good-page.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "averageScoreInRange", min: 70, max: 100 },
@@ -43,7 +44,7 @@ export const publicFixturesSuite: BenchmarkSuite = {
       name: "Poorly structured page (bad-page.html)",
       description:
         "Page with no headings, no landmarks, div-based buttons, no ARIA",
-      source: { type: "file", path: "fixtures/bad-page.html" },
+      source: { type: "file", path: fixturePath("bad-page.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "averageScoreInRange", min: 30, max: 80 },
@@ -59,7 +60,7 @@ export const publicFixturesSuite: BenchmarkSuite = {
       name: "Interactive page without exploration",
       description:
         "Page with menus, tabs, disclosures — analyzed without exploration",
-      source: { type: "file", path: "fixtures/interactive-page.html" },
+      source: { type: "file", path: fixturePath("interactive-page.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "averageScoreInRange", min: 60, max: 100 },
@@ -75,7 +76,7 @@ export const publicFixturesSuite: BenchmarkSuite = {
       name: "Interactive page with exploration",
       description:
         "Same page analyzed with exploration — should find hidden targets",
-      source: { type: "file", path: "fixtures/interactive-page.html" },
+      source: { type: "file", path: fixturePath("interactive-page.html") },
       profile: "generic-mobile-web-sr-v0",
       explore: true,
       assertions: [

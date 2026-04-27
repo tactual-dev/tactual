@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createMcpServer, extractFindings, getOverallScore } from "./index.js";
+import { parseMcpHttpOptions } from "./cli-args.js";
 
 describe("MCP server", () => {
   it("creates a server instance", () => {
@@ -126,6 +127,32 @@ describe("MCP server", () => {
     expect(keys).toContain("strategy");
     expect(keys).toContain("channel");
     expect(keys).toContain("stealth");
+  });
+});
+
+describe("MCP CLI HTTP args", () => {
+  it("accepts equals-style and space-separated host/port flags", () => {
+    expect(parseMcpHttpOptions(["--http", "--port=8794", "--host=127.0.0.1"], {})).toEqual({
+      port: 8794,
+      host: "127.0.0.1",
+    });
+    expect(parseMcpHttpOptions(["--http", "--port", "8795", "--host", "0.0.0.0"], {})).toEqual({
+      port: 8795,
+      host: "0.0.0.0",
+    });
+  });
+
+  it("keeps env/default fallback and rejects invalid values", () => {
+    expect(parseMcpHttpOptions(["--http"], { PORT: "8888", HOST: "localhost" })).toEqual({
+      port: 8888,
+      host: "localhost",
+    });
+    expect(parseMcpHttpOptions(["--http"], {})).toEqual({
+      port: 8787,
+      host: "127.0.0.1",
+    });
+    expect(() => parseMcpHttpOptions(["--http", "--port", "0"], {})).toThrow("Invalid port");
+    expect(() => parseMcpHttpOptions(["--http", "--host="], {})).toThrow("Invalid --host");
   });
 });
 

@@ -1,12 +1,27 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { chromium, type Browser } from "playwright";
 import { resolve } from "path";
+import { existsSync } from "fs";
 import { captureState } from "../playwright/capture.js";
 import { analyze } from "../core/analyzer.js";
 import { genericMobileWebSrV0 } from "../profiles/generic-mobile.js";
 import { formatReport } from "../reporters/index.js";
 import { runBenchmarkSuite, formatBenchmarkResults } from "./runner.js";
 import { publicFixturesSuite } from "./suites/public-fixtures.js";
+import { stressFixturesSuite } from "./suites/stress-fixtures.js";
+import { multiProfileSuite } from "./suites/multi-profile.js";
+
+describe("benchmark fixture packaging", () => {
+  it("suites resolve fixture files independently of the current working directory", () => {
+    for (const suite of [publicFixturesSuite, stressFixturesSuite, multiProfileSuite]) {
+      for (const benchCase of suite.cases) {
+        if (benchCase.source.type !== "file") continue;
+        expect(benchCase.source.path).toMatch(/fixtures[/\\].+\.html$/);
+        expect(existsSync(benchCase.source.path), benchCase.source.path).toBe(true);
+      }
+    }
+  });
+});
 
 describe("benchmarks", { timeout: 120000 }, () => {
   let browser: Browser;

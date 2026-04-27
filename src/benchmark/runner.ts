@@ -16,6 +16,7 @@ import type {
   AssertionResult,
 } from "./types.js";
 import { resolve } from "path";
+import { pathToFileURL } from "url";
 
 /** Severity rank used for threshold assertions. Higher = less severe. */
 const SEVERITY_RANK: Record<string, number> = {
@@ -153,7 +154,7 @@ async function runBenchmarkCase(
 
 function resolveSource(source: BenchmarkCase["source"]): string {
   if (source.type === "url") return source.url;
-  return `file://${resolve(source.path)}`;
+  return pathToFileURL(resolve(source.path)).href;
 }
 
 function validateAssertion(

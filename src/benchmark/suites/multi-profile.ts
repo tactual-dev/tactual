@@ -1,4 +1,5 @@
 import type { BenchmarkSuite } from "../types.js";
+import { fixturePath } from "../fixture-path.js";
 
 /**
  * Multi-profile benchmark suite.
@@ -17,7 +18,7 @@ export const multiProfileSuite: BenchmarkSuite = {
       id: "good-page-generic-mobile",
       name: "good-page.html with generic-mobile-web-sr-v0",
       description: "Generic mobile screen reader profile",
-      source: { type: "file", path: "fixtures/good-page.html" },
+      source: { type: "file", path: fixturePath("good-page.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
         { type: "averageScoreInRange", min: 65, max: 100 },
@@ -29,7 +30,7 @@ export const multiProfileSuite: BenchmarkSuite = {
       id: "good-page-nvda",
       name: "good-page.html with nvda-desktop-v0",
       description: "NVDA desktop screen reader profile",
-      source: { type: "file", path: "fixtures/good-page.html" },
+      source: { type: "file", path: fixturePath("good-page.html") },
       profile: "nvda-desktop-v0",
       assertions: [
         { type: "averageScoreInRange", min: 65, max: 100 },
@@ -41,7 +42,7 @@ export const multiProfileSuite: BenchmarkSuite = {
       id: "good-page-jaws",
       name: "good-page.html with jaws-desktop-v0",
       description: "JAWS desktop screen reader profile",
-      source: { type: "file", path: "fixtures/good-page.html" },
+      source: { type: "file", path: fixturePath("good-page.html") },
       profile: "jaws-desktop-v0",
       assertions: [
         { type: "averageScoreInRange", min: 65, max: 100 },
@@ -53,7 +54,7 @@ export const multiProfileSuite: BenchmarkSuite = {
       id: "good-page-voiceover",
       name: "good-page.html with voiceover-ios-v0",
       description: "VoiceOver iOS screen reader profile",
-      source: { type: "file", path: "fixtures/good-page.html" },
+      source: { type: "file", path: fixturePath("good-page.html") },
       profile: "voiceover-ios-v0",
       assertions: [
         { type: "averageScoreInRange", min: 65, max: 100 },
@@ -65,7 +66,7 @@ export const multiProfileSuite: BenchmarkSuite = {
       id: "good-page-talkback",
       name: "good-page.html with talkback-android-v0",
       description: "TalkBack Android screen reader profile",
-      source: { type: "file", path: "fixtures/good-page.html" },
+      source: { type: "file", path: fixturePath("good-page.html") },
       profile: "talkback-android-v0",
       assertions: [
         { type: "averageScoreInRange", min: 65, max: 100 },

@@ -61,6 +61,7 @@ npx tactual analyze-url https://example.com --format sarif --output report.sarif
 
 # Compare two analysis runs
 npx tactual diff-results baseline.json candidate.json
+npx tactual diff-results baseline.json candidate.json --format json
 
 # Print what NVDA would say as you Tab through the page
 npx tactual transcript https://example.com
@@ -73,6 +74,8 @@ npx tactual presets
 # Run benchmark suites
 npx tactual benchmark
 npx tactual benchmark --suite all
+
+Benchmark fixtures ship with the npm package, so the benchmark command works from a fresh install and does not require cloning the repository fixtures into your current directory.
 
 # Validate predicted paths against a virtual screen reader (reachability + step count)
 # Requires: npm install jsdom @guidepup/virtual-screen-reader
@@ -265,6 +268,7 @@ npx tactual-mcp
 # Start with HTTP transport (for hosted platforms, remote clients)
 npx tactual-mcp --http              # listens on http://127.0.0.1:8787/mcp
 npx tactual-mcp --http --port=3000  # custom port (or set PORT env var)
+npx tactual-mcp --http --port 3000  # space-separated form is also supported
 npx tactual-mcp --http --host=0.0.0.0  # bind to all interfaces (default: 127.0.0.1)
 ```
 
@@ -354,7 +358,7 @@ jobs:
       pull-requests: write # for comment-on-pr
     steps:
       - name: Analyze accessibility
-        uses: tactual-dev/tactual@v0.4.0
+        uses: tactual-dev/tactual@v0.4.1
         with:
           url: https://your-app.com
           profile: nvda-desktop-v0
@@ -423,7 +427,7 @@ Pair `--baseline` with `--fail-on-regression` to turn Tactual into a strict CI g
 Or via the action:
 
 ```yaml
-- uses: tactual-dev/tactual@v0.4.0
+- uses: tactual-dev/tactual@v0.4.1
   with:
     url: https://pr-preview.your-app.com
     baseline: tactual-baseline.json
@@ -658,7 +662,7 @@ Exploration candidates are sorted by a stable key (role + name) before iterating
 
 ## Probes
 
-The `--probe` flag measures whether important interactive patterns work after they appear in the accessibility tree. Probes are opt-in because they send real keyboard events and add runtime. In 0.4.0 this includes generic focus/activation checks, menu contracts, modal dialog contracts, trigger-to-dialog flows, tabs, disclosures, comboboxes, listboxes, and required-field error flows. Probe findings include evidence summaries so reports distinguish measured failures from modeled or heuristic scoring.
+The `--probe` flag measures whether important interactive patterns work after they appear in the accessibility tree. Probes are opt-in because they send real keyboard events and add runtime. Since 0.4.0 this includes generic focus/activation checks, menu contracts, modal dialog contracts, trigger-to-dialog flows, tabs, disclosures, comboboxes, listboxes, and required-field error flows. Probe findings include evidence summaries so reports distinguish measured failures from modeled or heuristic scoring.
 
 Goal-directed controls keep deep probes useful on complex SPAs:
 

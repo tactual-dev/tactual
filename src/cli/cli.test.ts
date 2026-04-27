@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { execSync } from "child_process";
-import { existsSync, rmSync } from "fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
 import { resolve } from "path";
 import { pathToFileURL } from "url";
 
@@ -167,6 +167,14 @@ describe("CLI", { timeout: 15_000 }, () => {
   });
 
   describe("diff command", () => {
+    const diffDir = resolve(__dirname, "../../__test_tactual_diff");
+    const baselinePath = resolve(diffDir, "baseline.json");
+    const candidatePath = resolve(diffDir, "candidate.json");
+
+    afterEach(() => {
+      if (existsSync(diffDir)) rmSync(diffDir, { recursive: true, force: true });
+    });
+
     it("shows help for diff", () => {
       const { stdout } = exec("diff --help");
       expect(stdout).toContain("Compare two analysis results");
@@ -177,6 +185,49 @@ describe("CLI", { timeout: 15_000 }, () => {
     it("exits non-zero for missing files", () => {
       const { exitCode } = exec("diff nonexistent-a.json nonexistent-b.json", true);
       expect(exitCode).not.toBe(0);
+    });
+
+    it("honors --format json", () => {
+      mkdirSync(diffDir, { recursive: true });
+      writeFileSync(
+        baselinePath,
+        JSON.stringify({
+          findings: [
+            {
+              targetId: "button:checkout",
+              scores: { overall: 50 },
+              severity: "high",
+              penalties: ["Hard to reach"],
+            },
+          ],
+        }),
+      );
+      writeFileSync(
+        candidatePath,
+        JSON.stringify({
+          findings: [
+            {
+              targetId: "button:checkout",
+              scores: { overall: 82 },
+              severity: "acceptable",
+              penalties: [],
+            },
+          ],
+        }),
+      );
+
+      const { stdout } = exec(`diff-results "${baselinePath}" "${candidatePath}" --format json`);
+      const parsed = JSON.parse(stdout) as {
+        summary: { improved: number; regressed: number; unchanged: number; total: number };
+        changes: Array<{ targetId: string; delta: number; status: string; penaltiesResolved: string[] }>;
+      };
+      expect(parsed.summary).toEqual({ improved: 1, regressed: 0, unchanged: 0, total: 1 });
+      expect(parsed.changes[0]).toMatchObject({
+        targetId: "button:checkout",
+        delta: 32,
+        status: "improved",
+        penaltiesResolved: ["Hard to reach"],
+      });
     });
   });
 

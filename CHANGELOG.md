@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.1 (2026-04-27)
+
+Patch release for installed-package ergonomics: diff output formats now match CLI help, MCP HTTP accepts both common flag forms, and benchmark fixtures ship with the package.
+
+### Bug Fixes
+
+- `diff-results --format json` now emits structured JSON instead of console text. Markdown and SARIF formatting are also honored by the diff command.
+- `tactual-mcp --http` now accepts both `--port=3000` / `--host=127.0.0.1` and space-separated `--port 3000` / `--host 127.0.0.1` forms.
+- Benchmark suites now resolve packaged fixture files instead of requiring a `fixtures` directory in the caller's current working directory.
+
+### Packaging
+
+- Include benchmark HTML fixtures in the npm package so `npx tactual benchmark` works from a fresh install.
+
 ## 0.4.0 (2026-04-26)
 
 A release focused on deeper AT-navigation evidence, runtime interaction probes, and more consistent CLI/MCP/GitHub Action surfaces.
