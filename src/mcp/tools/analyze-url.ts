@@ -200,6 +200,66 @@ export function registerAnalyzeUrl(server: McpServer): void {
               "defers to the profile default (desktop AT profiles declare the " +
               "full matrix; mobile/generic do not).",
           ),
+        detectRoutes: z
+          .boolean()
+          .optional()
+          .describe(
+            "Record SPA route changes (history.pushState/replaceState, popstate, " +
+              "hashchange) that fire during analysis. Surfaces an " +
+              "spa-route-changes info diagnostic when any are observed.",
+          ),
+        descendFrames: z
+          .boolean()
+          .optional()
+          .describe(
+            "Descend into child iframes during capture (capped at 20 frames). " +
+              "Appends frame targets with frame-URL attribution; Chromium can " +
+              "recover many inaccessible cross-origin OOPIF trees via CDP. Surfaces a " +
+              "frames-descended info diagnostic when any frame content is captured.",
+          ),
+        autoScroll: z
+          .boolean()
+          .optional()
+          .describe(
+            "Scroll to the bottom of the page in steps before capture so " +
+              "IntersectionObserver-driven lazy content materializes. Capped " +
+              "at 20 scrolls / 30 s; emits an auto-scrolled info diagnostic.",
+          ),
+        dismissBanners: z
+          .boolean()
+          .optional()
+          .describe(
+            "Best-effort dismiss of cookie/consent/GDPR banners. Clicks " +
+              "safe-accept buttons (Accept / OK / Got it / Allow all); " +
+              "explicitly skips Decline/Manage/Customize. Emits a " +
+              "banners-dismissed info diagnostic.",
+          ),
+        probeHover: z
+          .boolean()
+          .optional()
+          .describe(
+            "Hover candidate triggers to surface hover-only popups/tooltips " +
+              "without attribute hints. Diffs ariaSnapshot before/after " +
+              "each hover; new content becomes _hoverContent enrichment. " +
+              "Default budget 10 candidates; adds ~7-8 s.",
+          ),
+        walkTabOrder: z
+          .boolean()
+          .optional()
+          .describe(
+            "Press Tab up to 30 times and record the focused-element " +
+              "sequence so the analyzer can flag positive-tabindex anti-" +
+              "patterns and focus traps. Adds ~1-3 s.",
+          ),
+        diffViewports: z
+          .boolean()
+          .optional()
+          .describe(
+            "Capture the URL at desktop (1280×800) and mobile (375×667) " +
+              "viewports and diff the resulting target / landmark / heading " +
+              "lists. Surfaces a viewport-divergence diagnostic when content " +
+              "is set to display:none on small screens. Adds ~3-5 s.",
+          ),
       },
     },
     handleAnalyzeUrlTool,

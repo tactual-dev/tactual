@@ -45,6 +45,13 @@ interface AnalyzeUrlToolInput {
   channel?: string;
   stealth?: boolean;
   checkVisibility?: boolean;
+  detectRoutes?: boolean;
+  descendFrames?: boolean;
+  autoScroll?: boolean;
+  dismissBanners?: boolean;
+  probeHover?: boolean;
+  walkTabOrder?: boolean;
+  diffViewports?: boolean;
 }
 
 type McpToolResult = {
@@ -80,10 +87,18 @@ export async function handleAnalyzeUrlTool(input: AnalyzeUrlToolInput): Promise<
       waitTime: input.waitTime,
       storageState: input.storageState,
       restrictStorageStateToCwd: true,
+      allowFileUrls: false,
       useSharedBrowserPool: true,
       channel: input.channel,
       stealth: input.stealth,
       checkVisibility: input.checkVisibility,
+      detectRoutes: input.detectRoutes,
+      descendFrames: input.descendFrames,
+      autoScroll: input.autoScroll,
+      dismissBanners: input.dismissBanners,
+      probeHover: input.probeHover,
+      walkTabOrder: input.walkTabOrder,
+      diffViewports: input.diffViewports,
     });
 
     const { result } = pipelineResult;

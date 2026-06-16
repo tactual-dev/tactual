@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPA Route Calibration Lab</title>
+  <style>
+    body { color: #1f2937; font-family: system-ui, sans-serif; line-height: 1.5; margin: 24px; max-width: 960px; }
+    button, input { display: block; margin: 6px 0 14px; padding: 6px 8px; }
+    nav a { display: inline-block; margin-right: 16px; }
+    .panel { border-top: 1px solid #9ca3af; margin-top: 20px; padding-top: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SPA Route Calibration Lab</h1>
+    <nav aria-label="App routes">
+      <a href="#overview">Overview</a>
+      <a href="#orders">Orders</a>
+      <a href="#settings">Settings</a>
+    </nav>
+  </header>
+
+  <main id="app-main" aria-live="polite">
+    <section aria-labelledby="route-heading" class="panel">
+      <h2 id="route-heading">Overview route</h2>
+      <p id="route-copy">Current route: overview.</p>
+      <button id="orders-route" type="button">Open orders route</button>
+      <button id="settings-route" type="button">Open settings route</button>
+      <label for="global-search">Global search</label>
+      <input id="global-search" type="search" value="invoices">
+      <div id="route-status" role="status">Route status ready.</div>
+    </section>
+  </main>
+
+  <script>
+    const routes = {
+      overview: {
+        title: "Overview route",
+        copy: "Current route: overview.",
+        status: "Overview route loaded.",
+      },
+      orders: {
+        title: "Orders route",
+        copy: "Current route: orders. Three open invoices need review.",
+        status: "Orders route loaded.",
+      },
+      settings: {
+        title: "Settings route",
+        copy: "Current route: settings. Notification preferences are editable.",
+        status: "Settings route loaded.",
+      },
+    };
+
+    function renderRoute(name) {
+      const route = routes[name] || routes.overview;
+      document.title = route.title + " - SPA Route Calibration Lab";
+      document.getElementById("route-heading").textContent = route.title;
+      document.getElementById("route-copy").textContent = route.copy;
+      document.getElementById("route-status").textContent = route.status;
+    }
+
+    document.getElementById("orders-route").addEventListener("click", () => {
+      history.pushState({ route: "orders" }, "", "#orders");
+      renderRoute("orders");
+    });
+    document.getElementById("settings-route").addEventListener("click", () => {
+      history.pushState({ route: "settings" }, "", "#settings");
+      renderRoute("settings");
+    });
+    window.addEventListener("popstate", () => renderRoute(location.hash.slice(1) || "overview"));
+    window.addEventListener("hashchange", () => renderRoute(location.hash.slice(1) || "overview"));
+    renderRoute(location.hash.slice(1) || "overview");
+  </script>
+</body>
+</html>

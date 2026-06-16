@@ -1,0 +1,126 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-oopif-tab-2026-06-14",
+  "importedAt": "2026-06-14T16:40:25.246Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "oopif-form-field",
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "mode": "form-field",
+      "status": "passed",
+      "plannedTargets": 7,
+      "matchedTargets": 0,
+      "missingTargets": 7,
+      "unmatchedSpeechBlocks": 1,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html"
+    },
+    {
+      "name": "oopif-tab",
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "mode": "tab",
+      "status": "passed",
+      "plannedTargets": 9,
+      "matchedTargets": 9,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 6,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+      "analysis": "../analyses/fixtures-calibration-oopif-parent.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/oopif-tab/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 2,
+    "passed": 2,
+    "failed": 0,
+    "weak": 1,
+    "harnessBlocked": 0,
+    "ingestedCases": 1,
+    "plannedTargets": 16,
+    "matchedTargets": 9,
+    "missingTargets": 7,
+    "unmatchedSpeechBlocks": 7
+  },
+  "scoringSignals": [
+    {
+      "id": "reachability.quick-nav.observed-match",
+      "kind": "observed-reachability",
+      "dimension": "reachability",
+      "status": "review",
+      "confidence": 0.56,
+      "summary": "9/16 planned target(s) matched observed AT navigation",
+      "scoringImplication": "The graph likely over-predicts quick-nav reachability for at least one fixture/mode; review missing roles before changing weights.",
+      "evidence": {
+        "count": 16,
+        "examples": [
+          "oopif-form-field:0/7",
+          "oopif-tab:9/9"
+        ]
+      }
+    },
+    {
+      "id": "speech.context-verbosity",
+      "kind": "context-verbosity",
+      "dimension": "reachability",
+      "status": "review",
+      "confidence": 0.7,
+      "summary": "4 structural/context token occurrence(s) observed beyond the modeled announcement",
+      "scoringImplication": "Repeated frame, landmark, region, grouping, autocomplete, and boundary terms are candidates for an AT-specific context verbosity cost.",
+      "evidence": {
+        "count": 4,
+        "examples": [
+          "oopif-tab:Parent form",
+          "oopif-tab:Embedded checkout",
+          "oopif-tab:Parent form",
+          "oopif-tab:Parent form"
+        ]
+      }
+    },
+    {
+      "id": "speech.target-name-coalescing",
+      "kind": "target-name-coalescing",
+      "dimension": "discoverability",
+      "status": "review",
+      "confidence": 0.5,
+      "summary": "1 observed block(s)/token(s) named captured targets outside the planned match",
+      "scoringImplication": "One speech block may cover multiple targets; this can lower raw step count while increasing disambiguation and target-selection load.",
+      "evidence": {
+        "count": 1,
+        "examples": [
+          "oopif-tab:Parent form"
+        ]
+      }
+    },
+    {
+      "id": "speech.observed-values",
+      "kind": "value-speech",
+      "dimension": "confidence",
+      "status": "observed-only",
+      "confidence": 0.7,
+      "summary": "4 likely value/data token occurrence(s) observed",
+      "scoringImplication": "Preserve these as observations for target-specific evidence; do not turn page/user data into generic scoring weights.",
+      "evidence": {
+        "count": 4,
+        "examples": [
+          "oopif-tab:Expiration date",
+          "oopif-tab:Card number",
+          "oopif-tab:Parent email",
+          "oopif-tab:Billing country"
+        ]
+      }
+    }
+  ]
+}

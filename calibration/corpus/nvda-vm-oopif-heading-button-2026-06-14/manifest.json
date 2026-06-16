@@ -1,0 +1,154 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-oopif-heading-button-2026-06-14",
+  "importedAt": "2026-06-14T10:50:37.014Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "oopif-heading",
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "mode": "heading",
+      "status": "passed",
+      "plannedTargets": 4,
+      "matchedTargets": 4,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 13,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html"
+    },
+    {
+      "name": "oopif-button",
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "mode": "button",
+      "status": "passed",
+      "plannedTargets": 3,
+      "matchedTargets": 3,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 14,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html"
+    },
+    {
+      "name": "oopif-form-field",
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "mode": "form-field",
+      "status": "harness-blocked",
+      "plannedTargets": 7,
+      "matchedTargets": 0,
+      "missingTargets": 7,
+      "unmatchedSpeechBlocks": 0,
+      "evidenceUsable": false,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html"
+    },
+    {
+      "name": "oopif-tab",
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "mode": "tab",
+      "status": "harness-blocked",
+      "plannedTargets": 0,
+      "matchedTargets": 0,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 0,
+      "evidenceUsable": false,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+      "analysis": "../analyses/fixtures-calibration-oopif-parent.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/oopif-heading/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/oopif-button/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 4,
+    "passed": 2,
+    "failed": 0,
+    "weak": 0,
+    "harnessBlocked": 2,
+    "ingestedCases": 2,
+    "plannedTargets": 14,
+    "matchedTargets": 7,
+    "missingTargets": 7,
+    "unmatchedSpeechBlocks": 27
+  },
+  "scoringSignals": [
+    {
+      "id": "harness-health.blocked",
+      "kind": "harness-health",
+      "dimension": "confidence",
+      "status": "blocked",
+      "confidence": 1,
+      "summary": "2 case(s) blocked by harness health",
+      "scoringImplication": "Do not tune scoring weights from blocked cases; rerun after VM/Guest Control evidence is clean.",
+      "evidence": {
+        "count": 2,
+        "examples": [
+          "oopif-form-field:input-received-no-speech",
+          "oopif-tab:host-calibration-command-failed"
+        ]
+      }
+    },
+    {
+      "id": "reachability.quick-nav.observed-match",
+      "kind": "observed-reachability",
+      "dimension": "reachability",
+      "status": "confirmed",
+      "confidence": 1,
+      "summary": "7/7 planned target(s) matched observed AT navigation",
+      "scoringImplication": "The calibrated reachable-set model is supported for these fixtures/modes; promote repeated passes into profile-specific quick-nav confidence.",
+      "evidence": {
+        "count": 7,
+        "examples": [
+          "oopif-heading:4/4",
+          "oopif-button:3/3"
+        ]
+      }
+    },
+    {
+      "id": "speech.context-verbosity",
+      "kind": "context-verbosity",
+      "dimension": "reachability",
+      "status": "review",
+      "confidence": 1,
+      "summary": "11 structural/context token occurrence(s) observed beyond the modeled announcement",
+      "scoringImplication": "Repeated frame, landmark, region, grouping, autocomplete, and boundary terms are candidates for an AT-specific context verbosity cost.",
+      "evidence": {
+        "count": 11,
+        "examples": [
+          "oopif-heading:Parent account controls",
+          "oopif-heading:Embedded payment form",
+          "oopif-button:Pay now",
+          "oopif-heading:Parent account controls"
+        ]
+      }
+    },
+    {
+      "id": "speech.target-name-coalescing",
+      "kind": "target-name-coalescing",
+      "dimension": "discoverability",
+      "status": "review",
+      "confidence": 0.7,
+      "summary": "5 observed block(s)/token(s) named captured targets outside the planned match",
+      "scoringImplication": "One speech block may cover multiple targets; this can lower raw step count while increasing disambiguation and target-selection load.",
+      "evidence": {
+        "count": 5,
+        "examples": [
+          "oopif-heading:Embedded payment form",
+          "oopif-button:Pay now",
+          "oopif-button:Pay now",
+          "oopif-button:Pay now"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,4916 @@
+{
+  "flow": {
+    "id": "flow-1781321550765",
+    "name": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+    "states": [
+      "state-b6cab5abddd4"
+    ],
+    "profile": "nvda-desktop-v0",
+    "timestamp": 1781321550765
+  },
+  "states": [
+    {
+      "id": "state-b6cab5abddd4",
+      "url": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+      "route": "/fixtures/calibration-at-mapper-lab.html",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotHash": "b6cab5abddd4f60baa1f0d17a0018847ac3820e802dfacb59e8100374d820b05",
+      "canonicalSnapshotHash": "539a7e2be718b0f218d531f8386d0be54b070b0849a126a959f461b9ac86d874",
+      "_forms": [
+        {
+          "name": "Form controls",
+          "fieldCount": 9,
+          "requiredCount": 1,
+          "hasSubmit": false
+        }
+      ],
+      "_docMetadata": {
+        "htmlLang": "en",
+        "title": "AT Mapper Calibration Lab",
+        "zoomRestricted": false,
+        "viewportContent": "width=device-width, initial-scale=1.0"
+      },
+      "_mediaMetadata": {
+        "totalImages": 0,
+        "imagesMissingAlt": 0,
+        "imagesSuspiciousAlt": [],
+        "totalIframes": 1,
+        "iframesMissingTitle": []
+      },
+      "_structuralIssues": {
+        "duplicateIds": [],
+        "nestedInteractive": [],
+        "metaRefresh": false
+      },
+      "_mediaControls": {
+        "mediaWithoutControls": [],
+        "h1Count": 1
+      },
+      "_ariaIssues": {
+        "invalidRoles": [],
+        "unknownAttrs": [],
+        "invalidAttrValues": [],
+        "missingRequiredAttrs": [
+          {
+            "kind": "invalid-role",
+            "selector": "div#assignee-ada",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          },
+          {
+            "kind": "invalid-role",
+            "selector": "div#assignee-grace",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          }
+        ],
+        "prohibitedNaming": [],
+        "unsupportedAttrsForRole": []
+      },
+      "_cvdContrast": {
+        "byType": {
+          "deuteranopia": {
+            "count": 0,
+            "samples": []
+          },
+          "protanopia": {
+            "count": 0,
+            "samples": []
+          },
+          "tritanopia": {
+            "count": 5,
+            "samples": [
+              {
+                "selector": "a",
+                "text": "Form controls",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Composite widgets",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Embedded checkout",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Download summary",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Privacy notice",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              }
+            ]
+          }
+        },
+        "totalUniqueElements": 5
+      },
+      "interactiveHash": "f249dd95e16c4c85a366ec8304f8607c0958cec183239abbafc89a28ac449165",
+      "openOverlays": [],
+      "targets": [
+        {
+          "id": "banner-1",
+          "kind": "landmark",
+          "role": "banner",
+          "name": "",
+          "selector": "header",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "heading:at-mapper-calibration-lab",
+          "kind": "heading",
+          "role": "heading",
+          "name": "AT Mapper Calibration Lab",
+          "selector": "getByRole('heading', { name: 'AT Mapper Calibration Lab' })",
+          "headingLevel": 1,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "1"
+          },
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "navigation:account",
+          "kind": "landmark",
+          "role": "navigation",
+          "name": "Account",
+          "selector": "getByRole('navigation', { name: 'Account' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:form-controls",
+          "kind": "link",
+          "role": "link",
+          "name": "Form controls",
+          "selector": "getByRole('link', { name: 'Form controls' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Account"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Account"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-at-mapper-lab.html#forms",
+          "_rect": {
+            "x": 24,
+            "y": 93,
+            "width": 98,
+            "height": 21
+          }
+        },
+        {
+          "id": "link:composite-widgets",
+          "kind": "link",
+          "role": "link",
+          "name": "Composite widgets",
+          "selector": "getByRole('link', { name: 'Composite widgets' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Account"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Account"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-at-mapper-lab.html#widgets",
+          "_rect": {
+            "x": 126,
+            "y": 93,
+            "width": 136,
+            "height": 21
+          }
+        },
+        {
+          "id": "link:embedded-checkout",
+          "kind": "link",
+          "role": "link",
+          "name": "Embedded checkout",
+          "selector": "getByRole('link', { name: 'Embedded checkout' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Account"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Account"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-at-mapper-lab.html#embedded",
+          "_rect": {
+            "x": 266,
+            "y": 93,
+            "width": 145,
+            "height": 21
+          }
+        },
+        {
+          "id": "main:calibration-workspace",
+          "kind": "landmark",
+          "role": "main",
+          "name": "Calibration workspace",
+          "selector": "getByRole('main', { name: 'Calibration workspace' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "region:overview",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Overview",
+          "selector": "getByRole('region', { name: 'Overview' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main",
+              "name": "Calibration workspace"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:overview",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Overview",
+          "selector": "getByRole('heading', { name: 'Overview' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Overview"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:save-draft",
+          "kind": "button",
+          "role": "button",
+          "name": "Save draft",
+          "selector": "getByRole('button', { name: 'Save draft' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Overview"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 293,
+            "width": 77,
+            "height": 21
+          }
+        },
+        {
+          "id": "button:mute-alerts",
+          "kind": "button",
+          "role": "button",
+          "name": "Mute alerts",
+          "selector": "getByRole('button', { name: 'Mute alerts' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Overview"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-pressed": "false"
+          },
+          "_attributes": [
+            "aria-pressed"
+          ],
+          "_rect": {
+            "x": 24,
+            "y": 324,
+            "width": 82,
+            "height": 21
+          }
+        },
+        {
+          "id": "button:advanced-filters",
+          "kind": "button",
+          "role": "button",
+          "name": "Advanced filters",
+          "selector": "getByRole('button', { name: 'Advanced filters' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Overview"
+              }
+            ]
+          },
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "advanced-filters",
+                "role": "div",
+                "name": "Filter owner"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-controls": "advanced-filters",
+            "aria-expanded": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-expanded"
+          ],
+          "_rect": {
+            "x": 24,
+            "y": 355,
+            "width": 111,
+            "height": 21
+          }
+        },
+        {
+          "id": "form:form-controls",
+          "kind": "landmark",
+          "role": "form",
+          "name": "Form controls",
+          "selector": "getByRole('form', { name: 'Form controls' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main",
+              "name": "Calibration workspace"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:form-controls",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Form controls",
+          "selector": "getByRole('heading', { name: 'Form controls' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "form",
+              "name": "Form controls"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              }
+            ]
+          }
+        },
+        {
+          "id": "searchbox:site-search",
+          "kind": "formField",
+          "role": "searchbox",
+          "name": "Site search",
+          "selector": "getByRole('searchbox', { name: 'Site search' })",
+          "requiresBranchOpen": false,
+          "_value": "orders",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "form",
+              "name": "Form controls"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              }
+            ]
+          },
+          "_description": "Searches current account records.",
+          "_rect": {
+            "x": 24,
+            "y": 519,
+            "width": 177,
+            "height": 21
+          },
+          "_htmlTag": "input",
+          "_inputType": "search",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "textbox:email-address",
+          "kind": "formField",
+          "role": "textbox",
+          "name": "Email address",
+          "selector": "getByRole('textbox', { name: 'Email address' })",
+          "requiresBranchOpen": false,
+          "_value": "ben@example",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "form",
+              "name": "Form controls"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              }
+            ]
+          },
+          "_description": "Enter a complete email address.",
+          "_domId": "email",
+          "_attributeValues": {
+            "aria-invalid": "true",
+            "aria-required": "true"
+          },
+          "_attributes": [
+            "aria-invalid",
+            "aria-required"
+          ],
+          "_rect": {
+            "x": 24,
+            "y": 611,
+            "width": 177,
+            "height": 21
+          },
+          "_htmlTag": "input",
+          "_inputType": "email",
+          "_nativeHtmlControl": "input",
+          "_required": true
+        },
+        {
+          "id": "combobox:plan",
+          "kind": "formField",
+          "role": "combobox",
+          "name": "Plan",
+          "selector": "getByRole('combobox', { name: 'Plan' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "form",
+              "name": "Form controls"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              }
+            ]
+          },
+          "_description": "Current plan affects billing permissions.",
+          "_rect": {
+            "x": 24,
+            "y": 703,
+            "width": 83,
+            "height": 19
+          },
+          "_htmlTag": "select",
+          "_nativeHtmlControl": "select",
+          "_attributeValues": {
+            "aria-expanded": "false"
+          },
+          "_attributes": [
+            "aria-expanded"
+          ]
+        },
+        {
+          "id": "checkbox:daily-summary",
+          "kind": "formField",
+          "role": "checkbox",
+          "name": "Daily summary",
+          "selector": "getByRole('checkbox', { name: 'Daily summary' })",
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-checked"
+          ],
+          "_attributeValues": {
+            "aria-checked": "true"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "group",
+              "name": "Notifications"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              },
+              {
+                "role": "group",
+                "name": "Notifications"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 40,
+            "y": 795,
+            "width": 13,
+            "height": 13
+          },
+          "_htmlTag": "input",
+          "_inputType": "checkbox",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "checkbox:weekly-digest",
+          "kind": "formField",
+          "role": "checkbox",
+          "name": "Weekly digest",
+          "selector": "getByRole('checkbox', { name: 'Weekly digest' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "group",
+              "name": "Notifications"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              },
+              {
+                "role": "group",
+                "name": "Notifications"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 40,
+            "y": 845,
+            "width": 13,
+            "height": 13
+          },
+          "_htmlTag": "input",
+          "_inputType": "checkbox",
+          "_nativeHtmlControl": "input",
+          "_attributeValues": {
+            "aria-checked": "false"
+          },
+          "_attributes": [
+            "aria-checked"
+          ]
+        },
+        {
+          "id": "radio:use-my-profile",
+          "kind": "formField",
+          "role": "radio",
+          "name": "Use my profile",
+          "selector": "getByRole('radio', { name: 'Use my profile' })",
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-checked"
+          ],
+          "_attributeValues": {
+            "aria-checked": "true"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "group",
+              "name": "Billing contact"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              },
+              {
+                "role": "group",
+                "name": "Billing contact"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 40,
+            "y": 936,
+            "width": 13,
+            "height": 13
+          },
+          "_htmlTag": "input",
+          "_inputType": "radio",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "radio:use-team-owner",
+          "kind": "formField",
+          "role": "radio",
+          "name": "Use team owner",
+          "selector": "getByRole('radio', { name: 'Use team owner' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "group",
+              "name": "Billing contact"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              },
+              {
+                "role": "group",
+                "name": "Billing contact"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 40,
+            "y": 986,
+            "width": 13,
+            "height": 13
+          },
+          "_htmlTag": "input",
+          "_inputType": "radio",
+          "_nativeHtmlControl": "input",
+          "_attributeValues": {
+            "aria-checked": "false"
+          },
+          "_attributes": [
+            "aria-checked"
+          ]
+        },
+        {
+          "id": "spinbutton:seats",
+          "kind": "formField",
+          "role": "spinbutton",
+          "name": "Seats",
+          "selector": "getByRole('spinbutton', { name: 'Seats' })",
+          "requiresBranchOpen": false,
+          "_value": "8",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "form",
+              "name": "Form controls"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 1084,
+            "width": 66,
+            "height": 21
+          },
+          "_htmlTag": "input",
+          "_inputType": "number",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "slider:priority",
+          "kind": "formField",
+          "role": "slider",
+          "name": "Priority",
+          "selector": "getByRole('slider', { name: 'Priority' })",
+          "requiresBranchOpen": false,
+          "_value": "7",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "form",
+              "name": "Form controls"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "form",
+                "name": "Form controls"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 1144,
+            "width": 129,
+            "height": 16
+          },
+          "_htmlTag": "input",
+          "_inputType": "range",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "region:composite-widgets",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Composite widgets",
+          "selector": "getByRole('region', { name: 'Composite widgets' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main",
+              "name": "Calibration workspace"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:composite-widgets",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Composite widgets",
+          "selector": "getByRole('heading', { name: 'Composite widgets' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:actions",
+          "kind": "button",
+          "role": "button",
+          "name": "Actions",
+          "selector": "getByRole('button', { name: 'Actions' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              }
+            ]
+          },
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "action-menu",
+                "role": "menu",
+                "name": "Duplicate record\n        Archive record"
+              }
+            ],
+            "hasPopup": "menu"
+          },
+          "_attributeValues": {
+            "aria-controls": "action-menu",
+            "aria-expanded": "false",
+            "aria-haspopup": "menu"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-expanded",
+            "aria-haspopup"
+          ],
+          "_rect": {
+            "x": 24,
+            "y": 1276,
+            "width": 60,
+            "height": 21
+          }
+        },
+        {
+          "id": "combobox:assignee",
+          "kind": "formField",
+          "role": "combobox",
+          "name": "Assignee",
+          "selector": "getByRole('combobox', { name: 'Assignee' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              }
+            ]
+          },
+          "_description": "Type a teammate name.",
+          "_domId": "assignee",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "assignee-options",
+                "role": "listbox",
+                "name": "Ada Lovelace\n        Grace Hopper"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-controls": "assignee-options",
+            "aria-expanded": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-expanded"
+          ],
+          "_rect": {
+            "x": 24,
+            "y": 1336,
+            "width": 177,
+            "height": 21
+          },
+          "_htmlTag": "input",
+          "_inputType": "text",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "tab:summary",
+          "kind": "tab",
+          "role": "tab",
+          "name": "Summary",
+          "selector": "getByRole('tab', { name: 'Summary' })",
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-selected",
+            "aria-controls"
+          ],
+          "_attributeValues": {
+            "aria-selected": "true",
+            "aria-controls": "summary-panel"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tablist",
+              "name": "Record details"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              },
+              {
+                "role": "tablist",
+                "name": "Record details"
+              }
+            ]
+          },
+          "_domId": "summary-tab",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "summary-panel",
+                "role": "tabpanel",
+                "name": "Summary"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 1401,
+            "width": 73,
+            "height": 21
+          }
+        },
+        {
+          "id": "tab:activity",
+          "kind": "tab",
+          "role": "tab",
+          "name": "Activity",
+          "selector": "getByRole('tab', { name: 'Activity' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tablist",
+              "name": "Record details"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              },
+              {
+                "role": "tablist",
+                "name": "Record details"
+              }
+            ]
+          },
+          "_domId": "activity-tab",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "activity-panel",
+                "role": "tabpanel",
+                "name": "Activity"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-controls": "activity-panel",
+            "aria-selected": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-selected"
+          ],
+          "_rect": {
+            "x": 105,
+            "y": 1401,
+            "width": 58,
+            "height": 21
+          }
+        },
+        {
+          "id": "tabpanel:summary",
+          "kind": "tabPanel",
+          "role": "tabpanel",
+          "name": "Summary",
+          "selector": "getByRole('tabpanel', { name: 'Summary' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:summary-panel",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Summary panel",
+          "selector": "getByRole('heading', { name: 'Summary panel' })",
+          "headingLevel": 3,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "3"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tabpanel",
+              "name": "Summary"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              },
+              {
+                "role": "tabpanel",
+                "name": "Summary"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:download-summary",
+          "kind": "link",
+          "role": "link",
+          "name": "Download summary",
+          "selector": "getByRole('link', { name: 'Download summary' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tabpanel",
+              "name": "Summary"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Composite widgets"
+              },
+              {
+                "role": "tabpanel",
+                "name": "Summary"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-at-mapper-lab.html#summary-download",
+          "_rect": {
+            "x": 37,
+            "y": 1518,
+            "width": 141,
+            "height": 21
+          }
+        },
+        {
+          "id": "region:spa-route-changes",
+          "kind": "landmark",
+          "role": "region",
+          "name": "SPA route changes",
+          "selector": "getByRole('region', { name: 'SPA route changes' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main",
+              "name": "Calibration workspace"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:spa-route-changes",
+          "kind": "heading",
+          "role": "heading",
+          "name": "SPA route changes",
+          "selector": "getByRole('heading', { name: 'SPA route changes' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "SPA route changes"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "SPA route changes"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:orders-route",
+          "kind": "button",
+          "role": "button",
+          "name": "Orders route",
+          "selector": "getByRole('button', { name: 'Orders route' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "SPA route changes"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "SPA route changes"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 1669,
+            "width": 91,
+            "height": 21
+          }
+        },
+        {
+          "id": "button:settings-route",
+          "kind": "button",
+          "role": "button",
+          "name": "Settings route",
+          "selector": "getByRole('button', { name: 'Settings route' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "SPA route changes"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "SPA route changes"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 1700,
+            "width": 98,
+            "height": 21
+          }
+        },
+        {
+          "id": "status-37",
+          "kind": "statusMessage",
+          "role": "status",
+          "name": "",
+          "selector": "getByRole('status').nth(36)",
+          "requiresBranchOpen": false,
+          "_value": "Route is overview.",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "SPA route changes"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "SPA route changes"
+              }
+            ]
+          }
+        },
+        {
+          "id": "region:embedded-checkout",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Embedded checkout",
+          "selector": "getByRole('region', { name: 'Embedded checkout' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main",
+              "name": "Calibration workspace"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:embedded-checkout",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Embedded checkout",
+          "selector": "getByRole('heading', { name: 'Embedded checkout' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Embedded checkout"
+            },
+            "ancestors": [
+              {
+                "role": "main",
+                "name": "Calibration workspace"
+              },
+              {
+                "role": "region",
+                "name": "Embedded checkout"
+              }
+            ]
+          }
+        },
+        {
+          "id": "f1.main:embedded-checkout",
+          "kind": "landmark",
+          "role": "main",
+          "name": "Embedded checkout",
+          "selector": "getByRole('main', { name: 'Embedded checkout' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "document"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-at-mapper-frame.html",
+            "name": "",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 1876,
+              "width": 962,
+              "height": 262
+            }
+          }
+        },
+        {
+          "id": "f1.heading:embedded-checkout",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Embedded checkout",
+          "selector": "getByRole('heading', { name: 'Embedded checkout' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "main",
+              "name": "Embedded checkout"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded checkout"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-at-mapper-frame.html",
+            "name": "",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 1876,
+              "width": 962,
+              "height": 262
+            }
+          }
+        },
+        {
+          "id": "f1.textbox:card-number",
+          "kind": "formField",
+          "role": "textbox",
+          "name": "Card number",
+          "selector": "getByRole('textbox', { name: 'Card number' })",
+          "requiresBranchOpen": false,
+          "_value": "4242",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "main",
+              "name": "Embedded checkout"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded checkout"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-at-mapper-frame.html",
+            "name": "",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 1876,
+              "width": 962,
+              "height": 262
+            }
+          },
+          "_description": "Use the test card number shown by the payment provider.",
+          "_rect": {
+            "x": 96,
+            "y": 101,
+            "width": 177,
+            "height": 21
+          },
+          "_htmlTag": "input",
+          "_inputType": "text",
+          "_nativeHtmlControl": "input",
+          "_autocomplete": "cc-number"
+        },
+        {
+          "id": "f1.button:confirm-embedded-payment",
+          "kind": "button",
+          "role": "button",
+          "name": "Confirm embedded payment",
+          "selector": "getByRole('button', { name: 'Confirm embedded payment' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "main",
+              "name": "Embedded checkout"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded checkout"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-at-mapper-frame.html",
+            "name": "",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 1876,
+              "width": 962,
+              "height": 262
+            }
+          },
+          "_rect": {
+            "x": 277,
+            "y": 101,
+            "width": 184,
+            "height": 21
+          }
+        },
+        {
+          "id": "f1.link:embedded-payment-terms",
+          "kind": "link",
+          "role": "link",
+          "name": "Embedded payment terms",
+          "selector": "getByRole('link', { name: 'Embedded payment terms' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "main",
+              "name": "Embedded checkout"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded checkout"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-at-mapper-frame.html",
+            "name": "",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 1876,
+              "width": 962,
+              "height": 262
+            }
+          },
+          "_href": "tactual-fixture://fixtures/calibration-at-mapper-frame.html#embedded-terms",
+          "_rect": {
+            "x": 465,
+            "y": 102,
+            "width": 167,
+            "height": 17
+          }
+        },
+        {
+          "id": "contentinfo-40",
+          "kind": "landmark",
+          "role": "contentinfo",
+          "name": "",
+          "selector": "footer",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "link:privacy-notice",
+          "kind": "link",
+          "role": "link",
+          "name": "Privacy notice",
+          "selector": "getByRole('link', { name: 'Privacy notice' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "contentinfo"
+            },
+            "ancestors": [
+              {
+                "role": "contentinfo"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-at-mapper-lab.html#privacy",
+          "_rect": {
+            "x": 24,
+            "y": 2139,
+            "width": 97,
+            "height": 21
+          }
+        }
+      ],
+      "timestamp": 1781321550753,
+      "provenance": "scripted"
+    }
+  ],
+  "findings": [
+    {
+      "targetId": "combobox:assignee",
+      "selector": "getByRole('combobox', { name: 'Assignee' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 8,
+        "overall": 70
+      },
+      "severity": "moderate",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Actions",
+        "nextItem: Assignee"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextItem: Assignee"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextItem: Assignee"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: combobox: Combobox behavior varies across AT/browser pairs — verify critical flows with target assistive technologies",
+        "16 controls precede this target in control navigation",
+        "Cross-AT divergence (HIGH confidence for native <select>, MEDIUM for ARIA combobox): VoiceOver announces this combobox as 'popup button' with state implicit in the role text, while NVDA/JAWS announce 'combo box, expanded/collapsed' explicitly. Verify with real testing if this control is on a critical path."
+      ],
+      "suggestedFixes": [
+        "Verify this combobox with the target AT/browser pairs on critical flows; prefer native <select>, <datalist>, or a simpler pattern when custom filtering is not required.",
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "tab:summary",
+      "selector": "getByRole('tab', { name: 'Summary' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 77
+      },
+      "severity": "acceptable",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Actions",
+        "nextItem: Assignee",
+        "nextItem: Summary"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextItem: Assignee",
+          "nextItem: Summary"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextItem: Assignee",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tab: Tab widget interaction model (arrow keys vs tab key) not consistently expected",
+        "17 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "tab:activity",
+      "selector": "getByRole('tab', { name: 'Activity' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 77
+      },
+      "severity": "acceptable",
+      "actionType": "structural",
+      "bestPath": [
+        "previousItem: Summary",
+        "previousItem: Activity"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "previousItem: Summary",
+          "previousItem: Activity"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "previousItem: Summary",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tab: Tab widget interaction model (arrow keys vs tab key) not consistently expected",
+        "18 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "slider:priority",
+      "selector": "getByRole('slider', { name: 'Priority' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 70,
+        "recovery": 100,
+        "interopRisk": 5,
+        "overall": 81
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "previousItem: Priority"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "previousItem: Priority"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets",
+          "previousItem: Priority"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: slider: Slider value change announcements and interaction model vary",
+        "14 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "spinbutton:seats",
+      "selector": "getByRole('spinbutton', { name: 'Seats' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 92,
+        "operability": 70,
+        "recovery": 100,
+        "interopRisk": 5,
+        "overall": 83
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "previousItem: Priority",
+        "previousItem: Seats"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "previousItem: Priority",
+          "previousItem: Seats"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets",
+          "previousItem: Priority",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: spinbutton: Spinbutton increment/decrement behavior inconsistent",
+        "13 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "checkbox:daily-summary",
+      "selector": "getByRole('checkbox', { name: 'Daily summary' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 70,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 88
+      },
+      "severity": "acceptable",
+      "bestPath": [
+        "nextItem: Site search",
+        "nextItem: Email address",
+        "nextItem: Plan",
+        "nextItem: Daily summary"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan",
+          "nextItem: Daily summary"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "checkbox:weekly-digest",
+      "selector": "getByRole('checkbox', { name: 'Weekly digest' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 91,
+        "operability": 70,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 88
+      },
+      "severity": "acceptable",
+      "bestPath": [
+        "rotor: Weekly digest"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan",
+          "nextItem: Daily summary",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "radio:use-my-profile",
+      "selector": "getByRole('radio', { name: 'Use my profile' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 70,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 88
+      },
+      "severity": "acceptable",
+      "actionType": "structural",
+      "bestPath": [
+        "previousItem: Priority",
+        "previousItem: Seats",
+        "previousItem: Use team owner",
+        "previousItem: Use my profile"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan",
+          "nextItem: Daily summary",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan",
+          "... (3 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "... (4 more steps)"
+        ]
+      ],
+      "penalties": [
+        "11 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "radio:use-team-owner",
+      "selector": "getByRole('radio', { name: 'Use team owner' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 70,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 88
+      },
+      "severity": "acceptable",
+      "actionType": "structural",
+      "bestPath": [
+        "previousItem: Priority",
+        "previousItem: Seats",
+        "previousItem: Use team owner"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "previousItem: Priority",
+          "previousItem: Seats",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets",
+          "previousItem: Priority",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [
+        "12 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:composite-widgets",
+      "selector": "getByRole('link', { name: 'Composite widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 72,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 91
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Form controls",
+        "nextItem: Composite widgets"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Account",
+          "nextItem: Form controls",
+          "nextItem: Composite widgets"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextItem: Form controls",
+          "nextItem: Composite widgets"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Account",
+          "nextItem: Form controls",
+          "nextItem: Composite widgets"
+        ]
+      ],
+      "penalties": [
+        "Target is not efficiently reachable via heading or landmark navigation",
+        "Target is 136×21px, below the WCAG 2.5.8 minimum (24×24 for AA). Users with motor impairments have a higher miss rate on small targets. Screen-reader users aren't affected, but touch/pointer users are."
+      ],
+      "suggestedFixes": [
+        "Add a heading or landmark near this target to enable skip navigation",
+        "Increase min-width and min-height to 24px, or enlarge the clickable area via padding. An invisible padded hit region can enlarge touch target without changing visual design."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "banner-1",
+      "selector": "header",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 87,
+        "reachability": 90,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 92
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextItem: banner"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "previousItem: banner"
+        ],
+        [
+          "groupEntry: Account",
+          "previousItem: AT Mapper Calibration Lab",
+          "previousItem: banner"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: banner: Minor: some AT don't announce banner landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.7
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.7
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:form-controls",
+      "selector": "getByRole('link', { name: 'Form controls' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Form controls"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Account",
+          "nextItem: Form controls"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextItem: Form controls"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Account",
+          "nextItem: Form controls"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:embedded-checkout",
+      "selector": "getByRole('link', { name: 'Embedded checkout' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Embedded checkout"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout"
+        ],
+        [
+          "nextHeading: Overview",
+          "previousItem: Overview",
+          "previousItem: Calibration workspace",
+          "previousItem: Embedded checkout"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:save-draft",
+      "selector": "getByRole('button', { name: 'Save draft' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Save draft"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview",
+          "nextItem: Save draft"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextItem: Save draft"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextItem: Save draft"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:mute-alerts",
+      "selector": "getByRole('button', { name: 'Mute alerts' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 82,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Save draft",
+        "nextItem: Mute alerts"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview",
+          "nextItem: Save draft",
+          "nextItem: Mute alerts"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextItem: Save draft",
+          "nextItem: Mute alerts"
+        ],
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "previousItem: Advanced filters",
+          "previousItem: Mute alerts"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:advanced-filters",
+      "selector": "getByRole('button', { name: 'Advanced filters' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Advanced filters"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "previousItem: Advanced filters"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextItem: Save draft",
+          "nextItem: Mute alerts",
+          "nextItem: Advanced filters"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextItem: Save draft",
+          "nextItem: Mute alerts",
+          "nextItem: Advanced filters"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "searchbox:site-search",
+      "selector": "getByRole('searchbox', { name: 'Site search' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Site search"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextItem: Site search"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:actions",
+      "selector": "getByRole('button', { name: 'Actions' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Actions"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions"
+        ]
+      ],
+      "penalties": [
+        "15 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "tabpanel:summary",
+      "selector": "getByRole('tabpanel', { name: 'Summary' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 89,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 3,
+        "overall": 94
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "previousItem: Summary"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "previousItem: Summary"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "previousItem: Summary"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tabpanel: Tab panel association with tab not always announced"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "textbox:email-address",
+      "selector": "getByRole('textbox', { name: 'Email address' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 87,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 95
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Site search",
+        "nextItem: Email address"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "status-37",
+      "selector": "getByRole('status').nth(36)",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 89,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 95
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: status"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextButton: Orders route",
+          "nextItem: Settings route",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets",
+          "nextLandmark: SPA route changes",
+          "... (2 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextItem: SPA route changes",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.textbox:card-number",
+      "selector": "getByRole('textbox', { name: 'Card number' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 88,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 95
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Card number"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextButton: Orders route",
+          "nextItem: Settings route",
+          "... (1 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextLink: Embedded payment terms",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextButton: Orders route",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "22 controls precede this target in control navigation",
+        "Target is 177×21px, below the WCAG 2.5.8 minimum (24×24 for AA). Users with motor impairments have a higher miss rate on small targets. Screen-reader users aren't affected, but touch/pointer users are."
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby",
+        "Increase min-width and min-height to 24px, or enlarge the clickable area via padding. An invisible padded hit region can enlarge touch target without changing visual design."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:privacy-notice",
+      "selector": "getByRole('link', { name: 'Privacy notice' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 89,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 96
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Privacy notice"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextItem: Download summary",
+          "nextLink: Embedded payment terms",
+          "... (1 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextLink: Embedded payment terms",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "25 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "combobox:plan",
+      "selector": "getByRole('combobox', { name: 'Plan' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "actionType": "code-fix",
+      "bestPath": [
+        "nextItem: Site search",
+        "nextItem: Email address",
+        "nextItem: Plan"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "nextItem: Plan"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextItem: Site search",
+          "nextItem: Email address",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Cross-AT divergence (HIGH confidence for native <select>, MEDIUM for ARIA combobox): VoiceOver announces this combobox as 'popup button' with state implicit in the role text, while NVDA/JAWS announce 'combo box, expanded/collapsed' explicitly. Verify with real testing if this control is on a critical path."
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:download-summary",
+      "selector": "getByRole('link', { name: 'Download summary' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Download summary"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextItem: Download summary"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary"
+        ]
+      ],
+      "penalties": [
+        "19 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:orders-route",
+      "selector": "getByRole('button', { name: 'Orders route' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Orders route"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextButton: Orders route"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextButton: Orders route"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextControl: Orders route"
+        ]
+      ],
+      "penalties": [
+        "20 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.link:embedded-payment-terms",
+      "selector": "getByRole('link', { name: 'Embedded payment terms' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "previousItem: Embedded payment terms"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextItem: Download summary",
+          "nextLink: Embedded payment terms"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextLink: Embedded payment terms"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "24 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "contentinfo-40",
+      "selector": "footer",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 97
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextItem: Download summary",
+          "nextLink: Embedded payment terms",
+          "... (1 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextLink: Embedded payment terms",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: contentinfo: Minor: some AT don't announce contentinfo landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:settings-route",
+      "selector": "getByRole('button', { name: 'Settings route' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Orders route",
+        "nextItem: Settings route"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextButton: Orders route",
+          "nextItem: Settings route"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextItem: Actions",
+          "nextButton: Orders route",
+          "... (1 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextControl: Orders route",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "21 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.button:confirm-embedded-payment",
+      "selector": "getByRole('button', { name: 'Confirm embedded payment' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Card number",
+        "nextItem: Confirm embedded payment"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextItem: Download summary",
+          "nextLink: Embedded payment terms",
+          "... (1 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextLink: Embedded payment terms",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "23 controls precede this target in control navigation"
+      ],
+      "suggestedFixes": [
+        "Move this control earlier in the DOM or add a heading anchor nearby"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:at-mapper-calibration-lab",
+      "selector": "getByRole('heading', { name: 'AT Mapper Calibration Lab' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: AT Mapper Calibration Lab"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: AT Mapper Calibration Lab"
+        ],
+        [
+          "groupEntry: Account",
+          "previousItem: AT Mapper Calibration Lab"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "navigation:account",
+      "selector": "getByRole('navigation', { name: 'Account' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Account"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Account"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "main:calibration-workspace",
+      "selector": "getByRole('main', { name: 'Calibration workspace' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextItem: Account",
+          "nextLandmark: Calibration workspace"
+        ],
+        [
+          "nextHeading: Overview",
+          "previousItem: Overview",
+          "previousItem: Calibration workspace"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:overview",
+      "selector": "getByRole('region', { name: 'Overview' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview",
+          "previousItem: Overview"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "previousItem: Overview"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "nextItem: Overview"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:overview",
+      "selector": "getByRole('heading', { name: 'Overview' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: AT Mapper Calibration Lab",
+          "nextHeading: Overview"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "form:form-controls",
+      "selector": "getByRole('form', { name: 'Form controls' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls"
+        ],
+        [
+          "nextHeading: Overview",
+          "previousItem: Overview",
+          "nextLandmark: Form controls"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "previousItem: Form controls"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:form-controls",
+      "selector": "getByRole('heading', { name: 'Form controls' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:composite-widgets",
+      "selector": "getByRole('region', { name: 'Composite widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:composite-widgets",
+      "selector": "getByRole('heading', { name: 'Composite widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:summary-panel",
+      "selector": "getByRole('heading', { name: 'Summary panel' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 99,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:spa-route-changes",
+      "selector": "getByRole('region', { name: 'SPA route changes' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 99,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "nextLandmark: SPA route changes"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets",
+          "nextLandmark: SPA route changes"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextItem: SPA route changes"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:spa-route-changes",
+      "selector": "getByRole('heading', { name: 'SPA route changes' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextHeading: SPA route changes"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextHeading: SPA route changes"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:embedded-checkout",
+      "selector": "getByRole('region', { name: 'Embedded checkout' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "previousItem: Form controls",
+          "nextLandmark: Composite widgets",
+          "nextLandmark: SPA route changes",
+          "nextLandmark: Embedded checkout"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets",
+          "nextLandmark: SPA route changes",
+          "... (1 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextItem: SPA route changes",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:embedded-checkout",
+      "selector": "getByRole('heading', { name: 'Embedded checkout' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextHeading: SPA route changes",
+          "nextHeading: Embedded checkout"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextHeading: SPA route changes",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.main:embedded-checkout",
+      "selector": "getByRole('main', { name: 'Embedded checkout' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextHeading: SPA route changes",
+          "nextHeading: Embedded checkout",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "previousItem: Composite widgets",
+          "nextLandmark: SPA route changes",
+          "... (2 more steps)"
+        ],
+        [
+          "groupEntry: Account",
+          "nextLandmark: Calibration workspace",
+          "previousItem: Embedded checkout",
+          "nextLink: Download summary",
+          "nextItem: SPA route changes",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.heading:embedded-checkout",
+      "selector": "getByRole('heading', { name: 'Embedded checkout' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextHeading: SPA route changes",
+          "nextHeading: Embedded checkout",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "nextHeading: SPA route changes",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: AT Mapper Calibration Lab",
+          "nextHeading: Overview",
+          "nextHeading: Form controls",
+          "nextHeading: Composite widgets",
+          "nextHeading: Summary panel",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "warning",
+      "code": "no-skip-link",
+      "message": "No skip-to-content link found. Keyboard and screen-reader users must Tab through all navigation elements to reach the main content. A skip link is the single most impactful fix for navigation cost. Concrete savings: a skip link would bypass 3 controls (12% of page interactive targets).",
+      "affectedCount": 3,
+      "totalCount": 26
+    },
+    {
+      "level": "info",
+      "code": "structural-summary",
+      "message": "Structural overview: 8 headings · landmarks: main, banner, contentinfo, navigation · skip link: no · 46 total targets"
+    },
+    {
+      "level": "warning",
+      "code": "form-summary",
+      "message": "Forms on this page: Form controls (9 fields, 1 required, no submit button).",
+      "affectedCount": 1
+    },
+    {
+      "level": "warning",
+      "code": "missing-autocomplete",
+      "message": "1 form field of standard input types lack a useful autocomplete attribute (or use autocomplete=\"off\"): email \"Email address\". Password managers and SR autofill rely on autocomplete tokens (e.g. autocomplete=\"current-password\", autocomplete=\"email\"); without them, users re-type values they shouldn't have to.",
+      "affectedCount": 1
+    },
+    {
+      "level": "warning",
+      "code": "missing-required-aria-attr",
+      "message": "2 elements declare an ARIA role but lack the role's required state/property: div#assignee-ada (role=\"option\" missing aria-selected); div#assignee-grace (role=\"option\" missing aria-selected). Without these attributes, screen readers can't communicate the widget's current state to the user (e.g. a checkbox with no aria-checked is unreadable).",
+      "affectedCount": 2
+    },
+    {
+      "level": "warning",
+      "code": "color-blindness-contrast-fail",
+      "message": "5 text elements lose contrast under simulated color-vision deficiency (tritanopia: 5). Examples (tritanopia): a \"Form controls\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Composite widgets\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Embedded checkout\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1). Approximately 8% of male and 0.5% of female users have a CVD; choose color combinations whose contrast survives the deuteranopia/protanopia/tritanopia transforms or rely on luminance + non-color cues.",
+      "affectedCount": 5
+    },
+    {
+      "level": "info",
+      "code": "frames-descended",
+      "message": "Iframe descent: captured 1 iframe (tactual-fixture://fixtures/calibration-at-mapper-frame.html)."
+    }
+  ],
+  "metadata": {
+    "version": "0.5.0",
+    "profile": "nvda-desktop-v0",
+    "duration": 29,
+    "stateCount": 1,
+    "targetCount": 46,
+    "findingCount": 46,
+    "edgeCount": 226
+  }
+}

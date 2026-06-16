@@ -36,7 +36,10 @@ describe("generic-mobile-web-sr-v0", () => {
     const actions = [
       "nextItem", "previousItem", "nextHeading", "nextLink",
       "nextControl", "activate", "dismiss", "back",
-      "find", "groupEntry", "groupExit",
+      "find", "groupEntry", "groupExit", "firstLetter",
+      "nextFormField", "nextButton", "nextLandmark", "rotor",
+      "touchExplore", "relationshipJump", "activeDescendant",
+      "formsMode", "compositeNavigation",
     ] as const;
 
     for (const action of actions) {

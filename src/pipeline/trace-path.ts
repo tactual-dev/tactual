@@ -31,6 +31,8 @@ export interface TracePathOptions {
   timeout?: number;
   storageState?: string;
   restrictStorageStateToCwd?: boolean;
+  /** MCP callers set false; CLI/local fixture workflows keep the default true. */
+  allowFileUrls?: boolean;
   /** Long-lived MCP/server callers can opt into the shared browser pool. */
   useSharedBrowserPool?: boolean;
   /** Pre-captured states (MCP only). When set, skip browser launch. */
@@ -109,8 +111,8 @@ export async function runTracePath(
     throw new TracePathError("unknown-profile", `Unknown profile: ${profileId}`);
   }
 
-  const urlCheck = validateUrl(opts.url);
-  if (!urlCheck.valid && !opts.states) {
+  const urlCheck = validateUrl(opts.url, { allowFileUrls: opts.allowFileUrls });
+  if (!urlCheck.valid) {
     throw new TracePathError("invalid-url", `Invalid URL: ${urlCheck.error}`);
   }
 

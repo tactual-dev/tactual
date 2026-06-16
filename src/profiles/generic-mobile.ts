@@ -32,6 +32,15 @@ export const genericMobileWebSrV0: ATProfile = {
     groupExit: 2.0,
     // No first-letter type-ahead on mobile — not available
     firstLetter: 100,
+    nextFormField: 1.5,
+    nextButton: 1.5,
+    nextLandmark: 2.0,
+    rotor: 2.5,
+    touchExplore: 2.0,
+    relationshipJump: 1.7,
+    activeDescendant: 1.2,
+    formsMode: 2.0,
+    compositeNavigation: 1.2,
   },
 
   weights: {

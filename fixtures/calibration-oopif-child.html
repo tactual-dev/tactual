@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OOPIF Checkout Child</title>
+  <style>
+    body { color: #111827; font-family: system-ui, sans-serif; line-height: 1.5; margin: 18px; }
+    label, input, button, select { display: block; margin: 6px 0 12px; padding: 6px 8px; }
+  </style>
+</head>
+<body>
+  <main aria-label="Embedded payment form">
+    <h1>Embedded payment form</h1>
+    <form aria-label="Payment details">
+      <label for="card-number">Card number</label>
+      <input id="card-number" inputmode="numeric" autocomplete="cc-number" value="4242 4242 4242 4242">
+
+      <label for="expiration">Expiration date</label>
+      <input id="expiration" autocomplete="cc-exp" value="12/30">
+
+      <label for="country">Billing country</label>
+      <select id="country">
+        <option selected>United States</option>
+        <option>Canada</option>
+      </select>
+
+      <button type="button">Pay now</button>
+      <button type="button" aria-pressed="false">Remember card</button>
+    </form>
+    <p role="status">Payment frame ready.</p>
+  </main>
+</body>
+</html>

@@ -63,7 +63,20 @@ export function modelAnnouncement(
     case "nextLink":
       return cleanName ? `${cleanName}, link` : "link";
     case "nextControl":
+    case "nextFormField":
+    case "nextButton":
+    case "nextLandmark":
+    case "formsMode":
+    case "compositeNavigation":
       return cleanName ? `${cleanName}, ${roleAnnouncement}` : roleAnnouncement;
+    case "rotor":
+      return cleanName ? `Rotor: ${cleanName}, ${roleAnnouncement}` : `Rotor: ${roleAnnouncement}`;
+    case "touchExplore":
+      return cleanName ? `Touched: ${cleanName}, ${roleAnnouncement}` : `Touched: ${roleAnnouncement}`;
+    case "relationshipJump":
+      return cleanName ? `Related: ${cleanName}, ${roleAnnouncement}` : `Related: ${roleAnnouncement}`;
+    case "activeDescendant":
+      return cleanName ? `Active: ${cleanName}, ${roleAnnouncement}` : `Active: ${roleAnnouncement}`;
     case "find":
       return cleanName ? `Found: ${cleanName}, ${roleAnnouncement}` : `Found: ${roleAnnouncement}`;
     case "groupEntry":

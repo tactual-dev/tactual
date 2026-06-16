@@ -69,7 +69,9 @@ export function registerTranscript(program: Command): void {
             err instanceof Error &&
             (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))
           ) {
-            console.error("Playwright is required for transcript. Install it: npm install playwright");
+            console.error(
+              "Playwright is required for transcript but could not be loaded. Reinstall Tactual or run npm install.",
+            );
             process.exit(1);
           }
           throw err;

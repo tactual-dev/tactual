@@ -1,0 +1,103 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-smoke-mixed-modes-2026-06-12",
+  "importedAt": "2026-06-13T17:31:28.069Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "good-tab",
+      "fixture": "fixtures/good-page.html",
+      "mode": "tab",
+      "status": "passed",
+      "plannedTargets": 8,
+      "matchedTargets": 8,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 14,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "interactive-button",
+      "fixture": "fixtures/interactive-page.html",
+      "mode": "button",
+      "status": "passed",
+      "plannedTargets": 2,
+      "matchedTargets": 2,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 19,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/interactive-page.html"
+    },
+    {
+      "name": "widgets-form-field",
+      "fixture": "fixtures/corpus-widget-contracts.html",
+      "mode": "form-field",
+      "status": "passed",
+      "plannedTargets": 0,
+      "matchedTargets": 0,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 16,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/corpus-widget-contracts.html"
+    },
+    {
+      "name": "mapper-form-field",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "form-field",
+      "status": "passed",
+      "plannedTargets": 8,
+      "matchedTargets": 8,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 32,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/good-page.html",
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html",
+      "analysis": "../analyses/fixtures-good-page.analysis.full.json"
+    },
+    {
+      "fixture": "fixtures/interactive-page.html",
+      "canonicalUrl": "tactual-fixture://fixtures/interactive-page.html",
+      "analysis": "../analyses/fixtures-interactive-page.analysis.full.json"
+    },
+    {
+      "fixture": "fixtures/corpus-widget-contracts.html",
+      "canonicalUrl": "tactual-fixture://fixtures/corpus-widget-contracts.html",
+      "analysis": "../analyses/fixtures-corpus-widget-contracts.analysis.full.json"
+    },
+    {
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+      "analysis": "../analyses/fixtures-calibration-at-mapper-lab.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/good-tab/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/interactive-button/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/mapper-form-field/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 4,
+    "passed": 4,
+    "failed": 0,
+    "weak": 0,
+    "harnessBlocked": 0,
+    "ingestedCases": 3,
+    "plannedTargets": 18,
+    "matchedTargets": 18,
+    "missingTargets": 0,
+    "unmatchedSpeechBlocks": 81
+  },
+  "scoringSignals": []
+}

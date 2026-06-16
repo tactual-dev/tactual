@@ -1,0 +1,162 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T22:21:50.134Z",
+  "url": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "heading",
+  "navigation": {
+    "keyName": "h",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "23",
+      "a3"
+    ],
+    "description": "NVDA browse-mode next-heading quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 8,
+  "targetCount": 8,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "heading:at-mapper-calibration-lab",
+      "kind": "heading",
+      "role": "heading",
+      "name": "AT Mapper Calibration Lab",
+      "selector": "getByRole('heading', { name: 'AT Mapper Calibration Lab' })",
+      "expectedAnnouncement": "AT Mapper Calibration Lab, heading, level 1",
+      "expectedTokens": [
+        "at mapper calibration lab",
+        "heading",
+        "level 1"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "heading:overview",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Overview",
+      "selector": "getByRole('heading', { name: 'Overview' })",
+      "expectedAnnouncement": "Overview, heading, level 2",
+      "expectedTokens": [
+        "overview",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "heading:form-controls",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Form controls",
+      "selector": "getByRole('heading', { name: 'Form controls' })",
+      "expectedAnnouncement": "Form controls, heading, level 2",
+      "expectedTokens": [
+        "form controls",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "heading:composite-widgets",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Composite widgets",
+      "selector": "getByRole('heading', { name: 'Composite widgets' })",
+      "expectedAnnouncement": "Composite widgets, heading, level 2",
+      "expectedTokens": [
+        "composite widgets",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 5,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "heading:summary-panel",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Summary panel",
+      "selector": "getByRole('heading', { name: 'Summary panel' })",
+      "expectedAnnouncement": "Summary panel, heading, level 3",
+      "expectedTokens": [
+        "summary panel",
+        "heading",
+        "level 3"
+      ]
+    },
+    {
+      "index": 6,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "heading:spa-route-changes",
+      "kind": "heading",
+      "role": "heading",
+      "name": "SPA route changes",
+      "selector": "getByRole('heading', { name: 'SPA route changes' })",
+      "expectedAnnouncement": "SPA route changes, heading, level 2",
+      "expectedTokens": [
+        "spa route changes",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 7,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "heading:embedded-checkout",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Embedded checkout",
+      "selector": "getByRole('heading', { name: 'Embedded checkout' })",
+      "expectedAnnouncement": "Embedded checkout, heading, level 2",
+      "expectedTokens": [
+        "embedded checkout",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 8,
+      "mode": "heading",
+      "stateId": "state-b6cab5abddd4",
+      "id": "f1.heading:embedded-checkout",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Embedded checkout",
+      "selector": "getByRole('heading', { name: 'Embedded checkout' })",
+      "expectedAnnouncement": "Embedded checkout, heading, level 2",
+      "expectedTokens": [
+        "embedded checkout",
+        "heading",
+        "level 2"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

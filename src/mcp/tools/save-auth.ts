@@ -50,6 +50,7 @@ export function registerSaveAuth(server: McpServer): void {
           outputPath,
           timeout,
           restrictOutputToCwd: true,
+          allowFileUrls: false,
           useSharedBrowserPool: true,
         });
         return {

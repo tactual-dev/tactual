@@ -1,0 +1,2277 @@
+{
+  "flow": {
+    "id": "flow-1781299596149",
+    "name": "tactual-fixture://fixtures/interactive-page.html",
+    "states": [
+      "state-eaceba32d249"
+    ],
+    "profile": "nvda-desktop-v0",
+    "timestamp": 1781299596149
+  },
+  "states": [
+    {
+      "id": "state-eaceba32d249",
+      "url": "tactual-fixture://fixtures/interactive-page.html",
+      "route": "/fixtures/interactive-page.html",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotHash": "eaceba32d2497d01a45d0acb0170fffcc4b9ea16de68bf14561563a05e437ba8",
+      "canonicalSnapshotHash": "eaceba32d2497d01a45d0acb0170fffcc4b9ea16de68bf14561563a05e437ba8",
+      "_docMetadata": {
+        "htmlLang": "en",
+        "title": "Interactive Accessibility Example",
+        "zoomRestricted": false,
+        "viewportContent": "width=device-width, initial-scale=1.0"
+      },
+      "_mediaMetadata": {
+        "totalImages": 0,
+        "imagesMissingAlt": 0,
+        "imagesSuspiciousAlt": [],
+        "totalIframes": 0,
+        "iframesMissingTitle": []
+      },
+      "_structuralIssues": {
+        "duplicateIds": [],
+        "nestedInteractive": [],
+        "metaRefresh": false
+      },
+      "_mediaControls": {
+        "mediaWithoutControls": [],
+        "h1Count": 1
+      },
+      "_cvdContrast": {
+        "byType": {
+          "deuteranopia": {
+            "count": 0,
+            "samples": []
+          },
+          "protanopia": {
+            "count": 0,
+            "samples": []
+          },
+          "tritanopia": {
+            "count": 5,
+            "samples": [
+              {
+                "selector": "a",
+                "text": "Home",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Products",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Learn more about this product",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Full return policy",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Shipping details",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              }
+            ]
+          }
+        },
+        "totalUniqueElements": 5
+      },
+      "interactiveHash": "bb359690eb3b30858110524a3a69e78da9d732a8bcfdde2281aa24c170b56869",
+      "openOverlays": [],
+      "targets": [
+        {
+          "id": "banner-1",
+          "kind": "landmark",
+          "role": "banner",
+          "name": "",
+          "selector": "header",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "heading:interactive-example",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Interactive Example",
+          "selector": "getByRole('heading', { name: 'Interactive Example' })",
+          "headingLevel": 1,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "1"
+          },
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "navigation:main",
+          "kind": "landmark",
+          "role": "navigation",
+          "name": "Main",
+          "selector": "getByRole('navigation', { name: 'Main' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:home",
+          "kind": "link",
+          "role": "link",
+          "name": "Home",
+          "selector": "getByRole('link', { name: 'Home' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "listitem"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Main"
+              },
+              {
+                "role": "list"
+              },
+              {
+                "role": "listitem"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/interactive-page.html#home",
+          "_rect": {
+            "x": 48,
+            "y": 80,
+            "width": 39,
+            "height": 17
+          }
+        },
+        {
+          "id": "link:products",
+          "kind": "link",
+          "role": "link",
+          "name": "Products",
+          "selector": "getByRole('link', { name: 'Products' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "listitem"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Main"
+              },
+              {
+                "role": "list"
+              },
+              {
+                "role": "listitem"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/interactive-page.html#products",
+          "_rect": {
+            "x": 48,
+            "y": 98,
+            "width": 56,
+            "height": 17
+          }
+        },
+        {
+          "id": "main-6",
+          "kind": "landmark",
+          "role": "main",
+          "name": "",
+          "selector": "main",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "region:menu-demo",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Menu Demo",
+          "selector": "getByRole('region', { name: 'Menu Demo' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:menu-example",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Menu Example",
+          "selector": "getByRole('heading', { name: 'Menu Example' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Menu Demo"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Menu Demo"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:options-menu",
+          "kind": "button",
+          "role": "button",
+          "name": "Options Menu",
+          "selector": "getByRole('button', { name: 'Options Menu' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Menu Demo"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Menu Demo"
+              }
+            ]
+          },
+          "_domId": "menu-btn",
+          "_ariaRelationships": {
+            "hasPopup": "true"
+          },
+          "_attributeValues": {
+            "aria-expanded": "false",
+            "aria-haspopup": "true"
+          },
+          "_attributes": [
+            "aria-expanded",
+            "aria-haspopup"
+          ],
+          "_rect": {
+            "x": 8,
+            "y": 183,
+            "width": 99,
+            "height": 21
+          }
+        },
+        {
+          "id": "region:tab-demo",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Tab Demo",
+          "selector": "getByRole('region', { name: 'Tab Demo' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:tabbed-content",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Tabbed Content",
+          "selector": "getByRole('heading', { name: 'Tabbed Content' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Tab Demo"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tab Demo"
+              }
+            ]
+          }
+        },
+        {
+          "id": "tab:description",
+          "kind": "tab",
+          "role": "tab",
+          "name": "Description",
+          "selector": "getByRole('tab', { name: 'Description' })",
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-selected",
+            "aria-controls"
+          ],
+          "_attributeValues": {
+            "aria-selected": "true",
+            "aria-controls": "panel-desc"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tablist",
+              "name": "Product Info"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tab Demo"
+              },
+              {
+                "role": "tablist",
+                "name": "Product Info"
+              }
+            ]
+          },
+          "_domId": "tab-desc",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "panel-desc",
+                "role": "tabpanel",
+                "name": "Description"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 8,
+            "y": 271,
+            "width": 83,
+            "height": 21
+          }
+        },
+        {
+          "id": "tab:specifications",
+          "kind": "tab",
+          "role": "tab",
+          "name": "Specifications",
+          "selector": "getByRole('tab', { name: 'Specifications' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tablist",
+              "name": "Product Info"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tab Demo"
+              },
+              {
+                "role": "tablist",
+                "name": "Product Info"
+              }
+            ]
+          },
+          "_domId": "tab-specs",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "panel-specs",
+                "role": "tabpanel",
+                "name": "Specifications"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-controls": "panel-specs",
+            "aria-selected": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-selected"
+          ],
+          "_rect": {
+            "x": 95,
+            "y": 271,
+            "width": 98,
+            "height": 21
+          }
+        },
+        {
+          "id": "tab:reviews",
+          "kind": "tab",
+          "role": "tab",
+          "name": "Reviews",
+          "selector": "getByRole('tab', { name: 'Reviews' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tablist",
+              "name": "Product Info"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tab Demo"
+              },
+              {
+                "role": "tablist",
+                "name": "Product Info"
+              }
+            ]
+          },
+          "_domId": "tab-reviews",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "panel-reviews",
+                "role": "tabpanel",
+                "name": "Reviews"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-controls": "panel-reviews",
+            "aria-selected": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-selected"
+          ],
+          "_rect": {
+            "x": 197,
+            "y": 271,
+            "width": 66,
+            "height": 21
+          }
+        },
+        {
+          "id": "tabpanel:description",
+          "kind": "tabPanel",
+          "role": "tabpanel",
+          "name": "Description",
+          "selector": "getByRole('tabpanel', { name: 'Description' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Tab Demo"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tab Demo"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:product-description",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Product Description",
+          "selector": "getByRole('heading', { name: 'Product Description' })",
+          "headingLevel": 3,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "3"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tabpanel",
+              "name": "Description"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tab Demo"
+              },
+              {
+                "role": "tabpanel",
+                "name": "Description"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:learn-more-about-this-product",
+          "kind": "link",
+          "role": "link",
+          "name": "Learn more about this product",
+          "selector": "getByRole('link', { name: 'Learn more about this product' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tabpanel",
+              "name": "Description"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tab Demo"
+              },
+              {
+                "role": "tabpanel",
+                "name": "Description"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/interactive-page.html#learn-more",
+          "_rect": {
+            "x": 25,
+            "y": 402,
+            "width": 194,
+            "height": 17
+          }
+        },
+        {
+          "id": "region:faq",
+          "kind": "landmark",
+          "role": "region",
+          "name": "FAQ",
+          "selector": "getByRole('region', { name: 'FAQ' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:frequently-asked-questions",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Frequently Asked Questions",
+          "selector": "getByRole('heading', { name: 'Frequently Asked Questions' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "FAQ"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "FAQ"
+              }
+            ]
+          }
+        },
+        {
+          "id": "region:dialog-demo",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Dialog Demo",
+          "selector": "getByRole('region', { name: 'Dialog Demo' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:help-support",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Help & Support",
+          "selector": "getByRole('heading', { name: 'Help & Support' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Dialog Demo"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Dialog Demo"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:open-help",
+          "kind": "button",
+          "role": "button",
+          "name": "Open Help",
+          "selector": "getByRole('button', { name: 'Open Help' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Dialog Demo"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Dialog Demo"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 8,
+            "y": 607,
+            "width": 80,
+            "height": 21
+          }
+        },
+        {
+          "id": "contentinfo-23",
+          "kind": "landmark",
+          "role": "contentinfo",
+          "name": "",
+          "selector": "footer",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        }
+      ],
+      "timestamp": 1781299596135,
+      "provenance": "scripted"
+    }
+  ],
+  "findings": [
+    {
+      "targetId": "tab:description",
+      "selector": "getByRole('tab', { name: 'Description' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 89,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 75
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Description"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextItem: Description"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextItem: Description"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextItem: Description"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tab: Tab widget interaction model (arrow keys vs tab key) not consistently expected"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "tab:reviews",
+      "selector": "getByRole('tab', { name: 'Reviews' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 76
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "previousItem: Description",
+        "previousItem: Reviews"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextItem: Description",
+          "nextItem: Specifications",
+          "nextItem: Reviews"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextItem: Description",
+          "nextItem: Specifications",
+          "nextItem: Reviews"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextItem: Description",
+          "nextItem: Specifications",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tab: Tab widget interaction model (arrow keys vs tab key) not consistently expected"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "tab:specifications",
+      "selector": "getByRole('tab', { name: 'Specifications' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 77
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Description",
+        "nextItem: Specifications"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextItem: Description",
+          "nextItem: Specifications"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextItem: Description",
+          "nextItem: Specifications"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextItem: Description",
+          "nextItem: Specifications"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tab: Tab widget interaction model (arrow keys vs tab key) not consistently expected"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "banner-1",
+      "selector": "header",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 87,
+        "reachability": 90,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 92
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextItem: banner"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "previousItem: banner"
+        ],
+        [
+          "groupEntry: Main",
+          "previousItem: Interactive Example",
+          "previousItem: banner"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: banner: Minor: some AT don't announce banner landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.7
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.7
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:home",
+      "selector": "getByRole('link', { name: 'Home' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "actionType": "code-fix",
+      "bestPath": [
+        "nextItem: Home"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Main",
+          "nextItem: Home"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextItem: Main",
+          "nextItem: Home"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Main",
+          "nextItem: Home"
+        ]
+      ],
+      "penalties": [
+        "Target is 39×17px, below the WCAG 2.5.8 minimum (24×24 for AA). Users with motor impairments have a higher miss rate on small targets. Screen-reader users aren't affected, but touch/pointer users are."
+      ],
+      "suggestedFixes": [
+        "Increase min-width and min-height to 24px, or enlarge the clickable area via padding. An invisible padded hit region can enlarge touch target without changing visual design."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:products",
+      "selector": "getByRole('link', { name: 'Products' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "actionType": "code-fix",
+      "bestPath": [
+        "previousItem: Products"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Main",
+          "nextLandmark: main",
+          "previousItem: Products"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextItem: Main",
+          "nextLandmark: main",
+          "previousItem: Products"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "previousItem: Menu Demo",
+          "previousItem: main",
+          "previousItem: Products"
+        ]
+      ],
+      "penalties": [
+        "Target is 56×17px, below the WCAG 2.5.8 minimum (24×24 for AA). Users with motor impairments have a higher miss rate on small targets. Screen-reader users aren't affected, but touch/pointer users are."
+      ],
+      "suggestedFixes": [
+        "Increase min-width and min-height to 24px, or enlarge the clickable area via padding. An invisible padded hit region can enlarge touch target without changing visual design."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "tabpanel:description",
+      "selector": "getByRole('tabpanel', { name: 'Description' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 89,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 3,
+        "overall": 94
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "previousItem: Description"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "previousItem: Description"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "previousItem: Description"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "previousItem: Description"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tabpanel: Tab panel association with tab not always announced"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:options-menu",
+      "selector": "getByRole('button', { name: 'Options Menu' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Options Menu"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu"
+        ],
+        [
+          "nextHeading: Tabbed Content",
+          "previousItem: Tab Demo",
+          "previousItem: Options Menu"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:learn-more-about-this-product",
+      "selector": "getByRole('link', { name: 'Learn more about this product' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Learn more about this product"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextItem: Learn more about this product"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextItem: Learn more about this product"
+        ],
+        [
+          "groupEntry: Main",
+          "nextLandmark: main",
+          "previousItem: Products",
+          "nextLink: Learn more about this product"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "contentinfo-23",
+      "selector": "footer",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 97
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu",
+          "nextButton: Open Help",
+          "nextItem: contentinfo"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu",
+          "nextButton: Open Help",
+          "nextItem: contentinfo"
+        ],
+        [
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions",
+          "nextItem: Dialog Demo",
+          "nextLandmark: contentinfo"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: contentinfo: Minor: some AT don't announce contentinfo landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "main-6",
+      "selector": "main",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Main",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextItem: Main",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "previousItem: Menu Demo",
+          "previousItem: main"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:open-help",
+      "selector": "getByRole('button', { name: 'Open Help' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 98,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open Help"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu",
+          "nextButton: Open Help"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu",
+          "nextButton: Open Help"
+        ],
+        [
+          "nextHeading: Tabbed Content",
+          "previousItem: Tab Demo",
+          "previousItem: Options Menu",
+          "nextButton: Open Help"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:interactive-example",
+      "selector": "getByRole('heading', { name: 'Interactive Example' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Interactive Example"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Interactive Example"
+        ],
+        [
+          "groupEntry: Main",
+          "previousItem: Interactive Example"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "navigation:main",
+      "selector": "getByRole('navigation', { name: 'Main' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Main"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextItem: Main"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Main"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:menu-demo",
+      "selector": "getByRole('region', { name: 'Menu Demo' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Menu Example",
+          "previousItem: Menu Demo"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "previousItem: Menu Demo"
+        ],
+        [
+          "groupEntry: Main",
+          "nextLandmark: main",
+          "nextItem: Menu Demo"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:menu-example",
+      "selector": "getByRole('heading', { name: 'Menu Example' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Menu Example"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Interactive Example",
+          "nextHeading: Menu Example"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:tab-demo",
+      "selector": "getByRole('region', { name: 'Tab Demo' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "previousItem: Tab Demo"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "previousItem: Menu Demo",
+          "nextLandmark: Tab Demo"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "previousItem: Tab Demo"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:tabbed-content",
+      "selector": "getByRole('heading', { name: 'Tabbed Content' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:product-description",
+      "selector": "getByRole('heading', { name: 'Product Description' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 99,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:faq",
+      "selector": "getByRole('region', { name: 'FAQ' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 99,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "previousItem: Tab Demo",
+          "nextLandmark: FAQ"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "previousItem: Menu Demo",
+          "nextLandmark: Tab Demo",
+          "nextLandmark: FAQ"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "previousItem: Tab Demo",
+          "nextLandmark: FAQ"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:frequently-asked-questions",
+      "selector": "getByRole('heading', { name: 'Frequently Asked Questions' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:dialog-demo",
+      "selector": "getByRole('region', { name: 'Dialog Demo' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions",
+          "nextItem: Dialog Demo"
+        ],
+        [
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions",
+          "nextItem: Dialog Demo"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:help-support",
+      "selector": "getByRole('heading', { name: 'Help & Support' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu",
+          "nextButton: Open Help",
+          "previousItem: Help & Support"
+        ],
+        [
+          "nextHeading: Tabbed Content",
+          "nextHeading: Product Description",
+          "nextHeading: Frequently Asked Questions",
+          "nextHeading: Help & Support"
+        ],
+        [
+          "nextHeading: Interactive Example",
+          "nextHeading: Menu Example",
+          "nextItem: Options Menu",
+          "nextButton: Open Help",
+          "previousItem: Help & Support"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "warning",
+      "code": "no-skip-link",
+      "message": "No skip-to-content link found. Keyboard and screen-reader users must Tab through all navigation elements to reach the main content. A skip link is the single most impactful fix for navigation cost. Concrete savings: a skip link would bypass 2 controls (25% of page interactive targets).",
+      "affectedCount": 2,
+      "totalCount": 8
+    },
+    {
+      "level": "info",
+      "code": "structural-summary",
+      "message": "Structural overview: 6 headings · landmarks: main, banner, contentinfo, navigation · skip link: no · 23 total targets"
+    },
+    {
+      "level": "warning",
+      "code": "color-blindness-contrast-fail",
+      "message": "5 text elements lose contrast under simulated color-vision deficiency (tritanopia: 5). Examples (tritanopia): a \"Home\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Products\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Learn more about this product\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1). Approximately 8% of male and 0.5% of female users have a CVD; choose color combinations whose contrast survives the deuteranopia/protanopia/tritanopia transforms or rely on luminance + non-color cues.",
+      "affectedCount": 5
+    }
+  ],
+  "metadata": {
+    "version": "0.5.0",
+    "profile": "nvda-desktop-v0",
+    "duration": 34,
+    "stateCount": 1,
+    "targetCount": 23,
+    "findingCount": 23,
+    "edgeCount": 105
+  }
+}

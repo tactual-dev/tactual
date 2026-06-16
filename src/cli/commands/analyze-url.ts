@@ -9,6 +9,10 @@ export function registerAnalyzeUrl(program: Command): void {
     // Output
     .option("-f, --format <format>", "Output format: json, markdown, console, sarif", "console")
     .option("-o, --output <path>", "Write output to file instead of stdout")
+    .option(
+      "--full-json",
+      "When emitting JSON, write the full AnalysisResult with states/targets instead of the compact summary",
+    )
     // Profile & device
     .option("-p, --profile <id>", "AT profile to use")
     .option("-d, --device <name>", "Device to emulate (e.g., 'iPhone 14')")
@@ -69,7 +73,7 @@ export function registerAnalyzeUrl(program: Command): void {
     )
     .option(
       "--validate",
-      "Run @guidepup/virtual-screen-reader on the captured DOM and include predicted-vs-actual comparison. Requires jsdom + @guidepup/virtual-screen-reader.",
+      "Run @guidepup/virtual-screen-reader on the captured DOM and include modeled-vs-virtual comparison. Requires jsdom + @guidepup/virtual-screen-reader.",
     )
     .option("--validate-max-targets <n>", "Maximum findings to validate when --validate is set", "10")
     .option(
@@ -84,6 +88,34 @@ export function registerAnalyzeUrl(program: Command): void {
     .option(
       "--no-check-visibility",
       "Disable visibility sampling even if the profile declares visualModes",
+    )
+    .option(
+      "--detect-routes",
+      "Record SPA route changes (history.pushState/replaceState, popstate, hashchange) that fire during analysis",
+    )
+    .option(
+      "--descend-frames",
+      "Descend into child iframes during capture (capped at 20 frames). Chromium can recover many cross-origin OOPIF trees via CDP.",
+    )
+    .option(
+      "--auto-scroll",
+      "Scroll to the bottom of the page in steps before capture to surface lazy/infinite-scroll content (capped at 20 scrolls / 30 s).",
+    )
+    .option(
+      "--dismiss-banners",
+      "Best-effort dismiss of cookie/consent/GDPR banners (clicks safe-accept buttons; skips Decline/Manage/Customize).",
+    )
+    .option(
+      "--probe-hover",
+      "Hover candidate triggers to surface hover-only popups/tooltips with no attribute hint. Default budget 10 candidates; ~7-8 s.",
+    )
+    .option(
+      "--walk-tab-order",
+      "Press Tab up to 30 times and record the focused-element sequence to detect positive-tabindex anti-patterns and focus traps. ~1-3 s.",
+    )
+    .option(
+      "--diff-viewports",
+      "Capture the URL at desktop (1280×800) and mobile (375×667) viewports and diff the target/landmark/heading lists. Catches content set to display:none on small screens. ~3-5 s additional.",
     )
     .option(
       "--baseline <path>",

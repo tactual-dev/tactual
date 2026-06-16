@@ -9,6 +9,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "types": ["node"],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -18,6 +19,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": ["./src/*"]
     }

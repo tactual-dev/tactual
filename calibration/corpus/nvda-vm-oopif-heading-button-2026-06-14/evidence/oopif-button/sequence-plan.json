@@ -1,0 +1,80 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T09:33:35.562Z",
+  "url": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "button",
+  "navigation": {
+    "keyName": "b",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "30",
+      "b0"
+    ],
+    "description": "NVDA browse-mode next-button quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 5,
+  "targetCount": 3,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "button",
+      "stateId": "state-4af961a9dd6c",
+      "id": "button:save-parent-account",
+      "kind": "button",
+      "role": "button",
+      "name": "Save parent account",
+      "selector": "getByRole('button', { name: 'Save parent account' })",
+      "expectedAnnouncement": "Save parent account, button",
+      "expectedTokens": [
+        "save parent account",
+        "button"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "button",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.button:pay-now",
+      "kind": "button",
+      "role": "button",
+      "name": "Pay now",
+      "selector": "getByRole('button', { name: 'Pay now' })",
+      "expectedAnnouncement": "Pay now, button",
+      "expectedTokens": [
+        "pay now",
+        "button"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "button",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.button:remember-card",
+      "kind": "button",
+      "role": "button",
+      "name": "Remember card",
+      "selector": "getByRole('button', { name: 'Remember card' })",
+      "expectedAnnouncement": "Remember card, toggle button, not pressed",
+      "expectedTokens": [
+        "remember card",
+        "toggle button",
+        "not pressed"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

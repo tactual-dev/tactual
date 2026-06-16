@@ -19,7 +19,10 @@ const CLI = resolve(__dirname, "../../dist/cli/index.js");
 const exec = (
   args: string,
   expectFail = false,
-  timeout = 10_000,
+  // 25 s default absorbs the cold-start + Tactual-import time when the OS
+  // scheduler is busy with other workers' Chromium processes; raised from
+  // 10 s after parallel-load timeouts on multi-core test runs.
+  timeout = 25_000,
 ): { stdout: string; stderr: string; exitCode: number } => {
   try {
     const stdout = execSync(`node ${CLI} ${args}`, {
@@ -39,7 +42,7 @@ const exec = (
   }
 };
 
-describe("CLI", { timeout: 15_000 }, () => {
+describe("CLI", { timeout: 30_000 }, () => {
   describe("help and version", () => {
     it("shows help text with --help", () => {
       const { stdout } = exec("--help");
@@ -50,6 +53,7 @@ describe("CLI", { timeout: 15_000 }, () => {
       expect(stdout).toContain("diff");
       expect(stdout).toContain("init");
       expect(stdout).toContain("benchmark");
+      expect(stdout).toContain("calibration-report");
     });
 
     it("shows version with --version", () => {
@@ -76,6 +80,7 @@ describe("CLI", { timeout: 15_000 }, () => {
       expect(stdout).toContain("Analyze a single URL");
       expect(stdout).toContain("--profile");
       expect(stdout).toContain("--format");
+      expect(stdout).toContain("--full-json");
       expect(stdout).toContain("--explore");
       expect(stdout).toContain("--explore-timeout");
       expect(stdout).toContain("--threshold");
@@ -148,6 +153,19 @@ describe("CLI", { timeout: 15_000 }, () => {
       expect(exitCode).toBe(0);
       expect(parsed.stats.targetCount).toBeGreaterThan(0);
     }, 35_000);
+
+    it("can emit a full analysis JSON result for calibration consumers", () => {
+      const fixtureUrl = pathToFileURL(resolve(__dirname, "../../fixtures/good-page.html")).href;
+      const { stdout, exitCode } = exec(
+        `analyze-url "${fixtureUrl}" --format json --full-json --no-check-visibility`,
+        false,
+        30_000,
+      );
+      const parsed = JSON.parse(stdout) as { states?: unknown[]; metadata?: { targetCount: number } };
+      expect(exitCode).toBe(0);
+      expect(Array.isArray(parsed.states)).toBe(true);
+      expect(parsed.metadata?.targetCount).toBeGreaterThan(0);
+    }, 35_000);
   });
 
   describe("validate command", () => {
@@ -164,6 +182,329 @@ describe("CLI", { timeout: 15_000 }, () => {
       const { exitCode } = exec("validate", true);
       expect(exitCode).not.toBe(0);
     });
+  });
+
+  describe("observe-announcement command", () => {
+    const observeDir = resolve(__dirname, "../../__test_tactual_observe");
+    const analysisPath = resolve(observeDir, "analysis.json");
+
+    afterEach(() => {
+      if (existsSync(observeDir)) rmSync(observeDir, { recursive: true, force: true });
+    });
+
+    it("shows help with observation flags", () => {
+      const { stdout } = exec("observe-announcement --help");
+      expect(stdout).toContain("Compare Tactual's modeled screen-reader announcement");
+      expect(stdout).toContain("--analysis");
+      expect(stdout).toContain("--observed");
+      expect(stdout).toContain("--observed-token");
+      expect(stdout).toContain("--source");
+      expect(stdout).toContain("nvda-vm");
+    });
+
+    it("emits announcement observation JSON from a saved analysis", () => {
+      mkdirSync(observeDir, { recursive: true });
+      writeFileSync(
+        analysisPath,
+        JSON.stringify({
+          flow: {
+            id: "flow",
+            name: "https://example.test/checkout",
+            states: ["initial"],
+            profile: "nvda-desktop-v0",
+            timestamp: Date.now(),
+          },
+          states: [
+            {
+              id: "initial",
+              url: "https://example.test/checkout",
+              route: "/checkout",
+              snapshotHash: "a",
+              interactiveHash: "b",
+              openOverlays: [],
+              targets: [
+                {
+                  id: "button-1",
+                  kind: "button",
+                  role: "button",
+                  name: "Checkout",
+                  selector: "button",
+                },
+              ],
+              timestamp: Date.now(),
+              provenance: "scripted",
+            },
+          ],
+          findings: [],
+          diagnostics: [],
+          metadata: {
+            version: "0.0.0-test",
+            profile: "nvda-desktop-v0",
+            duration: 1,
+            stateCount: 1,
+            targetCount: 1,
+            findingCount: 0,
+            edgeCount: 0,
+          },
+        }),
+      );
+
+      const { stdout } = exec(
+        `observe-announcement Checkout --analysis "${analysisPath}" --observed "Checkout, link" --source nvda-vm --format json`,
+      );
+      const parsed = JSON.parse(stdout) as {
+        modeledAnnouncement: string;
+        observedAnnouncement: string;
+        announcementMatch: boolean;
+        missingAnnouncementTokens: string[];
+        announcementAssumptions: Array<{ id: string; status: string; expected: string }>;
+        observation: { observedAnnouncement: string; announcementSource: string };
+      };
+      expect(parsed.modeledAnnouncement).toBe("Checkout, button");
+      expect(parsed.observedAnnouncement).toBe("Checkout, link");
+      expect(parsed.announcementMatch).toBe(false);
+      expect(parsed.missingAnnouncementTokens).toEqual(["button"]);
+      expect(parsed.announcementAssumptions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: "announcement.nvda.name.accessible-name",
+            status: "confirmed",
+            expected: "checkout",
+          }),
+          expect.objectContaining({
+            id: "announcement.nvda.role.button",
+            status: "missing",
+            expected: "button",
+          }),
+        ]),
+      );
+      expect(parsed.observation).toMatchObject({
+        observedAnnouncement: "Checkout, link",
+        announcementSource: "nvda-vm",
+      });
+    });
+
+    it("matches observed announcement text with name punctuation separators", () => {
+      mkdirSync(observeDir, { recursive: true });
+      writeFileSync(
+        analysisPath,
+        JSON.stringify({
+          flow: {
+            id: "flow",
+            name: "https://example.test/search",
+            states: ["initial"],
+            profile: "nvda-desktop-v0",
+            timestamp: Date.now(),
+          },
+          states: [
+            {
+              id: "initial",
+              url: "https://example.test/search",
+              route: "/search",
+              snapshotHash: "a",
+              interactiveHash: "b",
+              openOverlays: [],
+              targets: [
+                {
+                  id: "searchbox-1",
+                  kind: "formField",
+                  role: "searchbox",
+                  name: "Search:",
+                  selector: "input[type=search]",
+                },
+              ],
+              timestamp: Date.now(),
+              provenance: "scripted",
+            },
+          ],
+          findings: [],
+          diagnostics: [],
+          metadata: {
+            version: "0.0.0-test",
+            profile: "nvda-desktop-v0",
+            duration: 1,
+            stateCount: 1,
+            targetCount: 1,
+            findingCount: 0,
+            edgeCount: 0,
+          },
+        }),
+      );
+
+      const { stdout } = exec(
+        `observe-announcement "Search:" --analysis "${analysisPath}" --observed "Search: edit blank" --source fixture --format json`,
+      );
+      const parsed = JSON.parse(stdout) as {
+        modeledAnnouncement: string;
+        announcementMatch: boolean;
+        missingAnnouncementTokens: string[];
+      };
+      expect(parsed.modeledAnnouncement).toBe("Search:, edit");
+      expect(parsed.announcementMatch).toBe(true);
+      expect(parsed.missingAnnouncementTokens).toEqual([]);
+    });
+  });
+
+  describe("calibration-report command", () => {
+    const calibrationDir = resolve(__dirname, "../../__test_tactual_calibration_report");
+    const datasetPath = resolve(calibrationDir, "dataset.json");
+    const analysisPath = resolve(calibrationDir, "analysis.json");
+
+    afterEach(() => {
+      if (existsSync(calibrationDir)) rmSync(calibrationDir, { recursive: true, force: true });
+    });
+
+    it("shows help with calibration inputs", () => {
+      const { stdout } = exec("calibration-report --help");
+      expect(stdout).toContain("Run a calibration dataset");
+      expect(stdout).toContain("--analysis");
+      expect(stdout).toContain("--analysis-dir");
+      expect(stdout).toContain("--format");
+      expect(stdout).toContain("emit scoring");
+      expect(stdout).toContain("signals");
+    });
+
+    it("emits structured scoring signals from a dataset and saved analysis", () => {
+      writeCalibrationFixture();
+
+      const { stdout, exitCode } = exec(
+        `calibration-report "${datasetPath}" --analysis "${analysisPath}" --format json`,
+      );
+      const parsed = JSON.parse(stdout) as {
+        datasetName: string;
+        observationCount: number;
+        scoringSignals: Array<{ id: string; status: string }>;
+      };
+
+      expect(exitCode).toBe(0);
+      expect(parsed.datasetName).toBe("cli-calibration");
+      expect(parsed.observationCount).toBe(1);
+      expect(parsed.scoringSignals).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ id: "navigation.strategy-switch-pressure" }),
+          expect.objectContaining({ id: "score.overall-bias", status: "review" }),
+        ]),
+      );
+    });
+
+    it("emits the human calibration report by default", () => {
+      writeCalibrationFixture();
+
+      const { stdout } = exec(`calibration-report "${datasetPath}" --analysis-dir "${calibrationDir}"`);
+
+      expect(stdout).toContain("# Calibration Report: cli-calibration");
+      expect(stdout).toContain("## Scoring Signals");
+      expect(stdout).toContain("navigation.strategy-switch-pressure");
+    });
+
+    it("rejects datasets without matching analysis URLs by default", () => {
+      writeCalibrationFixture({ datasetUrl: "https://example.test/missing" });
+
+      const { stderr, exitCode } = exec(
+        `calibration-report "${datasetPath}" --analysis "${analysisPath}"`,
+        true,
+      );
+
+      expect(exitCode).not.toBe(0);
+      expect(stderr).toContain("Missing analysis JSON");
+      expect(stderr).toContain("https://example.test/missing");
+    });
+
+    function writeCalibrationFixture(opts: { datasetUrl?: string } = {}): void {
+      const url = opts.datasetUrl ?? "https://example.test/checkout";
+      mkdirSync(calibrationDir, { recursive: true });
+      writeFileSync(
+        datasetPath,
+        JSON.stringify({
+          name: "cli-calibration",
+          collectedAt: "2026-06-13T00:00:00Z",
+          observations: [
+            {
+              url,
+              profileId: "nvda-desktop-v0",
+              targetId: "initial:checkout",
+              targetName: "Checkout",
+              observedAnnouncement: "Checkout, button",
+              announcementSource: "fixture",
+              actualStepsToReach: 9,
+              strategyUsed: "mixed",
+              requiredStrategySwitch: true,
+              knewTargetExisted: true,
+              timeToDiscoverSeconds: 8,
+              discoveryMethod: "linear-scan",
+              couldOperate: true,
+              couldRecover: true,
+              difficultyRating: 4,
+              testerId: "cli-test",
+              timestamp: "2026-06-13T00:01:00Z",
+            },
+          ],
+        }),
+      );
+      writeFileSync(
+        analysisPath,
+        JSON.stringify({
+          flow: {
+            id: "flow",
+            name: "https://example.test/checkout",
+            states: ["initial"],
+            profile: "nvda-desktop-v0",
+            timestamp: Date.now(),
+          },
+          states: [
+            {
+              id: "initial",
+              url: "https://example.test/checkout",
+              route: "/checkout",
+              snapshotHash: "a",
+              interactiveHash: "b",
+              openOverlays: [],
+              targets: [
+                {
+                  id: "checkout",
+                  kind: "button",
+                  role: "button",
+                  name: "Checkout",
+                  selector: "button",
+                },
+              ],
+              timestamp: Date.now(),
+              provenance: "scripted",
+            },
+          ],
+          findings: [
+            {
+              targetId: "initial:checkout",
+              profile: "nvda-desktop-v0",
+              scores: {
+                discoverability: 96,
+                reachability: 94,
+                operability: 92,
+                recovery: 90,
+                interopRisk: 88,
+                overall: 95,
+              },
+              severity: "strong",
+              bestPath: ["initial", "initial:checkout"],
+              alternatePaths: [],
+              penalties: [],
+              suggestedFixes: [],
+              confidence: 0.9,
+            },
+          ],
+          diagnostics: [],
+          metadata: {
+            version: "0.0.0-test",
+            profile: "nvda-desktop-v0",
+            duration: 1,
+            stateCount: 1,
+            targetCount: 1,
+            findingCount: 1,
+            edgeCount: 1,
+          },
+        }),
+      );
+    }
   });
 
   describe("diff command", () => {
@@ -324,6 +665,7 @@ describe("CLI", { timeout: 15_000 }, () => {
       expect(stdout).toContain("--wait-time");
       expect(stdout).toContain("--storage-state");
       expect(stdout).toContain("--summary-only");
+      expect(stdout).toContain("--full-json");
       expect(stdout).toContain("--probe");
     });
   });
@@ -344,6 +686,8 @@ describe("CLI", { timeout: 15_000 }, () => {
         "benchmark",
         "transcript",
         "validate",
+        "observe-announcement",
+        "calibration-report",
       ];
       for (const cmd of expected) expect(stdout).toContain(cmd);
     });

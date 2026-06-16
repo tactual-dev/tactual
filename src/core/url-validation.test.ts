@@ -19,6 +19,12 @@ describe("validateUrl", () => {
       expect(result.valid).toBe(true);
     });
 
+    it("can reject file URLs for remote-control surfaces", () => {
+      const result = validateUrl("file:///tmp/test.html", { allowFileUrls: false });
+      expect(result.valid).toBe(false);
+      expect(result.error).toContain("file: URLs");
+    });
+
     it("trims whitespace", () => {
       const result = validateUrl("  https://example.com  ");
       expect(result.valid).toBe(true);

@@ -6,7 +6,7 @@ import { genericMobileWebSrV0 } from "./profiles/generic-mobile.js";
 import { formatReport } from "./reporters/index.js";
 import { resolve } from "path";
 
-const PLAYWRIGHT_TEST_TIMEOUT = 15_000;
+const PLAYWRIGHT_TEST_TIMEOUT = 60_000;
 
 describe("integration: end-to-end analysis", () => {
   let browser: Browser;

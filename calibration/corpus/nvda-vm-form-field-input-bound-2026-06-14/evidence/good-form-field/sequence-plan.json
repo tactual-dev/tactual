@@ -1,0 +1,64 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T16:21:28.887Z",
+  "url": "tactual-fixture://fixtures/good-page.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "form-field",
+  "navigation": {
+    "keyName": "f",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "21",
+      "a1"
+    ],
+    "description": "NVDA browse-mode next-form-field quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 2,
+  "targetCount": 2,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "form-field",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:add-to-cart",
+      "kind": "button",
+      "role": "button",
+      "name": "Add to Cart",
+      "selector": "getByRole('button', { name: 'Add to Cart' })",
+      "expectedAnnouncement": "Add to Cart, button",
+      "expectedTokens": [
+        "add to cart",
+        "button"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "form-field",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:add-to-cart-2",
+      "kind": "button",
+      "role": "button",
+      "name": "Add to Cart",
+      "selector": "getByRole('button', { name: 'Add to Cart' })",
+      "expectedAnnouncement": "Add to Cart, button",
+      "expectedTokens": [
+        "add to cart",
+        "button"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

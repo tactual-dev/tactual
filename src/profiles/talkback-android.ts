@@ -47,6 +47,15 @@ export const talkbackAndroidV0: ATProfile = {
     groupExit: 2.0,
     // No first-letter type-ahead on TalkBack
     firstLetter: 100,
+    nextFormField: 1.7,
+    nextButton: 1.7,
+    nextLandmark: 2.0,
+    rotor: 2.2,
+    touchExplore: 1.7,
+    relationshipJump: 1.8,
+    activeDescendant: 1.2,
+    formsMode: 2.0,
+    compositeNavigation: 1.3,
   },
 
   weights: {

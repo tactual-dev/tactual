@@ -27,15 +27,17 @@ Tactual complements conformance scanners such as axe-core, Lighthouse, and Pa11y
 
 Use Tactual for screen-reader navigation-cost triage, path tracing, measured keyboard/widget evidence, before/after diffs, CI prioritization, and MCP workflows where an agent needs compact findings with source selectors and remediation candidates. Use real screen readers and manual testing for final validation of critical journeys, timing-sensitive flows, browser/AT settings, and implementation patterns that intentionally differ from a common APG example.
 
+**Agent quick path:** this README is a product overview plus reference. Agents should start with `docs/AGENT-RECIPES.md` for task patterns and `docs/MCP-TOOLS.md` for full MCP schemas, then come back here only for product context, install notes, and release-surface examples.
+
 ## Install
 
 Requires Node.js 20 or later.
 
 ```bash
-npm install tactual playwright
+npm install tactual
 ```
 
-Playwright is an optional peer dependency required for CLI page analysis. The MCP SDK ships as a runtime dependency, so `tactual-mcp` works from an installed `tactual` package without a separate SDK install.
+Tactual installs Playwright as a runtime dependency so one-off `npx tactual@latest ...` commands work without separately installing Playwright into the npx cache. The MCP SDK also ships as a runtime dependency, so `tactual-mcp` works from an installed `tactual` package without a separate SDK install.
 
 ## Quick start
 
@@ -78,7 +80,7 @@ npx tactual benchmark --suite all
 Benchmark fixtures ship with the npm package, so the benchmark command works from a fresh install and does not require cloning the repository fixtures into your current directory.
 
 # Validate predicted paths against a virtual screen reader (reachability + step count)
-# Requires: npm install jsdom @guidepup/virtual-screen-reader
+# Requires optional deps, installed by default with tactual
 npx tactual validate-url https://example.com --max-targets 10 --strategy semantic
 
 # Initialize a tactual.json config file
@@ -243,7 +245,7 @@ const validation = await validateFindingsInJsdom(dom, state, result.findings, {
   strategy: "semantic",
 });
 
-const calibration = runCalibration(dataset, [result]);
+const calibration = runCalibration(dataset, new Map([[state.url, result]]));
 console.log(validation, formatCalibrationReport(calibration));
 ```
 
@@ -251,6 +253,7 @@ Or from the CLI:
 
 ```bash
 npx tactual transcript https://example.com --at voiceover
+npx tactual calibration-report my-calibration.json --analysis example-nvda.json
 ```
 
 The simulator is heuristic prediction, not real screen-reader output. The simulator itself is fast (pure JavaScript over captured targets — sub-second once targets are in memory), but a full `analyze-url` run includes browser launch + page capture + scoring and takes seconds on small pages, longer with `--probe` (~30s+) and `--explore` (~1–5 min on complex SPAs). Analysis runs in a headless browser by default, so nothing pops up while you work. (Use `--no-headless` or `--channel chrome --stealth` for visible/bot-protected sites.)
@@ -281,6 +284,7 @@ For network-facing MCP deployments, put the HTTP transport behind an authenticat
 | `analyze_url`          | Analyze a page for SR navigation cost (SARIF default). Supports opt-in exploration, keyboard/widget/form probes, scoped/goal-directed probing, stealth/channel for bot-protected sites, and filtering. |
 | `trace_path`           | Step-by-step navigation path to a target with modeled SR announcements.                                                                                                                                |
 | `validate_url`         | Validate predicted paths against `@guidepup/virtual-screen-reader`. Returns reachable + mean accuracy per strategy (linear/semantic). Closes the predicted-vs-validated loop.                          |
+| `calibration_report`   | Run observed calibration datasets against saved full analysis JSON and return structured scoring signals for tuning/review workflows.                                                                  |
 | `list_profiles`        | List available AT profiles.                                                                                                                                                                            |
 | `diff_results`         | Compare two analysis results — improvements, regressions, severity changes.                                                                                                                            |
 | `suggest_remediations` | Ranked fix suggestions by impact.                                                                                                                                                                      |
@@ -294,7 +298,7 @@ Full parameter reference: [docs/MCP-TOOLS.md](docs/MCP-TOOLS.md)
 First install the required packages in your project:
 
 ```bash
-npm install tactual playwright
+npm install tactual
 ```
 
 **Claude Code** — add to `.mcp.json` in your project root:
@@ -341,7 +345,7 @@ npm install tactual playwright
 **Direct (global install)** — if you prefer not to use npx:
 
 ```bash
-npm install -g tactual playwright
+npm install -g tactual
 tactual-mcp  # starts the MCP server on stdio
 ```
 
@@ -358,7 +362,7 @@ jobs:
       pull-requests: write # for comment-on-pr
     steps:
       - name: Analyze accessibility
-        uses: tactual-dev/tactual@v0.4.1
+        uses: tactual-dev/tactual@v0.5.0
         with:
           url: https://your-app.com
           profile: nvda-desktop-v0
@@ -369,7 +373,7 @@ jobs:
           comment-on-pr: "true"
 ```
 
-The action installs Tactual and Playwright, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Set `comment-on-pr: "true"` to post a summary comment on pull requests (updates on re-run). Outputs `average-score` and `result-file` for downstream steps. Action version tracks Tactual version — bump the `uses:` line to pick up patches.
+The action installs Tactual and Chromium browser binaries, runs the analysis, uploads SARIF to GitHub Code Scanning, and fails the build if the average score is below the threshold. Set `comment-on-pr: "true"` to post a summary comment on pull requests (updates on re-run). Outputs `average-score` and `result-file` for downstream steps. Action version tracks Tactual version — bump the `uses:` line to pick up patches.
 
 Defaults are conservative: `probe` is off unless enabled because it sends real keyboard events, and forced-colors icon checks run only for profiles that declare `visualModes` such as `nvda-desktop-v0` and `jaws-desktop-v0`.
 
@@ -377,7 +381,7 @@ Or use the CLI directly for more control:
 
 ```yaml
 - name: Install Tactual
-  run: npm install tactual playwright
+  run: npm install tactual
 
 - name: Install browsers
   run: npx playwright install chromium --with-deps
@@ -427,7 +431,7 @@ Pair `--baseline` with `--fail-on-regression` to turn Tactual into a strict CI g
 Or via the action:
 
 ```yaml
-- uses: tactual-dev/tactual@v0.4.1
+- uses: tactual-dev/tactual@v0.5.0
   with:
     url: https://pr-preview.your-app.com
     baseline: tactual-baseline.json
@@ -493,10 +497,18 @@ Options:
   --validate                      Run the virtual screen reader over the captured DOM and include
                                     a predicted-vs-validated step comparison in the output.
                                     Requires optional deps: jsdom + @guidepup/virtual-screen-reader.
+                                    Installed by default unless optional deps were omitted.
   --validate-max-targets <n>      Max findings to validate (default: 10)
   --validate-strategy <mode>      Virtual-SR nav strategy: linear | semantic (default: semantic)
   --check-visibility              Force per-icon contrast check across the profile's visualModes
   --no-check-visibility           Disable per-icon contrast check even if profile declares modes
+  --detect-routes                 Record SPA route changes during analysis
+  --descend-frames                Include iframe accessibility targets; Chromium can recover many cross-origin OOPIFs via CDP
+  --auto-scroll                   Scroll before capture to surface lazy/infinite-scroll content
+  --dismiss-banners               Best-effort dismissal of safe cookie/consent banners
+  --probe-hover                   Hover likely triggers to expose hover-only popup content
+  --walk-tab-order                Record Tab traversal to detect focus-order/focus-trap issues
+  --diff-viewports                Compare desktop and mobile captures for hidden content
   --wait-for-selector <css>       Wait for selector before capturing (for SPAs)
   --wait-time <ms>                Additional wait after page load
   --storage-state <path>          Playwright storageState JSON for authenticated pages
@@ -622,29 +634,75 @@ Dimension weights vary by profile:
 
 ## Diagnostics
 
-Tactual detects and reports when analysis may be unreliable:
+Tactual emits diagnostics for capture reliability, page structure, visual access,
+runtime evidence, ARIA validity, and repeated cost patterns. Warnings are review
+prompts, not automatic conformance failures. Many visual/content checks are
+heuristic and should be confirmed in context before filing a defect.
 
-| Code                        | Level   | Meaning                                                                  |
-| --------------------------- | ------- | ------------------------------------------------------------------------ |
-| `blocked-by-bot-protection` | error   | Cloudflare/bot challenge detected                                        |
-| `empty-page`                | error   | No targets found at all                                                  |
-| `possibly-degraded-content` | warning | Suspiciously few targets for an http page                                |
-| `sparse-content`            | warning | Only 1-4 targets found                                                   |
-| `possible-login-wall`       | warning | Auth-gated content (detects `/login`, `/signin`, `/auth` path redirects) |
-| `possible-cookie-wall`      | info    | Cookie consent may obscure content                                       |
-| `redirect-detected`         | warning | Landed on different domain                                               |
-| `no-headings`               | warning | No heading elements found                                                |
-| `heading-skip`              | warning | Heading hierarchy skips a level (e.g., h1 → h3)                          |
-| `no-landmarks`              | warning | No landmark regions found                                                |
-| `no-skip-link`              | warning | No skip-to-content link on pages with 5+ targets                         |
-| `no-main-landmark`          | warning | Missing `<main>` landmark                                                |
-| `no-banner-landmark`        | info    | Missing `<header>` / banner landmark                                     |
-| `no-contentinfo-landmark`   | info    | Missing `<footer>` / contentinfo landmark                                |
-| `no-nav-landmark`           | info    | Missing `<nav>` / navigation landmark                                    |
-| `structural-summary`        | info    | One-line structural overview (headings, landmarks, skip link)            |
-| `shared-structural-issue`   | warning | Penalty affecting >50% of targets promoted to page-level                 |
-| `landmark-demoted`          | warning | HTML landmark exists but demoted by nesting context                      |
-| `timeout-during-render`     | warning | A `waitForSelector` did not appear in time during MCP capture            |
+| Code | Level | Meaning |
+| --- | --- | --- |
+| `blocked-by-bot-protection` | error | Bot/challenge page detected; captured content is not the intended page. |
+| `empty-page` | error | No targets found at all. |
+| `ok` | info | Capture produced a target set without reliability warnings. |
+| `possibly-degraded-content` | warning | Suspiciously few targets for an HTTP page. |
+| `sparse-content` | warning | Only 1-4 targets found. |
+| `possible-login-wall` | warning | Auth-gated content or login redirect suspected. |
+| `possible-cookie-wall` | info | Cookie consent may obscure content. |
+| `redirect-detected` | info/warning | Capture landed on a different URL or domain. |
+| `timeout-during-render` | warning | A requested render wait did not complete before capture. |
+| `framework-detected` | info | Frontend framework signals were detected during capture. |
+| `spa-route-changes` | info | SPA route changes happened during analysis. |
+| `exploration-no-new-states` | warning | `--explore` ran but did not reveal additional states. |
+| `frames-descended` | info | Iframe descent captured or skipped child frames. |
+| `auto-scrolled` | info | Auto-scroll ran before capture and reports what it surfaced. |
+| `banners-dismissed` | info | Cookie/consent banner dismissal was attempted. |
+| `tab-order-walked` | info/warning | Tab-order walk recorded focus stops; warns on positive `tabindex`. |
+| `viewport-divergence` | warning | Desktop/mobile viewport diff found missing targets, landmarks, or headings. |
+| `no-headings` | warning | No heading elements found. |
+| `heading-skip` | warning | Heading hierarchy skips a level, such as `h1 -> h3`. |
+| `empty-heading` | warning | Heading exists but has no text. |
+| `numeric-heading` | warning | Heading text is only digits, punctuation, or trivial single-character content. |
+| `h1-count` | info/warning | Page has no useful single H1, or has multiple H1s worth reviewing. |
+| `no-landmarks` | warning | No landmark regions found. |
+| `no-main-landmark` | warning | Missing `<main>` landmark. |
+| `no-banner-landmark` | info | Missing `<header>` / banner landmark. |
+| `no-contentinfo-landmark` | info | Missing `<footer>` / contentinfo landmark. |
+| `no-nav-landmark` | info | Missing `<nav>` / navigation landmark. |
+| `landmark-demoted` | warning | HTML landmark exists but is demoted by nesting context. |
+| `structural-summary` | info | One-line structural overview. |
+| `no-skip-link` | warning | No skip-to-content link on pages with 5+ targets. |
+| `broken-skip-link` | warning | Skip-style link points to a missing fragment target. |
+| `skip-link-not-first` | warning | A skip link exists but is not reachable in the first two Tab stops. |
+| `visual-order-divergence` | warning | Visual order appears to diverge from DOM/SR navigation order. |
+| `shared-structural-issue` | warning | A penalty affecting >50% of targets is promoted to page level. |
+| `redundant-tab-stops` | warning | Multiple link targets create repeated Tab stops to the same destination. |
+| `data-flow-dependencies` | info | Explored states reveal controls that become enabled only after prior action. |
+| `form-summary` | info/warning | Summarizes forms and warns when a form appears to lack a submit control. |
+| `missing-autocomplete` | warning | Standard form fields lack useful `autocomplete` tokens or disable them. |
+| `empty-interactive` | warning | Interactive target has no accessible name. |
+| `fake-interactive-elements` | warning | Clickable non-semantic elements are not keyboard/SR reachable. |
+| `cdp-click-listeners` | warning | CDP found click-like listeners on non-interactive elements. |
+| `ambiguous-link-names` | warning | Links with the same accessible name point to different destinations. |
+| `media-without-controls` | warning | Audio/video lacks controls and is not hidden. |
+| `duplicate-id` | warning | Duplicate `id` values can break labels and ARIA references. |
+| `nested-interactive` | warning | Interactive controls are nested inside other interactive controls. |
+| `meta-refresh` | warning | Page auto-refreshes or redirects via meta refresh. |
+| `missing-image-alt` | warning | Images lack `alt` attributes. |
+| `suspicious-image-alt` | warning | Image alt text looks like filler or a filename-like placeholder. |
+| `missing-iframe-title` | warning | Iframes lack a `title` or accessible label. |
+| `missing-html-lang` | warning | `<html lang>` is missing or does not look like a BCP 47 language tag. |
+| `poor-document-title` | warning | Document title is missing, empty, too short, or generic. |
+| `viewport-blocks-zoom` | warning | Viewport meta settings restrict user zoom. |
+| `low-contrast-text` | warning | Interactive text or headings fail WCAG-style text contrast thresholds. |
+| `color-only-conveyance` | warning | Text appears to rely on color alone to convey meaning. |
+| `color-blindness-contrast-fail` | warning | Text loses contrast under simulated color-vision deficiency. |
+| `lang-switch-without-marker` | warning | Text language appears to change without a `lang` marker. |
+| `invalid-aria-role` | warning | Non-standard ARIA role is present. |
+| `unknown-aria-attr` | warning | Unknown `aria-*` attribute is present. |
+| `invalid-aria-attr-value` | warning | ARIA attribute value is outside the allowed value set. |
+| `missing-required-aria-attr` | warning | ARIA role is missing a required state or property. |
+| `aria-naming-prohibited` | warning | Name is applied to a role that prohibits naming. |
+| `unsupported-aria-attr-for-role` | warning | ARIA attribute is not supported on the element's role. |
 
 ## Exploration
 
@@ -713,6 +771,41 @@ Tactual detects when SPA content has rendered before capturing the accessibility
 
 After initial framework detection, Tactual uses convergence-based polling — repeatedly snapshotting the accessibility tree until the target count stabilizes — which works regardless of framework.
 
+For SPA-heavy apps, these opt-in capture helpers are useful:
+
+```bash
+npx tactual analyze-url https://app.example.com \
+  --wait-for-selector "main" \
+  --detect-routes \
+  --auto-scroll \
+  --descend-frames \
+  --diff-viewports
+```
+
+- `--detect-routes` records `pushState`, `replaceState`, `popstate`, and `hashchange` events that happen during analysis.
+- `--auto-scroll` surfaces IntersectionObserver-driven lazy content before capture.
+- `--descend-frames` appends iframe targets with frame URL attribution. Same-origin frames use Playwright's frame-scoped accessibility snapshot; Chromium falls back to CDP for cross-origin OOPIFs when the normal snapshot path is inaccessible. Firefox/WebKit keep the existing skip behavior for inaccessible frames.
+- `--diff-viewports` catches target, landmark, or heading content that disappears between desktop and mobile viewports.
+- `--dismiss-banners`, `--probe-hover`, and `--walk-tab-order` add targeted runtime evidence for common SPA overlays and focus-order bugs.
+
+### Known-pages benchmark
+
+For release evidence against complex public SPA/component-library pages, run:
+
+```bash
+npm run benchmark:known-pages
+```
+
+The script builds the package, runs `analyze-url` with the SPA helper stack
+enabled, and writes `run-results.json`, `summary.json`, and `REPORT.md` under
+`build/known-pages-*`. It is intentionally not a CI gate: public sites change,
+block automation, and serve different content over time. Use the report to spot
+drift and category-level surprises, then use local fixtures or project-owned
+pages for deterministic regression gates. For a bounded smoke run or APG/W3C
+capture-quality probes, call the script directly, for example
+`node scripts/known-pages-corpus.mjs --build --limit 1` or
+`node scripts/known-pages-corpus.mjs --build --include-capture-probes`.
+
 ## Regression Tracking
 
 Compare two analysis runs to catch regressions:
@@ -771,15 +864,23 @@ For MCP usage, `sarif` is the default and recommended format. Use `summaryOnly: 
 
 Tactual includes a calibration framework (`src/calibration/`, exported as `tactual/calibration`) for tuning scoring parameters against ground-truth datasets. See `docs/CALIBRATION.md` for details.
 
+Calibration observations can also include deterministic announcement feedback from OSS review work: record `observedAnnouncement` when you know the tested output, or `observedAnnouncementTokens` when exact phrasing is noisy but role/name/state tokens are clear. Tactual compares those against its modeled announcement for the matched target and reports missing or unexpected tokens. Use `tactual calibration-report` or MCP `calibration_report` to run a dataset against saved `analyze-url --full-json` output and emit `scoringSignals`. Use `tactual observe-announcement` to generate or append announcement-only observations from a saved analysis, or `npm run -- nvda:vm:observe -- ...` in this repo to organize a controlled NVDA VM capture folder. The repo's versioned corpus lives under `calibration/corpus/`; run `npm run calibration:corpus` to audit coverage gates and `npm run calibration:matrix` after `npm run build` to rank reachability tuning work by MAE, bias, variance, and stale sequence-plan drift.
+
+Release readiness and known boundaries are documented in [docs/RELEASE_TEST_MATRIX.md](docs/RELEASE_TEST_MATRIX.md), [docs/LIMITATIONS.md](docs/LIMITATIONS.md), and [docs/NVDA_VM_OBSERVER.md](docs/NVDA_VM_OBSERVER.md).
+
 ## Development
 
 ```bash
 npm install                    # Install dependencies
 npm run build                  # Build with tsup
 npm run test                   # Run unit + integration tests
+npm run test:shard -- --list   # List bounded Vitest release shards
+npm run test:shard -- capture  # Run one bounded Vitest shard
+npm run test:shards            # Run all bounded Vitest shards
 npm run test:benchmark         # Run benchmark suites
 npm run typecheck              # TypeScript type checking
 npm run lint                   # ESLint
+npm run test:release           # Full split release gate
 ```
 
 ## Security
@@ -802,7 +903,7 @@ This is a keyword-based heuristic — it cannot detect semantic deception (e.g.,
 
 ### URL validation
 
-All URLs are validated before navigation. Only `http:`, `https:`, and `file:` schemes are accepted; `javascript:`, `data:`, `blob:`, and `vbscript:` are rejected. URLs with embedded credentials (e.g. `https://user:pass@host/`) are also rejected. Private/internal IP ranges are **not** filtered — running Tactual in an environment with access to internal services is equivalent to letting any other Playwright-driven tool reach them, so treat the URL input as trusted input.
+All URLs are validated before navigation. The CLI accepts `http:`, `https:`, and `file:` schemes so local fixtures work; MCP URL-taking tools accept only `http:` and `https:` to avoid exposing local files through agent-controlled browser navigation. `javascript:`, `data:`, `blob:`, and `vbscript:` are rejected. URLs with embedded credentials (e.g. `https://user:pass@host/`) are also rejected. Private/internal IP ranges are **not** filtered — running Tactual in an environment with access to internal services is equivalent to letting any other Playwright-driven tool reach them, so treat the URL input as trusted input.
 
 ## License
 

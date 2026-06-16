@@ -1,7 +1,7 @@
 /**
  * Pipeline: validate a URL by running Tactual analysis and then driving
  * @guidepup/virtual-screen-reader over the captured DOM to compare
- * predicted-vs-actual navigation cost.
+ * modeled-vs-virtual navigation cost.
  *
  * Shared across CLI (`tactual validate-url`) and MCP (`validate_url`).
  * Surface code parses its own input shape, calls runValidateUrl, and
@@ -40,6 +40,8 @@ export interface ValidateUrlOptions {
   headless?: boolean;
   /** storageState path for authenticated pages. */
   storageState?: string;
+  /** MCP callers set false; CLI/local fixture workflows keep the default true. */
+  allowFileUrls?: boolean;
   /**
    * Whether to reject storageState paths outside the cwd. MCP callers
    * should pass true; CLI callers pass false (user wrote the flag).
@@ -87,7 +89,7 @@ export class ValidateUrlError extends Error {
 export async function runValidateUrl(
   opts: ValidateUrlOptions,
 ): Promise<ValidateUrlResult> {
-  const urlCheck = validateUrl(opts.url);
+  const urlCheck = validateUrl(opts.url, { allowFileUrls: opts.allowFileUrls });
   if (!urlCheck.valid) {
     throw new ValidateUrlError("invalid-url", `Invalid URL: ${urlCheck.error}`);
   }

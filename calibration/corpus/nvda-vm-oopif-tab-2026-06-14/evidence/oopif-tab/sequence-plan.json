@@ -1,0 +1,161 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T16:15:31.133Z",
+  "url": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "tab",
+  "navigation": {
+    "keyName": "Tab",
+    "scancodes": [
+      "0f",
+      "8f"
+    ],
+    "description": "Sequential keyboard Tab traversal through focusable controls."
+  },
+  "state": "first",
+  "maxSteps": 10,
+  "targetCount": 9,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "link:parent-form",
+      "kind": "link",
+      "role": "link",
+      "name": "Parent form",
+      "selector": "getByRole('link', { name: 'Parent form' })",
+      "expectedAnnouncement": "Parent form, link",
+      "expectedTokens": [
+        "parent form",
+        "link"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "link:embedded-checkout",
+      "kind": "link",
+      "role": "link",
+      "name": "Embedded checkout",
+      "selector": "getByRole('link', { name: 'Embedded checkout' })",
+      "expectedAnnouncement": "Embedded checkout, link",
+      "expectedTokens": [
+        "embedded checkout",
+        "link"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "textbox:parent-email",
+      "kind": "formField",
+      "role": "textbox",
+      "name": "Parent email",
+      "selector": "getByRole('textbox', { name: 'Parent email' })",
+      "expectedAnnouncement": "Parent email, edit",
+      "expectedTokens": [
+        "parent email",
+        "edit"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "button:save-parent-account",
+      "kind": "button",
+      "role": "button",
+      "name": "Save parent account",
+      "selector": "getByRole('button', { name: 'Save parent account' })",
+      "expectedAnnouncement": "Save parent account, button",
+      "expectedTokens": [
+        "save parent account",
+        "button"
+      ]
+    },
+    {
+      "index": 5,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.textbox:card-number",
+      "kind": "formField",
+      "role": "textbox",
+      "name": "Card number",
+      "selector": "getByRole('textbox', { name: 'Card number' })",
+      "expectedAnnouncement": "Card number, edit",
+      "expectedTokens": [
+        "card number",
+        "edit"
+      ]
+    },
+    {
+      "index": 6,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.textbox:expiration-date",
+      "kind": "formField",
+      "role": "textbox",
+      "name": "Expiration date",
+      "selector": "getByRole('textbox', { name: 'Expiration date' })",
+      "expectedAnnouncement": "Expiration date, edit",
+      "expectedTokens": [
+        "expiration date",
+        "edit"
+      ]
+    },
+    {
+      "index": 7,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.combobox:billing-country",
+      "kind": "formField",
+      "role": "combobox",
+      "name": "Billing country",
+      "selector": "getByRole('combobox', { name: 'Billing country' })",
+      "expectedAnnouncement": "Billing country, combo box, collapsed",
+      "expectedTokens": [
+        "billing country",
+        "combo box",
+        "collapsed"
+      ]
+    },
+    {
+      "index": 8,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.button:pay-now",
+      "kind": "button",
+      "role": "button",
+      "name": "Pay now",
+      "selector": "getByRole('button', { name: 'Pay now' })",
+      "expectedAnnouncement": "Pay now, button",
+      "expectedTokens": [
+        "pay now",
+        "button"
+      ]
+    },
+    {
+      "index": 9,
+      "mode": "tab",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.button:remember-card",
+      "kind": "button",
+      "role": "button",
+      "name": "Remember card",
+      "selector": "getByRole('button', { name: 'Remember card' })",
+      "expectedAnnouncement": "Remember card, toggle button, not pressed",
+      "expectedTokens": [
+        "remember card",
+        "toggle button",
+        "not pressed"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

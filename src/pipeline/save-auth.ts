@@ -42,6 +42,8 @@ export interface SaveAuthOptions {
   timeout?: number;
   /** MCP callers pass true; CLI passes false (explicit path choice). */
   restrictOutputToCwd?: boolean;
+  /** MCP callers set false; CLI/local fixture workflows keep the default true. */
+  allowFileUrls?: boolean;
   /** File mode for the saved JSON. Defaults to 0o600. */
   fileMode?: number;
   /** Long-lived MCP/server callers can opt into the shared browser pool. */
@@ -73,7 +75,7 @@ export class SaveAuthError extends Error {
 export async function runSaveAuth(
   opts: SaveAuthOptions,
 ): Promise<SaveAuthResult> {
-  const urlCheck = validateUrl(opts.url);
+  const urlCheck = validateUrl(opts.url, { allowFileUrls: opts.allowFileUrls });
   if (!urlCheck.valid) {
     throw new SaveAuthError("invalid-url", `Invalid URL: ${urlCheck.error}`);
   }

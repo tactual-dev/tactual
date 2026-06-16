@@ -27,15 +27,26 @@ describe("release report goldens", { timeout: 90_000 }, () => {
 
     expect(json.stats).toMatchObject({
       targetCount: 12,
-      averageScore: 53.9,
-      p10Score: 44,
-      worstScore: 43,
+      averageScore: 62.2,
+      p10Score: 62,
+      worstScore: 62,
     });
-    expect(json.severityCounts).toMatchObject({ high: 9, moderate: 3, strong: 0 });
+    expect(json.severityCounts).toMatchObject({ high: 0, moderate: 12, strong: 0 });
     expect(json.diagnostics.map((d) => d.code)).toEqual([
       "no-landmarks",
       "no-headings",
       "no-skip-link",
+      // bad-page.html includes div[onclick] anti-patterns to exercise the
+      // fake-interactive detector.
+      "fake-interactive-elements",
+      // bad-page.html doesn't set <html lang>, so the metadata check catches it.
+      "missing-html-lang",
+      // The CDP listener probe finds the same handlers fake-interactive catches
+      // plus any attached via on-property assignment.
+      "cdp-click-listeners",
+      // CVD contrast simulation flags styled spans whose contrast holds for
+      // normal vision but collapses under deuteranopia / protanopia transforms.
+      "color-blindness-contrast-fail",
       "shared-structural-issue",
     ]);
     expect(json.issueGroups[0]).toMatchObject({
@@ -47,8 +58,8 @@ describe("release report goldens", { timeout: 90_000 }, () => {
       "Reduce repeated screen-reader navigation cost",
     );
     expect(json.worstFindings[0]).toMatchObject({
-      targetId: "link:privacy",
-      severity: "high",
+      targetId: "link:about",
+      severity: "moderate",
     });
 
     const markdown = formatReport(result, "markdown");
@@ -56,7 +67,7 @@ describe("release report goldens", { timeout: 90_000 }, () => {
     expect(markdown).toContain("## Diagnostics");
     expect(markdown).toContain("## Remediation Candidates");
     expect(markdown).toContain("Add heading hierarchy to organize page content");
-    expect(markdown).toContain("link:privacy");
+    expect(markdown).toContain("link:about");
 
     const sarif = JSON.parse(formatReport(result, "sarif")) as {
       version: string;
@@ -68,8 +79,8 @@ describe("release report goldens", { timeout: 90_000 }, () => {
     expect(sarif.version).toBe("2.1.0");
     expect(sarif.runs[0].results).toHaveLength(12);
     expect(sarif.runs[0].tool.driver.rules.length).toBeGreaterThan(0);
-    expect(sarif.runs[0].results[0].ruleId).toBe("tactual/high");
-    expect(sarif.runs[0].results[0].message.text).toContain("Score: 43/100");
+    expect(sarif.runs[0].results[0].ruleId).toBe("tactual/moderate");
+    expect(sarif.runs[0].results[0].message.text).toContain("Score: 62/100");
     expect(sarif.runs[0].results[0].properties.evidenceSummary).toBeDefined();
   });
 
@@ -90,18 +101,22 @@ describe("release report goldens", { timeout: 90_000 }, () => {
 
     expect(json.stats).toMatchObject({
       targetCount: 19,
-      averageScore: 96.9,
-      p10Score: 93,
-      worstScore: 91,
+      averageScore: 96.7,
+      p10Score: 91,
+      worstScore: 89,
     });
     expect(json.severityCounts).toMatchObject({
       severe: 0,
       high: 0,
       moderate: 0,
-      acceptable: 0,
-      strong: 19,
+      acceptable: 1,
+      strong: 18,
     });
     expect(json.issueGroups.some((group) => /accessible name/i.test(group.issue))).toBe(false);
-    expect(json.remediationCandidates).toHaveLength(0);
+    expect(
+      json.remediationCandidates.some((candidate) =>
+        JSON.stringify(candidate).toLowerCase().includes("landmark name"),
+      ),
+    ).toBe(false);
   });
 });

@@ -1,0 +1,80 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-structured-heading-shared-2026-06-14",
+  "importedAt": "2026-06-14T10:50:36.309Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "structured-heading",
+      "fixture": "fixtures/calibration-structured-lab.html",
+      "mode": "heading",
+      "status": "passed",
+      "plannedTargets": 4,
+      "matchedTargets": 4,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 15,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-structured-lab.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/calibration-structured-lab.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-structured-lab.html",
+      "analysis": "../analyses/fixtures-calibration-structured-lab.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/structured-heading/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 1,
+    "passed": 1,
+    "failed": 0,
+    "weak": 0,
+    "harnessBlocked": 0,
+    "ingestedCases": 1,
+    "plannedTargets": 4,
+    "matchedTargets": 4,
+    "missingTargets": 0,
+    "unmatchedSpeechBlocks": 15
+  },
+  "scoringSignals": [
+    {
+      "id": "reachability.quick-nav.observed-match",
+      "kind": "observed-reachability",
+      "dimension": "reachability",
+      "status": "confirmed",
+      "confidence": 1,
+      "summary": "4/4 planned target(s) matched observed AT navigation",
+      "scoringImplication": "The calibrated reachable-set model is supported for these fixtures/modes; promote repeated passes into profile-specific quick-nav confidence.",
+      "evidence": {
+        "count": 4,
+        "examples": [
+          "structured-heading:4/4"
+        ]
+      }
+    },
+    {
+      "id": "speech.context-verbosity",
+      "kind": "context-verbosity",
+      "dimension": "reachability",
+      "status": "review",
+      "confidence": 0.75,
+      "summary": "5 structural/context token occurrence(s) observed beyond the modeled announcement",
+      "scoringImplication": "Repeated frame, landmark, region, grouping, autocomplete, and boundary terms are candidates for an AT-specific context verbosity cost.",
+      "evidence": {
+        "count": 5,
+        "examples": [
+          "structured-heading:Native invoice table",
+          "structured-heading:ARIA account grid",
+          "structured-heading:Tree and treegrid widgets",
+          "structured-heading:Structured Widget Calibration Lab"
+        ]
+      }
+    }
+  ]
+}

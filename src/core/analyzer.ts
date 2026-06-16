@@ -10,6 +10,7 @@ import {
 } from "./filter.js";
 import { globToRegex } from "./glob.js";
 import { summarizeEvidence } from "./evidence.js";
+import { analyzeStateFlow } from "./state-flow-analyzer.js";
 import type { ATProfile } from "../profiles/types.js";
 import { VERSION } from "../version.js";
 
@@ -64,6 +65,7 @@ export function analyze(
 
   addRedundantTabStopDiagnostics(diagnostics, filteredStates);
   addSharedCauseDiagnostics(diagnostics, findings);
+  addDataFlowDiagnostic(diagnostics, filteredStates);
   findings = addPageLevelFindingIfEmpty(findings, states, profile);
 
   return buildAnalysisResult(
@@ -83,17 +85,24 @@ function collectCaptureDiagnostics(
   options: AnalyzeOptions,
   filter: AnalysisFilter,
 ): CaptureDiagnostic[] {
-  const allStateDiags = states.map((state) =>
-    diagnoseCapture(
+  const allStateDiags = states.map((state) => ({
+    state,
+    diagnostics: diagnoseCapture(
       state,
       options.requestedUrl ?? options.name ?? state.url,
       options.snapshotText ?? "",
     ),
+  }));
+  const hasHealthyScriptedState = allStateDiags.some(({ state, diagnostics }) =>
+    state.provenance === "scripted" && isHealthyPrimaryCapture(state, diagnostics),
   );
 
   const diagCounts = new Map<string, number>();
   for (const stateDiags of allStateDiags) {
-    for (const diagnostic of stateDiags) {
+    for (const diagnostic of stateDiags.diagnostics) {
+      if (shouldSuppressBranchDiagnostic(diagnostic, stateDiags.state, hasHealthyScriptedState)) {
+        continue;
+      }
       if (diagnostic.code === "ok") continue;
       const key = diagnosticKey(diagnostic);
       diagCounts.set(key, (diagCounts.get(key) ?? 0) + 1);
@@ -103,7 +112,10 @@ function collectCaptureDiagnostics(
   const diagnostics: CaptureDiagnostic[] = [];
   const seenKeys = new Set<string>();
   for (const stateDiags of allStateDiags) {
-    for (const diagnostic of stateDiags) {
+    for (const diagnostic of stateDiags.diagnostics) {
+      if (shouldSuppressBranchDiagnostic(diagnostic, stateDiags.state, hasHealthyScriptedState)) {
+        continue;
+      }
       if (diagnostic.code === "ok") continue;
       const key = diagnosticKey(diagnostic);
       if (seenKeys.has(key)) continue;
@@ -118,6 +130,33 @@ function collectCaptureDiagnostics(
   }
 
   return filterDiagnostics(diagnostics, filter);
+}
+
+function isHealthyPrimaryCapture(state: PageState, diagnostics: CaptureDiagnostic[]): boolean {
+  const unreliableCodes = new Set([
+    "blocked-by-bot-protection",
+    "empty-page",
+    "possibly-degraded-content",
+  ]);
+  return state.targets.length >= 30 && diagnostics.every((d) => !unreliableCodes.has(d.code));
+}
+
+function shouldSuppressBranchDiagnostic(
+  diagnostic: CaptureDiagnostic,
+  state: PageState,
+  hasHealthyScriptedState: boolean,
+): boolean {
+  // `possibly-degraded-content` is calibrated for the page-level capture:
+  // "the browser may have received a stripped-down document." Explored branch
+  // states are often intentionally thin (a menu, palette, or routed docs pane).
+  // When the primary scripted state captured substantial content, promoting a
+  // branch-level thin-state warning makes the whole page look unreliable even
+  // though the low target count came from exploration shape, not page load.
+  return (
+    diagnostic.code === "possibly-degraded-content" &&
+    hasHealthyScriptedState &&
+    state.provenance !== "scripted"
+  );
 }
 
 function diagnosticKey(diagnostic: CaptureDiagnostic): string {
@@ -262,6 +301,29 @@ function addRedundantTabStopDiagnostics(
     affectedCount: savings,
     totalCount: redundantUrls,
     affectedTargetIds: worstTargetIds.slice(0, 5),
+  });
+}
+
+function addDataFlowDiagnostic(
+  diagnostics: CaptureDiagnostic[],
+  filteredStates: PageState[],
+): void {
+  if (filteredStates.length < 2) return;
+  const deps = analyzeStateFlow(filteredStates);
+  if (deps.length === 0) return;
+  const sample = deps
+    .slice(0, 3)
+    .map((d) => `"${d.targetName}"`)
+    .join(", ");
+  const more = deps.length > 3 ? ` (+${deps.length - 3} more)` : "";
+  diagnostics.push({
+    level: "info",
+    code: "data-flow-dependencies",
+    message:
+      `${deps.length} target${deps.length === 1 ? "" : "s"} flipped from disabled to enabled across explored states: ${sample}${more}. ` +
+      `These targets only become operable after some prior interaction — SR users need to know which interaction unlocks them.`,
+    affectedCount: deps.length,
+    affectedTargetIds: deps.slice(0, 5).map((d) => d.targetId),
   });
 }
 

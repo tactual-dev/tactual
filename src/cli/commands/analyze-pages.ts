@@ -46,7 +46,9 @@ export function registerAnalyzePages(program: Command): void {
           (err.message.includes("Cannot find module") ||
             err.message.includes("Cannot find package"))
         ) {
-          console.error("Playwright is required. Install it: npm install playwright");
+          console.error(
+            "Playwright is required but could not be loaded. Reinstall Tactual or run npm install.",
+          );
           process.exit(1);
         }
         throw err;

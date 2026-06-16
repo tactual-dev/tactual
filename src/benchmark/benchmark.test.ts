@@ -1,15 +1,59 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { chromium, type Browser } from "playwright";
+import { createServer, type Server } from "node:http";
+import type { AddressInfo } from "node:net";
 import { resolve } from "path";
 import { existsSync } from "fs";
 import { captureState } from "../playwright/capture.js";
 import { analyze } from "../core/analyzer.js";
 import { genericMobileWebSrV0 } from "../profiles/generic-mobile.js";
 import { formatReport } from "../reporters/index.js";
+import { runAnalyzeUrl } from "../pipeline/analyze-url.js";
 import { runBenchmarkSuite, formatBenchmarkResults } from "./runner.js";
 import { publicFixturesSuite } from "./suites/public-fixtures.js";
 import { stressFixturesSuite } from "./suites/stress-fixtures.js";
 import { multiProfileSuite } from "./suites/multi-profile.js";
+
+const SPA_FRAME_HTML = `<!DOCTYPE html>
+<html><body>
+<main>
+  <h2>Embedded checkout</h2>
+  <div style="height: 850px;">Lazy prelude</div>
+  <div id="lazy-zone" style="height: 40px;"></div>
+</main>
+<script>
+  let added = 0;
+  new IntersectionObserver((entries) => {
+    if (!entries[0].isIntersecting || added) return;
+    added = 1;
+    const button = document.createElement("button");
+    button.textContent = "Authorize embedded payment";
+    document.querySelector("main").appendChild(button);
+  }).observe(document.getElementById("lazy-zone"));
+</script>
+</body></html>`;
+
+function spaShellHtml(frameUrl: string): string {
+  return `<!DOCTYPE html>
+<html><body>
+<main>
+  <h1>Admin shell</h1>
+  <nav aria-label="Workspace navigation">
+    ${Array.from({ length: 16 }, (_, i) => `<a href="#n-${i}">Workspace nav ${i + 1}</a>`).join("\n")}
+  </nav>
+  <button aria-controls="billing-panel" aria-expanded="true">Open billing tools</button>
+  <section id="billing-panel" role="region" aria-label="Billing tools">
+    <button>Rotate invoice token</button>
+  </section>
+  <div role="tablist" aria-label="Account sections">
+    <button role="tab" aria-selected="true">Overview</button>
+    <button role="tab" aria-selected="false">Invoices</button>
+  </div>
+  <iframe src="${frameUrl}" title="Embedded checkout"></iframe>
+</main>
+<script>setTimeout(() => history.replaceState({}, "", "/ready"), 25);</script>
+</body></html>`;
+}
 
 describe("benchmark fixture packaging", () => {
   it("suites resolve fixture files independently of the current working directory", () => {
@@ -59,6 +103,39 @@ describe("benchmarks", { timeout: 120000 }, () => {
     }
 
     expect(result.totalFailed).toBe(0);
+  });
+});
+
+describe("pipeline benchmark coverage", { timeout: 60000 }, () => {
+  it("keeps hard SPA capture helpers working together", async () => {
+    await withSpaBenchmarkServer(async ({ mainUrl, frameUrl }) => {
+      const { result, routeChanges } = await runAnalyzeUrl({
+        url: mainUrl,
+        profileId: "generic-mobile-web-sr-v0",
+        waitForSelector: "main",
+        detectRoutes: true,
+        descendFrames: true,
+        autoScroll: true,
+        checkVisibility: false,
+        timeout: 10000,
+      });
+
+      const names = new Set(result.states[0].targets.map((target) => target.name));
+      expect(names.has("Rotate invoice token")).toBe(true);
+      expect(names.has("Invoices")).toBe(true);
+      expect(names.has("Authorize embedded payment")).toBe(true);
+      expect(
+        result.states[0].targets.some((target) => {
+          const frame = (target as Record<string, unknown>)._frame as
+            | { url?: string }
+            | undefined;
+          return target.name === "Authorize embedded payment" && frame?.url === frameUrl;
+        }),
+      ).toBe(true);
+      expect(routeChanges?.some((event) => event.kind === "replaceState")).toBe(true);
+      expect(result.diagnostics.some((diagnostic) => diagnostic.code === "auto-scrolled")).toBe(true);
+      expect(result.diagnostics.some((diagnostic) => diagnostic.code === "frames-descended")).toBe(true);
+    });
   });
 });
 
@@ -162,3 +239,56 @@ describe("score stability", { timeout: 30000 }, () => {
     expect(md).toContain("| Severity | Count |");
   });
 });
+
+async function withSpaBenchmarkServer<T>(
+  fn: (urls: { mainUrl: string; frameUrl: string }) => Promise<T>,
+): Promise<T> {
+  const frameServer = createServer((req, res) => {
+    if (req.url !== "/frame") {
+      res.writeHead(404);
+      res.end();
+      return;
+    }
+    res.writeHead(200, { "content-type": "text/html" });
+    res.end(SPA_FRAME_HTML);
+  });
+
+  let frameListening = false;
+  let mainServer: Server | undefined;
+  let mainListening = false;
+  try {
+    const frameOrigin = await listenServer(frameServer);
+    frameListening = true;
+    const frameUrl = `${frameOrigin}/frame`;
+    mainServer = createServer((_req, res) => {
+      res.writeHead(200, { "content-type": "text/html" });
+      res.end(spaShellHtml(frameUrl));
+    });
+    const mainOrigin = await listenServer(mainServer);
+    mainListening = true;
+
+    return await fn({ mainUrl: `${mainOrigin}/`, frameUrl });
+  } finally {
+    await Promise.all([
+      mainListening && mainServer ? closeServer(mainServer) : Promise.resolve(),
+      frameListening ? closeServer(frameServer) : Promise.resolve(),
+    ]);
+  }
+}
+
+function listenServer(server: Server): Promise<string> {
+  return new Promise((resolve, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => {
+      server.off("error", reject);
+      const { port } = server.address() as AddressInfo;
+      resolve(`http://127.0.0.1:${port}`);
+    });
+  });
+}
+
+function closeServer(server: Server): Promise<void> {
+  return new Promise((resolve, reject) => {
+    server.close((err) => (err ? reject(err) : resolve()));
+  });
+}

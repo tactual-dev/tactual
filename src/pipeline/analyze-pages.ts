@@ -26,6 +26,8 @@ export interface AnalyzePagesOptions {
   timeout?: number;
   storageState?: string;
   restrictStorageStateToCwd?: boolean;
+  /** MCP callers set false; CLI/local fixture workflows keep the default true. */
+  allowFileUrls?: boolean;
   /** Max URLs to accept. MCP sets 20; CLI leaves undefined. */
   maxUrls?: number;
   /** Long-lived MCP/server callers can opt into the shared browser pool. */
@@ -162,7 +164,7 @@ export async function runAnalyzePages(
     };
 
     for (const url of opts.urls) {
-      const urlCheck = validateUrl(url);
+      const urlCheck = validateUrl(url, { allowFileUrls: opts.allowFileUrls });
       if (!urlCheck.valid) {
         pageResults.push(
           emptyPageResult(url, [`invalid-url: ${urlCheck.error}`]),

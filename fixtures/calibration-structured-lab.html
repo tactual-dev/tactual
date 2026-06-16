@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Structured Widget Calibration Lab</title>
+  <style>
+    body { color: #1f2937; font-family: system-ui, sans-serif; line-height: 1.5; margin: 24px; max-width: 1040px; }
+    table, [role="grid"], [role="treegrid"], [role="tree"] { border: 1px solid #9ca3af; margin: 16px 0; max-width: 760px; }
+    th, td, [role="columnheader"], [role="rowheader"], [role="gridcell"], [role="treeitem"] { border: 1px solid #d1d5db; padding: 8px; }
+    [role="row"] { display: grid; grid-template-columns: 180px 160px 160px; }
+    [role="treeitem"] { display: block; margin-left: calc((var(--level, 1) - 1) * 24px); }
+    button { padding: 6px 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Structured Widget Calibration Lab</h1>
+    <nav aria-label="Structured sections">
+      <a href="#native-table">Native table</a>
+      <a href="#aria-grid">ARIA grid</a>
+      <a href="#treegrid">Treegrid</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="native-table" aria-labelledby="table-heading">
+      <h2 id="table-heading">Native invoice table</h2>
+      <table>
+        <caption>Open invoices by account</caption>
+        <thead>
+          <tr>
+            <th scope="col">Account</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Ada Labs</th>
+            <td>$240</td>
+            <td><button type="button">Review Ada Labs</button></td>
+          </tr>
+          <tr>
+            <th scope="row">Grace Systems</th>
+            <td>$380</td>
+            <td><button type="button">Review Grace Systems</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="aria-grid" aria-labelledby="grid-heading">
+      <h2 id="grid-heading">ARIA account grid</h2>
+      <div role="grid" aria-label="Account review grid" aria-rowcount="3" aria-colcount="3">
+        <div role="row">
+          <div role="columnheader" aria-colindex="1" tabindex="0">Account</div>
+          <div role="columnheader" aria-colindex="2" tabindex="-1">Owner</div>
+          <div role="columnheader" aria-colindex="3" tabindex="-1">Action</div>
+        </div>
+        <div role="row" aria-rowindex="2">
+          <div role="rowheader" aria-colindex="1" tabindex="-1">Northwind</div>
+          <div role="gridcell" aria-colindex="2" tabindex="-1">Ada</div>
+          <div role="gridcell" aria-colindex="3" tabindex="-1"><button type="button">Open Northwind</button></div>
+        </div>
+        <div role="row" aria-rowindex="3">
+          <div role="rowheader" aria-colindex="1" tabindex="-1">Contoso</div>
+          <div role="gridcell" aria-colindex="2" tabindex="-1">Grace</div>
+          <div role="gridcell" aria-colindex="3" tabindex="-1"><button type="button">Open Contoso</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="treegrid" aria-labelledby="treegrid-heading">
+      <h2 id="treegrid-heading">Tree and treegrid widgets</h2>
+      <div role="tree" aria-label="Repository folders">
+        <div role="treeitem" aria-expanded="true" aria-level="1" style="--level: 1" tabindex="0">src</div>
+        <div role="treeitem" aria-level="2" style="--level: 2" tabindex="-1">playwright</div>
+        <div role="treeitem" aria-level="2" style="--level: 2" tabindex="-1">calibration</div>
+      </div>
+
+      <div role="treegrid" aria-label="Expandable accounts" aria-rowcount="3" aria-colcount="3">
+        <div role="row">
+          <div role="columnheader" aria-colindex="1" tabindex="0">Account</div>
+          <div role="columnheader" aria-colindex="2" tabindex="-1">Open items</div>
+          <div role="columnheader" aria-colindex="3" tabindex="-1">Owner</div>
+        </div>
+        <div role="row" aria-level="1" aria-expanded="true">
+          <div role="rowheader" aria-colindex="1" tabindex="-1">Enterprise</div>
+          <div role="gridcell" aria-colindex="2" tabindex="-1">4</div>
+          <div role="gridcell" aria-colindex="3" tabindex="-1">Ada</div>
+        </div>
+        <div role="row" aria-level="2">
+          <div role="rowheader" aria-colindex="1" tabindex="-1">Renewals</div>
+          <div role="gridcell" aria-colindex="2" tabindex="-1">2</div>
+          <div role="gridcell" aria-colindex="3" tabindex="-1">Grace</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

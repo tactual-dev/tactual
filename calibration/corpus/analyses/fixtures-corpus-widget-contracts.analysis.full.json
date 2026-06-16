@@ -1,0 +1,1582 @@
+{
+  "flow": {
+    "id": "flow-1781454329885",
+    "name": "tactual-fixture://fixtures/corpus-widget-contracts.html",
+    "states": [
+      "state-c594db9362aa"
+    ],
+    "profile": "nvda-desktop-v0",
+    "timestamp": 1781454329885
+  },
+  "states": [
+    {
+      "id": "state-c594db9362aa",
+      "url": "tactual-fixture://fixtures/corpus-widget-contracts.html",
+      "route": "/fixtures/corpus-widget-contracts.html",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotHash": "c594db9362aa93260ad8066031aa1ed3de624a6e7ae6d5fdec63ca8eba523079",
+      "canonicalSnapshotHash": "c594db9362aa93260ad8066031aa1ed3de624a6e7ae6d5fdec63ca8eba523079",
+      "_forms": [
+        {
+          "name": "form #1",
+          "fieldCount": 0,
+          "requiredCount": 0,
+          "hasSubmit": false
+        }
+      ],
+      "_docMetadata": {
+        "htmlLang": "en",
+        "title": "Widget Contract Corpus",
+        "zoomRestricted": false,
+        "viewportContent": "width=device-width, initial-scale=1.0"
+      },
+      "_mediaMetadata": {
+        "totalImages": 0,
+        "imagesMissingAlt": 0,
+        "imagesSuspiciousAlt": [],
+        "totalIframes": 0,
+        "iframesMissingTitle": []
+      },
+      "_structuralIssues": {
+        "duplicateIds": [],
+        "nestedInteractive": [],
+        "metaRefresh": false
+      },
+      "_mediaControls": {
+        "mediaWithoutControls": [],
+        "h1Count": 1
+      },
+      "_ariaIssues": {
+        "invalidRoles": [],
+        "unknownAttrs": [],
+        "invalidAttrValues": [],
+        "missingRequiredAttrs": [
+          {
+            "kind": "invalid-role",
+            "selector": "div#good-option-a.option",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          },
+          {
+            "kind": "invalid-role",
+            "selector": "div#good-option-b.option",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          },
+          {
+            "kind": "invalid-role",
+            "selector": "div.option",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          },
+          {
+            "kind": "invalid-role",
+            "selector": "div.option",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          },
+          {
+            "kind": "invalid-role",
+            "selector": "div.option",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          },
+          {
+            "kind": "invalid-role",
+            "selector": "div.option",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          },
+          {
+            "kind": "invalid-role",
+            "selector": "div.option",
+            "name": "option",
+            "value": "aria-selected",
+            "hint": "role=\"option\" requires aria-selected"
+          }
+        ],
+        "prohibitedNaming": [],
+        "unsupportedAttrsForRole": []
+      },
+      "_cvdContrast": {
+        "byType": {
+          "deuteranopia": {
+            "count": 0,
+            "samples": []
+          },
+          "protanopia": {
+            "count": 0,
+            "samples": []
+          },
+          "tritanopia": {
+            "count": 2,
+            "samples": [
+              {
+                "selector": "a",
+                "text": "Widgets",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Forms",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              }
+            ]
+          }
+        },
+        "totalUniqueElements": 2
+      },
+      "interactiveHash": "56fc9e526feb4b9145a5e375ca03e9d6aa22042be167d1e05fdd4c01c1da956b",
+      "openOverlays": [],
+      "targets": [
+        {
+          "id": "banner-1",
+          "kind": "landmark",
+          "role": "banner",
+          "name": "",
+          "selector": "header",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "heading:widget-contract-corpus",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Widget Contract Corpus",
+          "selector": "getByRole('heading', { name: 'Widget Contract Corpus' })",
+          "headingLevel": 1,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "1"
+          },
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "navigation:primary",
+          "kind": "landmark",
+          "role": "navigation",
+          "name": "Primary",
+          "selector": "getByRole('navigation', { name: 'Primary' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:widgets",
+          "kind": "link",
+          "role": "link",
+          "name": "Widgets",
+          "selector": "getByRole('link', { name: 'Widgets' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Primary"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Primary"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/corpus-widget-contracts.html#widgets",
+          "_rect": {
+            "x": 8,
+            "y": 80,
+            "width": 53,
+            "height": 17
+          }
+        },
+        {
+          "id": "link:forms",
+          "kind": "link",
+          "role": "link",
+          "name": "Forms",
+          "selector": "getByRole('link', { name: 'Forms' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Primary"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Primary"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/corpus-widget-contracts.html#forms",
+          "_rect": {
+            "x": 65,
+            "y": 80,
+            "width": 41,
+            "height": 17
+          }
+        },
+        {
+          "id": "main-6",
+          "kind": "landmark",
+          "role": "main",
+          "name": "",
+          "selector": "main",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "region:composite-widgets",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Composite Widgets",
+          "selector": "getByRole('region', { name: 'Composite Widgets' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:composite-widgets",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Composite Widgets",
+          "selector": "getByRole('heading', { name: 'Composite Widgets' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite Widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Composite Widgets"
+              }
+            ]
+          }
+        },
+        {
+          "id": "combobox:good-combobox",
+          "kind": "formField",
+          "role": "combobox",
+          "name": "Good combobox",
+          "selector": "getByRole('combobox', { name: 'Good combobox' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite Widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Composite Widgets"
+              }
+            ]
+          },
+          "_domId": "good-combo",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "good-options",
+                "role": "listbox",
+                "name": "Alpha\n        Beta"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-controls": "good-options",
+            "aria-expanded": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-expanded"
+          ],
+          "_rect": {
+            "x": 119,
+            "y": 165,
+            "width": 177,
+            "height": 21
+          },
+          "_htmlTag": "input",
+          "_inputType": "text",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "combobox:broken-combobox",
+          "kind": "formField",
+          "role": "combobox",
+          "name": "Broken combobox",
+          "selector": "getByRole('combobox', { name: 'Broken combobox' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite Widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Composite Widgets"
+              }
+            ]
+          },
+          "_domId": "broken-combo",
+          "_ariaRelationships": {
+            "controls": [
+              {
+                "id": "broken-options",
+                "role": "listbox",
+                "name": "One\n        Two"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-controls": "broken-options",
+            "aria-expanded": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-expanded"
+          ],
+          "_rect": {
+            "x": 423,
+            "y": 165,
+            "width": 177,
+            "height": 21
+          },
+          "_htmlTag": "input",
+          "_inputType": "text",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "listbox:broken-listbox",
+          "kind": "formField",
+          "role": "listbox",
+          "name": "Broken listbox",
+          "selector": "getByRole('listbox', { name: 'Broken listbox' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite Widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Composite Widgets"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 8,
+            "y": 186,
+            "width": 1264,
+            "height": 78
+          },
+          "_htmlTag": "div"
+        },
+        {
+          "id": "button:broken-disclosure",
+          "kind": "button",
+          "role": "button",
+          "name": "Broken disclosure",
+          "selector": "getByRole('button', { name: 'Broken disclosure' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Composite Widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Composite Widgets"
+              }
+            ]
+          },
+          "_domId": "broken-disclosure",
+          "_attributeValues": {
+            "aria-controls": "missing-panel",
+            "aria-expanded": "false"
+          },
+          "_attributes": [
+            "aria-controls",
+            "aria-expanded"
+          ],
+          "_rect": {
+            "x": 8,
+            "y": 264,
+            "width": 122,
+            "height": 21
+          }
+        },
+        {
+          "id": "region:form-errors",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Form Errors",
+          "selector": "getByRole('region', { name: 'Form Errors' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:form-errors",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Form Errors",
+          "selector": "getByRole('heading', { name: 'Form Errors' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Form Errors"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Form Errors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "textbox:broken-custom-field",
+          "kind": "formField",
+          "role": "textbox",
+          "name": "Broken custom field",
+          "selector": "getByRole('textbox', { name: 'Broken custom field' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Form Errors"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Form Errors"
+              }
+            ]
+          },
+          "_attributeValues": {
+            "aria-invalid": "true"
+          },
+          "_attributes": [
+            "aria-invalid"
+          ],
+          "_rect": {
+            "x": 8,
+            "y": 352,
+            "width": 270,
+            "height": 34
+          },
+          "_htmlTag": "div"
+        }
+      ],
+      "timestamp": 1781454329875,
+      "provenance": "scripted"
+    }
+  ],
+  "findings": [
+    {
+      "targetId": "combobox:broken-combobox",
+      "selector": "getByRole('combobox', { name: 'Broken combobox' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 8,
+        "overall": 69
+      },
+      "severity": "moderate",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Good combobox",
+        "nextItem: Broken combobox"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Composite Widgets",
+          "nextItem: Good combobox",
+          "nextItem: Broken combobox"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextItem: Good combobox",
+          "nextItem: Broken combobox"
+        ],
+        [
+          "nextHeading: Form Errors",
+          "previousItem: Form Errors",
+          "previousItem: Broken disclosure",
+          "previousItem: Broken listbox",
+          "previousItem: Broken combobox"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: combobox: Combobox behavior varies across AT/browser pairs — verify critical flows with target assistive technologies",
+        "Cross-AT divergence (HIGH confidence for native <select>, MEDIUM for ARIA combobox): VoiceOver announces this combobox as 'popup button' with state implicit in the role text, while NVDA/JAWS announce 'combo box, expanded/collapsed' explicitly. Verify with real testing if this control is on a critical path."
+      ],
+      "suggestedFixes": [
+        "Verify this combobox with the target AT/browser pairs on critical flows; prefer native <select>, <datalist>, or a simpler pattern when custom filtering is not required."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "combobox:good-combobox",
+      "selector": "getByRole('combobox', { name: 'Good combobox' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 45,
+        "recovery": 100,
+        "interopRisk": 8,
+        "overall": 70
+      },
+      "severity": "moderate",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Good combobox"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Composite Widgets",
+          "nextItem: Good combobox"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextItem: Good combobox"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextItem: Good combobox"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: combobox: Combobox behavior varies across AT/browser pairs — verify critical flows with target assistive technologies",
+        "Cross-AT divergence (HIGH confidence for native <select>, MEDIUM for ARIA combobox): VoiceOver announces this combobox as 'popup button' with state implicit in the role text, while NVDA/JAWS announce 'combo box, expanded/collapsed' explicitly. Verify with real testing if this control is on a critical path."
+      ],
+      "suggestedFixes": [
+        "Verify this combobox with the target AT/browser pairs on critical flows; prefer native <select>, <datalist>, or a simpler pattern when custom filtering is not required."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "listbox:broken-listbox",
+      "selector": "getByRole('listbox', { name: 'Broken listbox' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 50,
+        "recovery": 100,
+        "interopRisk": 5,
+        "overall": 75
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "previousItem: Broken disclosure",
+        "previousItem: Broken listbox"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Composite Widgets",
+          "nextItem: Good combobox",
+          "nextItem: Broken combobox",
+          "nextItem: Broken listbox"
+        ],
+        [
+          "nextHeading: Form Errors",
+          "previousItem: Form Errors",
+          "previousItem: Broken disclosure",
+          "previousItem: Broken listbox"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextItem: Good combobox",
+          "nextItem: Broken combobox",
+          "nextItem: Broken listbox"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: listbox: Listbox selection announcement inconsistent across AT"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "banner-1",
+      "selector": "header",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 87,
+        "reachability": 90,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 92
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextItem: banner"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "previousItem: banner"
+        ],
+        [
+          "groupEntry: Primary",
+          "previousItem: Widget Contract Corpus",
+          "previousItem: banner"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: banner: Minor: some AT don't announce banner landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.7
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.7
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:forms",
+      "selector": "getByRole('link', { name: 'Forms' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Forms"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Primary",
+          "nextLandmark: main",
+          "previousItem: Forms"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextItem: Primary",
+          "nextLandmark: main",
+          "previousItem: Forms"
+        ],
+        [
+          "nextHeading: Composite Widgets",
+          "previousItem: Composite Widgets",
+          "previousItem: main",
+          "previousItem: Forms"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:broken-disclosure",
+      "selector": "getByRole('button', { name: 'Broken disclosure' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Broken disclosure"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form Errors",
+          "previousItem: Form Errors",
+          "previousItem: Broken disclosure"
+        ],
+        [
+          "nextHeading: Composite Widgets",
+          "previousItem: Composite Widgets",
+          "nextLandmark: Form Errors",
+          "previousItem: Broken disclosure"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextHeading: Form Errors",
+          "previousItem: Form Errors",
+          "previousItem: Broken disclosure"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:widgets",
+      "selector": "getByRole('link', { name: 'Widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 98,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Widgets"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Primary",
+          "nextItem: Widgets"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextItem: Primary",
+          "nextItem: Widgets"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Primary",
+          "nextItem: Widgets"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "main-6",
+      "selector": "main",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Primary",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextItem: Primary",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Composite Widgets",
+          "previousItem: Composite Widgets",
+          "previousItem: main"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "textbox:broken-custom-field",
+      "selector": "getByRole('textbox', { name: 'Broken custom field' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Broken custom field"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Form Errors",
+          "nextItem: Broken custom field"
+        ],
+        [
+          "nextHeading: Composite Widgets",
+          "nextHeading: Form Errors",
+          "nextItem: Broken custom field"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextHeading: Form Errors",
+          "nextItem: Broken custom field"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:widget-contract-corpus",
+      "selector": "getByRole('heading', { name: 'Widget Contract Corpus' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Widget Contract Corpus"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Widget Contract Corpus"
+        ],
+        [
+          "groupEntry: Primary",
+          "previousItem: Widget Contract Corpus"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "navigation:primary",
+      "selector": "getByRole('navigation', { name: 'Primary' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Primary"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextItem: Primary"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Primary"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:composite-widgets",
+      "selector": "getByRole('region', { name: 'Composite Widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Composite Widgets",
+          "previousItem: Composite Widgets"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "previousItem: Composite Widgets"
+        ],
+        [
+          "groupEntry: Primary",
+          "nextLandmark: main",
+          "nextItem: Composite Widgets"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:composite-widgets",
+      "selector": "getByRole('heading', { name: 'Composite Widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Composite Widgets"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Widget Contract Corpus",
+          "nextHeading: Composite Widgets"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:form-errors",
+      "selector": "getByRole('region', { name: 'Form Errors' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form Errors",
+          "previousItem: Form Errors"
+        ],
+        [
+          "nextHeading: Composite Widgets",
+          "previousItem: Composite Widgets",
+          "nextLandmark: Form Errors"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextHeading: Form Errors",
+          "previousItem: Form Errors"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:form-errors",
+      "selector": "getByRole('heading', { name: 'Form Errors' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Form Errors"
+        ],
+        [
+          "nextHeading: Composite Widgets",
+          "nextHeading: Form Errors"
+        ],
+        [
+          "nextHeading: Widget Contract Corpus",
+          "nextHeading: Composite Widgets",
+          "nextHeading: Form Errors"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "warning",
+      "code": "no-skip-link",
+      "message": "No skip-to-content link found. Keyboard and screen-reader users must Tab through all navigation elements to reach the main content. A skip link is the single most impactful fix for navigation cost. Concrete savings: a skip link would bypass 2 controls (29% of page interactive targets).",
+      "affectedCount": 2,
+      "totalCount": 7
+    },
+    {
+      "level": "info",
+      "code": "no-contentinfo-landmark",
+      "message": "No <footer> / contentinfo landmark found. Adding <footer> helps screen-reader users locate site-wide links."
+    },
+    {
+      "level": "info",
+      "code": "structural-summary",
+      "message": "Structural overview: 3 headings · landmarks: main, banner, navigation · missing: contentinfo · skip link: no · 15 total targets"
+    },
+    {
+      "level": "info",
+      "code": "form-summary",
+      "message": "Forms on this page: form #1 (0 fields, no submit button).",
+      "affectedCount": 1
+    },
+    {
+      "level": "warning",
+      "code": "missing-required-aria-attr",
+      "message": "7 elements declare an ARIA role but lack the role's required state/property: div#good-option-a.option (role=\"option\" missing aria-selected); div#good-option-b.option (role=\"option\" missing aria-selected); div.option (role=\"option\" missing aria-selected) (+4 more). Without these attributes, screen readers can't communicate the widget's current state to the user (e.g. a checkbox with no aria-checked is unreadable).",
+      "affectedCount": 7
+    },
+    {
+      "level": "warning",
+      "code": "color-blindness-contrast-fail",
+      "message": "2 text elements lose contrast under simulated color-vision deficiency (tritanopia: 2). Examples (tritanopia): a \"Widgets\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Forms\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1). Approximately 8% of male and 0.5% of female users have a CVD; choose color combinations whose contrast survives the deuteranopia/protanopia/tritanopia transforms or rely on luminance + non-color cues.",
+      "affectedCount": 2
+    },
+    {
+      "level": "warning",
+      "code": "landmark-demoted",
+      "message": "demoted-form-1: Element with role=\"form\" exists but has no aria-label — it is not exposed as a landmark without a label. Fix: add aria-label to make it a landmark."
+    }
+  ],
+  "metadata": {
+    "version": "0.5.0",
+    "profile": "nvda-desktop-v0",
+    "duration": 11,
+    "stateCount": 1,
+    "targetCount": 15,
+    "findingCount": 15,
+    "edgeCount": 72
+  }
+}

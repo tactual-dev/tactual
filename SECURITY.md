@@ -15,7 +15,7 @@ Tactual launches a Chromium browser, navigates to user-specified URLs, and captu
 ### URLs and navigation
 
 - **URL validation** (`src/core/url-validation.ts`): Blocks `javascript:`, `data:`, `vbscript:`, `blob:` schemes. Blocks embedded credentials (phishing vectors). Requires hostname for HTTP/HTTPS URLs.
-- **`file:///` URLs**: Allowed by design (local fixture testing). Playwright's browser sandbox limits file system access to what Chromium permits.
+- **`file:///` URLs**: CLI and library workflows allow `file:` URLs by design for local fixture testing and offline reports. MCP URL-taking tools reject `file:` URLs because MCP callers are commonly agent/editor integrations, and local browser navigation would otherwise become a local file disclosure primitive. Playwright's browser sandbox still limits file system access to what Chromium permits when a trusted CLI/library user opts into `file:` navigation.
 
 ### CSS selector input
 
@@ -58,15 +58,16 @@ Hosted MCP checklist:
 
 | Version | Supported |
 |---|---|
-| 0.4.x | Yes (current) |
+| 0.5.x | Yes (current) |
+| 0.4.x | No |
 | 0.3.x | No |
 | 0.2.x | No |
 | 0.1.x | No |
 
 ## Dependencies
 
-Runtime dependencies: `commander` (CLI parsing), `zod` (schema validation), `@modelcontextprotocol/sdk` (MCP server).
+Runtime dependencies: `commander` (CLI parsing), `zod` (schema validation), `@modelcontextprotocol/sdk` (MCP server), and `playwright` (browser automation library).
 
-Peer dependencies (optional): `playwright` (browser automation).
+Optional dependencies: `jsdom` and `@guidepup/virtual-screen-reader` for virtual screen-reader validation workflows.
 
 Run `npm audit` to check for known vulnerabilities in the dependency tree.

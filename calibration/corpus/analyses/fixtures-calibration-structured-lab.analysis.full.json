@@ -1,0 +1,6074 @@
+{
+  "flow": {
+    "id": "flow-1781424795618",
+    "name": "tactual-fixture://fixtures/calibration-structured-lab.html",
+    "states": [
+      "state-3d8141f12186"
+    ],
+    "profile": "nvda-desktop-v0",
+    "timestamp": 1781424795618
+  },
+  "states": [
+    {
+      "id": "state-3d8141f12186",
+      "url": "tactual-fixture://fixtures/calibration-structured-lab.html",
+      "route": "/fixtures/calibration-structured-lab.html",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotHash": "3d8141f12186589cd8d397708f24f22addb76b02559cf6a28c08a2f489d3bb17",
+      "canonicalSnapshotHash": "5e6cb3c4be48f7befe441705656421779ddc050b45f5f33061bc514cf53de1ff",
+      "_docMetadata": {
+        "htmlLang": "en",
+        "title": "Structured Widget Calibration Lab",
+        "zoomRestricted": false,
+        "viewportContent": "width=device-width, initial-scale=1.0"
+      },
+      "_mediaMetadata": {
+        "totalImages": 0,
+        "imagesMissingAlt": 0,
+        "imagesSuspiciousAlt": [],
+        "totalIframes": 0,
+        "iframesMissingTitle": []
+      },
+      "_structuralIssues": {
+        "duplicateIds": [],
+        "nestedInteractive": [],
+        "metaRefresh": false
+      },
+      "_mediaControls": {
+        "mediaWithoutControls": [],
+        "h1Count": 1
+      },
+      "_cvdContrast": {
+        "byType": {
+          "deuteranopia": {
+            "count": 0,
+            "samples": []
+          },
+          "protanopia": {
+            "count": 0,
+            "samples": []
+          },
+          "tritanopia": {
+            "count": 3,
+            "samples": [
+              {
+                "selector": "a",
+                "text": "Native table",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "ARIA grid",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Treegrid",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              }
+            ]
+          }
+        },
+        "totalUniqueElements": 3
+      },
+      "interactiveHash": "31747d1f6c2d75ccfe7a9aaf90f5774eb9e7009582f3514db9aac3d94486d9c9",
+      "openOverlays": [],
+      "targets": [
+        {
+          "id": "banner-1",
+          "kind": "landmark",
+          "role": "banner",
+          "name": "",
+          "selector": "header",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "heading:structured-widget-calibration-lab",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Structured Widget Calibration Lab",
+          "selector": "getByRole('heading', { name: 'Structured Widget Calibration Lab' })",
+          "headingLevel": 1,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "1"
+          },
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "navigation:structured-sections",
+          "kind": "landmark",
+          "role": "navigation",
+          "name": "Structured sections",
+          "selector": "getByRole('navigation', { name: 'Structured sections' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:native-table",
+          "kind": "link",
+          "role": "link",
+          "name": "Native table",
+          "selector": "getByRole('link', { name: 'Native table' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Structured sections"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Structured sections"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-structured-lab.html#native-table",
+          "_rect": {
+            "x": 24,
+            "y": 94,
+            "width": 85,
+            "height": 21
+          }
+        },
+        {
+          "id": "link:aria-grid",
+          "kind": "link",
+          "role": "link",
+          "name": "ARIA grid",
+          "selector": "getByRole('link', { name: 'ARIA grid' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Structured sections"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Structured sections"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-structured-lab.html#aria-grid",
+          "_rect": {
+            "x": 113,
+            "y": 94,
+            "width": 67,
+            "height": 21
+          }
+        },
+        {
+          "id": "link:treegrid",
+          "kind": "link",
+          "role": "link",
+          "name": "Treegrid",
+          "selector": "getByRole('link', { name: 'Treegrid' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Structured sections"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Structured sections"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-structured-lab.html#treegrid",
+          "_rect": {
+            "x": 185,
+            "y": 94,
+            "width": 58,
+            "height": 21
+          }
+        },
+        {
+          "id": "main-7",
+          "kind": "landmark",
+          "role": "main",
+          "name": "",
+          "selector": "main",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "region:native-invoice-table",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Native invoice table",
+          "selector": "getByRole('region', { name: 'Native invoice table' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:native-invoice-table",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Native invoice table",
+          "selector": "getByRole('heading', { name: 'Native invoice table' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Native invoice table"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              }
+            ]
+          }
+        },
+        {
+          "id": "table:open-invoices-by-account",
+          "kind": "other",
+          "role": "table",
+          "name": "Open invoices by account",
+          "selector": "getByRole('table', { name: 'Open invoices by account' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Native invoice table"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              }
+            ]
+          }
+        },
+        {
+          "id": "row:account-amount-status",
+          "kind": "other",
+          "role": "row",
+          "name": "Account Amount Status",
+          "selector": "getByRole('row', { name: 'Account Amount Status' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "rowgroup"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:account",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Account",
+          "selector": "getByRole('columnheader', { name: 'Account' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Account Amount Status"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Account Amount Status"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:amount",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Amount",
+          "selector": "getByRole('columnheader', { name: 'Amount' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Account Amount Status"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Account Amount Status"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:status",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Status",
+          "selector": "getByRole('columnheader', { name: 'Status' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Account Amount Status"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Account Amount Status"
+              }
+            ]
+          }
+        },
+        {
+          "id": "row:ada-labs-240-review-ada-labs",
+          "kind": "other",
+          "role": "row",
+          "name": "Ada Labs $240 Review Ada Labs",
+          "selector": "getByRole('row', { name: 'Ada Labs $240 Review Ada Labs' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "rowgroup"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowheader:ada-labs",
+          "kind": "other",
+          "role": "rowheader",
+          "name": "Ada Labs",
+          "selector": "getByRole('rowheader', { name: 'Ada Labs' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Ada Labs $240 Review Ada Labs"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Ada Labs $240 Review Ada Labs"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cell:240",
+          "kind": "other",
+          "role": "cell",
+          "name": "$240",
+          "selector": "getByRole('cell', { name: '$240' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Ada Labs $240 Review Ada Labs"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Ada Labs $240 Review Ada Labs"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cell:review-ada-labs",
+          "kind": "other",
+          "role": "cell",
+          "name": "Review Ada Labs",
+          "selector": "getByRole('cell', { name: 'Review Ada Labs' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Ada Labs $240 Review Ada Labs"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Ada Labs $240 Review Ada Labs"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:review-ada-labs",
+          "kind": "button",
+          "role": "button",
+          "name": "Review Ada Labs",
+          "selector": "getByRole('button', { name: 'Review Ada Labs' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 6,
+            "parent": {
+              "role": "cell",
+              "name": "Review Ada Labs"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Ada Labs $240 Review Ada Labs"
+              },
+              {
+                "role": "cell",
+                "name": "Review Ada Labs"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 245,
+            "y": 273,
+            "width": 123,
+            "height": 31
+          }
+        },
+        {
+          "id": "row:grace-systems-380-review-grace-systems",
+          "kind": "other",
+          "role": "row",
+          "name": "Grace Systems $380 Review Grace Systems",
+          "selector": "getByRole('row', { name: 'Grace Systems $380 Review Grace Systems' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "rowgroup"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowheader:grace-systems",
+          "kind": "other",
+          "role": "rowheader",
+          "name": "Grace Systems",
+          "selector": "getByRole('rowheader', { name: 'Grace Systems' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Grace Systems $380 Review Grace Systems"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Grace Systems $380 Review Grace Systems"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cell:380",
+          "kind": "other",
+          "role": "cell",
+          "name": "$380",
+          "selector": "getByRole('cell', { name: '$380' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Grace Systems $380 Review Grace Systems"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Grace Systems $380 Review Grace Systems"
+              }
+            ]
+          }
+        },
+        {
+          "id": "cell:review-grace-systems",
+          "kind": "other",
+          "role": "cell",
+          "name": "Review Grace Systems",
+          "selector": "getByRole('cell', { name: 'Review Grace Systems' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "row",
+              "name": "Grace Systems $380 Review Grace Systems"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Grace Systems $380 Review Grace Systems"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:review-grace-systems",
+          "kind": "button",
+          "role": "button",
+          "name": "Review Grace Systems",
+          "selector": "getByRole('button', { name: 'Review Grace Systems' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 6,
+            "parent": {
+              "role": "cell",
+              "name": "Review Grace Systems"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Native invoice table"
+              },
+              {
+                "role": "table",
+                "name": "Open invoices by account"
+              },
+              {
+                "role": "rowgroup"
+              },
+              {
+                "role": "row",
+                "name": "Grace Systems $380 Review Grace Systems"
+              },
+              {
+                "role": "cell",
+                "name": "Review Grace Systems"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 245,
+            "y": 324,
+            "width": 159,
+            "height": 31
+          }
+        },
+        {
+          "id": "region:aria-account-grid",
+          "kind": "landmark",
+          "role": "region",
+          "name": "ARIA account grid",
+          "selector": "getByRole('region', { name: 'ARIA account grid' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:aria-account-grid",
+          "kind": "heading",
+          "role": "heading",
+          "name": "ARIA account grid",
+          "selector": "getByRole('heading', { name: 'ARIA account grid' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "ARIA account grid"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              }
+            ]
+          }
+        },
+        {
+          "id": "grid:account-review-grid",
+          "kind": "other",
+          "role": "grid",
+          "name": "Account review grid",
+          "selector": "getByRole('grid', { name: 'Account review grid' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "ARIA account grid"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              }
+            ]
+          }
+        },
+        {
+          "id": "row:account-owner-action",
+          "kind": "other",
+          "role": "row",
+          "name": "Account Owner Action",
+          "selector": "getByRole('row', { name: 'Account Owner Action' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "grid",
+              "name": "Account review grid"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:account-2",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Account",
+          "selector": "getByRole('columnheader', { name: 'Account' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Owner Action"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Account Owner Action"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:owner",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Owner",
+          "selector": "getByRole('columnheader', { name: 'Owner' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Owner Action"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Account Owner Action"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:action",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Action",
+          "selector": "getByRole('columnheader', { name: 'Action' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Owner Action"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Account Owner Action"
+              }
+            ]
+          }
+        },
+        {
+          "id": "row:northwind-ada-open-northwind",
+          "kind": "other",
+          "role": "row",
+          "name": "Northwind Ada Open Northwind",
+          "selector": "getByRole('row', { name: 'Northwind Ada Open Northwind' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "grid",
+              "name": "Account review grid"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowheader:northwind",
+          "kind": "other",
+          "role": "rowheader",
+          "name": "Northwind",
+          "selector": "getByRole('rowheader', { name: 'Northwind' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Northwind Ada Open Northwind"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Northwind Ada Open Northwind"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:ada",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "Ada",
+          "selector": "getByRole('gridcell', { name: 'Ada' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Northwind Ada Open Northwind"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Northwind Ada Open Northwind"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:open-northwind",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "Open Northwind",
+          "selector": "getByRole('gridcell', { name: 'Open Northwind' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Northwind Ada Open Northwind"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Northwind Ada Open Northwind"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:open-northwind",
+          "kind": "button",
+          "role": "button",
+          "name": "Open Northwind",
+          "selector": "getByRole('button', { name: 'Open Northwind' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "gridcell",
+              "name": "Open Northwind"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Northwind Ada Open Northwind"
+              },
+              {
+                "role": "gridcell",
+                "name": "Open Northwind"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 374,
+            "y": 495,
+            "width": 116,
+            "height": 31
+          }
+        },
+        {
+          "id": "row:contoso-grace-open-contoso",
+          "kind": "other",
+          "role": "row",
+          "name": "Contoso Grace Open Contoso",
+          "selector": "getByRole('row', { name: 'Contoso Grace Open Contoso' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "grid",
+              "name": "Account review grid"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowheader:contoso",
+          "kind": "other",
+          "role": "rowheader",
+          "name": "Contoso",
+          "selector": "getByRole('rowheader', { name: 'Contoso' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Contoso Grace Open Contoso"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Contoso Grace Open Contoso"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:grace",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "Grace",
+          "selector": "getByRole('gridcell', { name: 'Grace' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Contoso Grace Open Contoso"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Contoso Grace Open Contoso"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:open-contoso",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "Open Contoso",
+          "selector": "getByRole('gridcell', { name: 'Open Contoso' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Contoso Grace Open Contoso"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Contoso Grace Open Contoso"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:open-contoso",
+          "kind": "button",
+          "role": "button",
+          "name": "Open Contoso",
+          "selector": "getByRole('button', { name: 'Open Contoso' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 5,
+            "parent": {
+              "role": "gridcell",
+              "name": "Open Contoso"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "ARIA account grid"
+              },
+              {
+                "role": "grid",
+                "name": "Account review grid"
+              },
+              {
+                "role": "row",
+                "name": "Contoso Grace Open Contoso"
+              },
+              {
+                "role": "gridcell",
+                "name": "Open Contoso"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 374,
+            "y": 544,
+            "width": 106,
+            "height": 31
+          }
+        },
+        {
+          "id": "region:tree-and-treegrid-widgets",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Tree and treegrid widgets",
+          "selector": "getByRole('region', { name: 'Tree and treegrid widgets' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:tree-and-treegrid-widgets",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Tree and treegrid widgets",
+          "selector": "getByRole('heading', { name: 'Tree and treegrid widgets' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Tree and treegrid widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              }
+            ]
+          }
+        },
+        {
+          "id": "tree:repository-folders",
+          "kind": "other",
+          "role": "tree",
+          "name": "Repository folders",
+          "selector": "getByRole('tree', { name: 'Repository folders' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Tree and treegrid widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              }
+            ]
+          }
+        },
+        {
+          "id": "treeitem:playwright",
+          "kind": "other",
+          "role": "treeitem",
+          "name": "playwright",
+          "selector": "getByRole('treeitem', { name: 'playwright' })",
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tree",
+              "name": "Repository folders"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "tree",
+                "name": "Repository folders"
+              }
+            ]
+          }
+        },
+        {
+          "id": "treeitem:calibration",
+          "kind": "other",
+          "role": "treeitem",
+          "name": "calibration",
+          "selector": "getByRole('treeitem', { name: 'calibration' })",
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "tree",
+              "name": "Repository folders"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "tree",
+                "name": "Repository folders"
+              }
+            ]
+          }
+        },
+        {
+          "id": "treegrid:expandable-accounts",
+          "kind": "other",
+          "role": "treegrid",
+          "name": "Expandable accounts",
+          "selector": "getByRole('treegrid', { name: 'Expandable accounts' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Tree and treegrid widgets"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              }
+            ]
+          }
+        },
+        {
+          "id": "row:account-open-items-owner",
+          "kind": "other",
+          "role": "row",
+          "name": "Account Open items Owner",
+          "selector": "getByRole('row', { name: 'Account Open items Owner' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "treegrid",
+              "name": "Expandable accounts"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:account-3",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Account",
+          "selector": "getByRole('columnheader', { name: 'Account' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Open items Owner"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Account Open items Owner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:open-items",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Open items",
+          "selector": "getByRole('columnheader', { name: 'Open items' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Open items Owner"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Account Open items Owner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "columnheader:owner-2",
+          "kind": "other",
+          "role": "columnheader",
+          "name": "Owner",
+          "selector": "getByRole('columnheader', { name: 'Owner' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Open items Owner"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Account Open items Owner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowheader:enterprise",
+          "kind": "other",
+          "role": "rowheader",
+          "name": "Enterprise",
+          "selector": "getByRole('rowheader', { name: 'Enterprise' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Open items Owner"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Account Open items Owner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:4",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "4",
+          "selector": "getByRole('gridcell', { name: '4' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Open items Owner"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Account Open items Owner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:ada-2",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "Ada",
+          "selector": "getByRole('gridcell', { name: 'Ada' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Account Open items Owner"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Account Open items Owner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "row:renewals-2-grace",
+          "kind": "other",
+          "role": "row",
+          "name": "Renewals 2 Grace",
+          "selector": "getByRole('row', { name: 'Renewals 2 Grace' })",
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "treegrid",
+              "name": "Expandable accounts"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              }
+            ]
+          }
+        },
+        {
+          "id": "rowheader:renewals",
+          "kind": "other",
+          "role": "rowheader",
+          "name": "Renewals",
+          "selector": "getByRole('rowheader', { name: 'Renewals' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Renewals 2 Grace"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Renewals 2 Grace"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:2",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "2",
+          "selector": "getByRole('gridcell', { name: '2' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Renewals 2 Grace"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Renewals 2 Grace"
+              }
+            ]
+          }
+        },
+        {
+          "id": "gridcell:grace-2",
+          "kind": "other",
+          "role": "gridcell",
+          "name": "Grace",
+          "selector": "getByRole('gridcell', { name: 'Grace' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 4,
+            "parent": {
+              "role": "row",
+              "name": "Renewals 2 Grace"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Tree and treegrid widgets"
+              },
+              {
+                "role": "treegrid",
+                "name": "Expandable accounts"
+              },
+              {
+                "role": "row",
+                "name": "Renewals 2 Grace"
+              }
+            ]
+          }
+        }
+      ],
+      "timestamp": 1781424795608,
+      "provenance": "scripted"
+    }
+  ],
+  "findings": [
+    {
+      "targetId": "treegrid:expandable-accounts",
+      "selector": "getByRole('treegrid', { name: 'Expandable accounts' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 75,
+        "recovery": 100,
+        "interopRisk": 12,
+        "overall": 78
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: treegrid: Treegrid combines tree + grid problems — very low cross-AT support"
+      ],
+      "suggestedFixes": [
+        "Verify role=\"treegrid\" with target AT/browser pairs; consider a simpler or native pattern if support is inconsistent on critical flows."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "tree:repository-folders",
+      "selector": "getByRole('tree', { name: 'Repository folders' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 75,
+        "recovery": 100,
+        "interopRisk": 10,
+        "overall": 80
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Repository folders"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: tree: Tree widget navigation model poorly supported outside of JAWS"
+      ],
+      "suggestedFixes": [
+        "Verify role=\"tree\" with target AT/browser pairs; consider a simpler or native pattern if support is inconsistent on critical flows."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "grid:account-review-grid",
+      "selector": "getByRole('grid', { name: 'Account review grid' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 75,
+        "recovery": 100,
+        "interopRisk": 9,
+        "overall": 81
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Account review grid"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: grid: Grid navigation (arrow keys for cells) not consistently supported"
+      ],
+      "suggestedFixes": [
+        "Verify role=\"grid\" with target AT/browser pairs; consider a simpler or native pattern if support is inconsistent on critical flows."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "treeitem:playwright",
+      "selector": "getByRole('treeitem', { name: 'playwright' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 75,
+        "recovery": 100,
+        "interopRisk": 10,
+        "overall": 81
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: treeitem: Tree item expand/collapse and level announcement varies widely"
+      ],
+      "suggestedFixes": [
+        "Verify role=\"treeitem\" with target AT/browser pairs; consider a simpler or native pattern if support is inconsistent on critical flows."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "treeitem:calibration",
+      "selector": "getByRole('treeitem', { name: 'calibration' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 75,
+        "recovery": 100,
+        "interopRisk": 10,
+        "overall": 81
+      },
+      "severity": "acceptable",
+      "actionType": "pattern-review",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: treeitem: Tree item expand/collapse and level announcement varies widely"
+      ],
+      "suggestedFixes": [
+        "Verify role=\"treeitem\" with target AT/browser pairs; consider a simpler or native pattern if support is inconsistent on critical flows."
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:2",
+      "selector": "getByRole('gridcell', { name: '2' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 61,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 86
+      },
+      "severity": "acceptable",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner",
+        "... (6 more steps)"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (11 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (12 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (13 more steps)"
+        ]
+      ],
+      "penalties": [
+        "14 sequential items must be traversed on the best path"
+      ],
+      "suggestedFixes": [
+        "Add skip navigation or restructure content to reduce linear traversal"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:grace-2",
+      "selector": "getByRole('gridcell', { name: 'Grace' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 58,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 87
+      },
+      "severity": "acceptable",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner",
+        "... (7 more steps)"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (12 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (13 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (14 more steps)"
+        ]
+      ],
+      "penalties": [
+        "15 sequential items must be traversed on the best path"
+      ],
+      "suggestedFixes": [
+        "Add skip navigation or restructure content to reduce linear traversal"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "rowheader:renewals",
+      "selector": "getByRole('rowheader', { name: 'Renewals' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 64,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 89
+      },
+      "severity": "acceptable",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner",
+        "... (5 more steps)"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (10 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (11 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (12 more steps)"
+        ]
+      ],
+      "penalties": [
+        "13 sequential items must be traversed on the best path"
+      ],
+      "suggestedFixes": [
+        "Add skip navigation or restructure content to reduce linear traversal"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:renewals-2-grace",
+      "selector": "getByRole('row', { name: 'Renewals 2 Grace' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 67,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 90
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner",
+        "... (4 more steps)"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (9 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (10 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (11 more steps)"
+        ]
+      ],
+      "penalties": [
+        "12 sequential items must be traversed on the best path"
+      ],
+      "suggestedFixes": [
+        "Add skip navigation or restructure content to reduce linear traversal"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:4",
+      "selector": "getByRole('gridcell', { name: '4' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 74,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 91
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner",
+        "... (2 more steps)"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (7 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (8 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (9 more steps)"
+        ]
+      ],
+      "penalties": [
+        "10 sequential items must be traversed on the best path"
+      ],
+      "suggestedFixes": [
+        "Add skip navigation or restructure content to reduce linear traversal"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "banner-1",
+      "selector": "header",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 87,
+        "reachability": 90,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 92
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextItem: banner"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "previousItem: banner"
+        ],
+        [
+          "groupEntry: Structured sections",
+          "previousItem: Structured Widget Calibration Lab",
+          "previousItem: banner"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: banner: Minor: some AT don't announce banner landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.7
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.7
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:ada-2",
+      "selector": "getByRole('gridcell', { name: 'Ada' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 71,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 92
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner",
+        "... (3 more steps)"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (8 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (9 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (10 more steps)"
+        ]
+      ],
+      "penalties": [
+        "11 sequential items must be traversed on the best path"
+      ],
+      "suggestedFixes": [
+        "Add skip navigation or restructure content to reduce linear traversal"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "rowheader:enterprise",
+      "selector": "getByRole('rowheader', { name: 'Enterprise' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 77,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 94
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner",
+        "... (1 more steps)"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (6 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (7 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (8 more steps)"
+        ]
+      ],
+      "penalties": [
+        "9 sequential items must be traversed on the best path"
+      ],
+      "suggestedFixes": [
+        "Add skip navigation or restructure content to reduce linear traversal"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:aria-grid",
+      "selector": "getByRole('link', { name: 'ARIA grid' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 87,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 95
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Native table",
+        "nextItem: ARIA grid"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextItem: Native table",
+          "nextItem: ARIA grid"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextItem: Native table",
+          "nextItem: ARIA grid"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Structured sections",
+          "nextItem: Native table",
+          "nextItem: ARIA grid"
+        ]
+      ],
+      "penalties": [
+        "Target is not efficiently reachable via heading or landmark navigation"
+      ],
+      "suggestedFixes": [
+        "Add a heading or landmark near this target to enable skip navigation"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:owner-2",
+      "selector": "getByRole('columnheader', { name: 'Owner' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 81,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 95
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items",
+        "nextItem: Owner"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (5 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (6 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (7 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:native-table",
+      "selector": "getByRole('link', { name: 'Native table' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 89,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 96
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Native table"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextItem: Native table"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextItem: Native table"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Structured sections",
+          "nextItem: Native table"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:open-items",
+      "selector": "getByRole('columnheader', { name: 'Open items' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 96
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account",
+        "nextItem: Open items"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (4 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (5 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (6 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:treegrid",
+      "selector": "getByRole('link', { name: 'Treegrid' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Treegrid"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "previousItem: main",
+          "previousItem: Treegrid"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:ada-labs-240-review-ada-labs",
+      "selector": "getByRole('row', { name: 'Ada Labs $240 Review Ada Labs' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 88,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open invoices by account",
+        "nextItem: Account Amount Status",
+        "nextItem: Account",
+        "nextItem: Amount",
+        "nextItem: Status",
+        "nextItem: Ada Labs $240 Review Ada Labs"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account",
+          "nextItem: Amount",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account",
+          "... (3 more steps)"
+        ],
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "previousItem: Review Ada Labs",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:northwind-ada-open-northwind",
+      "selector": "getByRole('row', { name: 'Northwind Ada Open Northwind' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 89,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "nextFormField: Open Northwind",
+        "previousItem: Open Northwind",
+        "previousItem: Ada",
+        "previousItem: Northwind",
+        "previousItem: Northwind Ada Open Northwind"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account",
+          "nextItem: Owner",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account",
+          "... (3 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "... (4 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:account-3",
+      "selector": "getByRole('columnheader', { name: 'Account' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 88,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner",
+        "nextItem: Account"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (3 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (4 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (5 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "main-7",
+      "selector": "main",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "previousItem: main"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "table:open-invoices-by-account",
+      "selector": "getByRole('table', { name: 'Open invoices by account' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open invoices by account"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:amount",
+      "selector": "getByRole('columnheader', { name: 'Amount' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open invoices by account",
+        "nextItem: Account Amount Status",
+        "nextItem: Account",
+        "nextItem: Amount"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account",
+          "nextItem: Amount"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account",
+          "... (1 more steps)"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:status",
+      "selector": "getByRole('columnheader', { name: 'Status' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 91,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open invoices by account",
+        "nextItem: Account Amount Status",
+        "nextItem: Account",
+        "nextItem: Amount",
+        "nextItem: Status"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account",
+          "nextItem: Amount",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account",
+          "... (2 more steps)"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "rowheader:ada-labs",
+      "selector": "getByRole('rowheader', { name: 'Ada Labs' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 91,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Treegrid",
+        "nextControl: Review Ada Labs",
+        "previousItem: Review Ada Labs",
+        "previousItem: $240",
+        "previousItem: Ada Labs"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "previousItem: Review Ada Labs",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account",
+          "nextItem: Amount",
+          "... (3 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "cell:240",
+      "selector": "getByRole('cell', { name: '$240' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Treegrid",
+        "nextControl: Review Ada Labs",
+        "previousItem: Review Ada Labs",
+        "previousItem: $240"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "previousItem: Review Ada Labs",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "previousItem: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "rowheader:grace-systems",
+      "selector": "getByRole('rowheader', { name: 'Grace Systems' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "previousItem: Review Grace Systems",
+        "previousItem: $380",
+        "previousItem: Grace Systems"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "previousItem: Review Grace Systems",
+          "previousItem: $380",
+          "... (1 more steps)"
+        ],
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "nextItem: Grace Systems $380 Review Grace Systems",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "previousItem: Review Grace Systems",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:review-grace-systems",
+      "selector": "getByRole('button', { name: 'Review Grace Systems' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:owner",
+      "selector": "getByRole('columnheader', { name: 'Owner' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Account review grid",
+        "nextItem: Account Owner Action",
+        "nextItem: Account",
+        "nextItem: Owner"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account",
+          "nextItem: Owner"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:action",
+      "selector": "getByRole('columnheader', { name: 'Action' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 91,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Account review grid",
+        "nextItem: Account Owner Action",
+        "nextItem: Account",
+        "nextItem: Owner",
+        "nextItem: Action"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account",
+          "nextItem: Owner",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "rowheader:northwind",
+      "selector": "getByRole('rowheader', { name: 'Northwind' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 91,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "nextFormField: Open Northwind",
+        "previousItem: Open Northwind",
+        "previousItem: Ada",
+        "previousItem: Northwind"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "previousItem: Open Northwind",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "... (3 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (4 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:ada",
+      "selector": "getByRole('gridcell', { name: 'Ada' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "nextFormField: Open Northwind",
+        "previousItem: Open Northwind",
+        "previousItem: Ada"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "previousItem: Open Northwind",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "rowheader:contoso",
+      "selector": "getByRole('rowheader', { name: 'Contoso' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 93,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "nextFormField: Open Northwind",
+        "nextItem: Contoso Grace Open Contoso",
+        "nextItem: Contoso"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "nextItem: Contoso Grace Open Contoso",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:open-contoso",
+      "selector": "getByRole('button', { name: 'Open Contoso' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Open Contoso"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets",
+          "previousItem: Open Contoso"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "previousItem: Tree and treegrid widgets",
+          "previousItem: Open Contoso"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:account-open-items-owner",
+      "selector": "getByRole('row', { name: 'Account Open items Owner' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 91,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Repository folders",
+        "nextItem: playwright",
+        "nextItem: calibration",
+        "nextItem: Expandable accounts",
+        "nextItem: Account Open items Owner"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "nextItem: calibration",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "nextItem: playwright",
+          "... (3 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "nextItem: Repository folders",
+          "... (4 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:account-amount-status",
+      "selector": "getByRole('row', { name: 'Account Amount Status' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open invoices by account",
+        "nextItem: Account Amount Status"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:account",
+      "selector": "getByRole('columnheader', { name: 'Account' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open invoices by account",
+        "nextItem: Account Amount Status",
+        "nextItem: Account"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "nextItem: Account"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextItem: Open invoices by account",
+          "nextItem: Account Amount Status",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "cell:review-ada-labs",
+      "selector": "getByRole('cell', { name: 'Review Ada Labs' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Treegrid",
+        "nextControl: Review Ada Labs",
+        "previousItem: Review Ada Labs"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "previousItem: Review Ada Labs"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "previousItem: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:review-ada-labs",
+      "selector": "getByRole('button', { name: 'Review Ada Labs' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Treegrid",
+        "nextControl: Review Ada Labs"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "previousItem: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:grace-systems-380-review-grace-systems",
+      "selector": "getByRole('row', { name: 'Grace Systems $380 Review Grace Systems' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Treegrid",
+        "nextControl: Review Ada Labs",
+        "nextItem: Grace Systems $380 Review Grace Systems"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "nextItem: Grace Systems $380 Review Grace Systems"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections",
+          "nextLandmark: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "previousItem: main",
+          "previousItem: Treegrid",
+          "nextControl: Review Ada Labs",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "cell:380",
+      "selector": "getByRole('cell', { name: '$380' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "previousItem: Review Grace Systems",
+        "previousItem: $380"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "previousItem: Review Grace Systems",
+          "previousItem: $380"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "previousItem: Review Grace Systems",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "cell:review-grace-systems",
+      "selector": "getByRole('cell', { name: 'Review Grace Systems' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "previousItem: Review Grace Systems"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "previousItem: Review Grace Systems"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "previousItem: Review Grace Systems"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:account-owner-action",
+      "selector": "getByRole('row', { name: 'Account Owner Action' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Account review grid",
+        "nextItem: Account Owner Action"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "columnheader:account-2",
+      "selector": "getByRole('columnheader', { name: 'Account' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Account review grid",
+        "nextItem: Account Owner Action",
+        "nextItem: Account"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "nextItem: Account"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextItem: Account review grid",
+          "nextItem: Account Owner Action",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:open-northwind",
+      "selector": "getByRole('gridcell', { name: 'Open Northwind' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "nextFormField: Open Northwind",
+        "previousItem: Open Northwind"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "previousItem: Open Northwind"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:open-northwind",
+      "selector": "getByRole('button', { name: 'Open Northwind' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "nextFormField: Open Northwind"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "row:contoso-grace-open-contoso",
+      "selector": "getByRole('row', { name: 'Contoso Grace Open Contoso' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Review Grace Systems",
+        "nextFormField: Open Northwind",
+        "nextItem: Contoso Grace Open Contoso"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "nextItem: Contoso Grace Open Contoso"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "nextFormField: Open Northwind",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "previousItem: Review Grace Systems",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:grace",
+      "selector": "getByRole('gridcell', { name: 'Grace' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Open Contoso",
+        "previousItem: Open Contoso",
+        "previousItem: Grace"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets",
+          "previousItem: Open Contoso",
+          "previousItem: Open Contoso",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "previousItem: Tree and treegrid widgets",
+          "previousItem: Open Contoso",
+          "... (2 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets",
+          "... (3 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "gridcell:open-contoso",
+      "selector": "getByRole('gridcell', { name: 'Open Contoso' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 97,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Open Contoso",
+        "previousItem: Open Contoso"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets",
+          "previousItem: Open Contoso",
+          "previousItem: Open Contoso"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "previousItem: Tree and treegrid widgets",
+          "previousItem: Open Contoso",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:structured-widget-calibration-lab",
+      "selector": "getByRole('heading', { name: 'Structured Widget Calibration Lab' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Structured Widget Calibration Lab"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Structured Widget Calibration Lab"
+        ],
+        [
+          "groupEntry: Structured sections",
+          "previousItem: Structured Widget Calibration Lab"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "navigation:structured-sections",
+      "selector": "getByRole('navigation', { name: 'Structured sections' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Structured sections"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextItem: Structured sections"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Structured sections"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:native-invoice-table",
+      "selector": "getByRole('region', { name: 'Native invoice table' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table"
+        ],
+        [
+          "groupEntry: Structured sections",
+          "nextLandmark: main",
+          "nextItem: Native invoice table"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:native-invoice-table",
+      "selector": "getByRole('heading', { name: 'Native invoice table' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Native invoice table"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:aria-account-grid",
+      "selector": "getByRole('region', { name: 'ARIA account grid' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "previousItem: Native invoice table",
+          "nextLandmark: ARIA account grid"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:aria-account-grid",
+      "selector": "getByRole('heading', { name: 'ARIA account grid' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:tree-and-treegrid-widgets",
+      "selector": "getByRole('region', { name: 'Tree and treegrid widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets",
+          "previousItem: Tree and treegrid widgets"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "previousItem: ARIA account grid",
+          "nextLandmark: Tree and treegrid widgets"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:tree-and-treegrid-widgets",
+      "selector": "getByRole('heading', { name: 'Tree and treegrid widgets' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets"
+        ],
+        [
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets"
+        ],
+        [
+          "nextHeading: Structured Widget Calibration Lab",
+          "nextHeading: Native invoice table",
+          "nextHeading: ARIA account grid",
+          "nextHeading: Tree and treegrid widgets"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "warning",
+      "code": "no-skip-link",
+      "message": "No skip-to-content link found. Keyboard and screen-reader users must Tab through all navigation elements to reach the main content. A skip link is the single most impactful fix for navigation cost. Concrete savings: a skip link would bypass 3 controls (43% of page interactive targets).",
+      "affectedCount": 3,
+      "totalCount": 7
+    },
+    {
+      "level": "info",
+      "code": "no-contentinfo-landmark",
+      "message": "No <footer> / contentinfo landmark found. Adding <footer> helps screen-reader users locate site-wide links."
+    },
+    {
+      "level": "info",
+      "code": "structural-summary",
+      "message": "Structural overview: 4 headings · landmarks: main, banner, navigation · missing: contentinfo · skip link: no · 58 total targets"
+    },
+    {
+      "level": "warning",
+      "code": "color-blindness-contrast-fail",
+      "message": "3 text elements lose contrast under simulated color-vision deficiency (tritanopia: 3). Examples (tritanopia): a \"Native table\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"ARIA grid\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Treegrid\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1). Approximately 8% of male and 0.5% of female users have a CVD; choose color combinations whose contrast survives the deuteranopia/protanopia/tritanopia transforms or rely on luminance + non-color cues.",
+      "affectedCount": 3
+    }
+  ],
+  "metadata": {
+    "version": "0.5.0",
+    "profile": "nvda-desktop-v0",
+    "duration": 23,
+    "stateCount": 1,
+    "targetCount": 58,
+    "findingCount": 58,
+    "edgeCount": 164
+  }
+}

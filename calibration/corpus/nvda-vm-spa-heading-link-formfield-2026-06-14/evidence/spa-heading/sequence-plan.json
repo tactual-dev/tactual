@@ -1,0 +1,66 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T10:19:26.839Z",
+  "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "heading",
+  "navigation": {
+    "keyName": "h",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "23",
+      "a3"
+    ],
+    "description": "NVDA browse-mode next-heading quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 4,
+  "targetCount": 2,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "heading",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "heading:spa-route-calibration-lab",
+      "kind": "heading",
+      "role": "heading",
+      "name": "SPA Route Calibration Lab",
+      "selector": "getByRole('heading', { name: 'SPA Route Calibration Lab' })",
+      "expectedAnnouncement": "SPA Route Calibration Lab, heading, level 1",
+      "expectedTokens": [
+        "spa route calibration lab",
+        "heading",
+        "level 1"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "heading",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "heading:overview-route",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Overview route",
+      "selector": "getByRole('heading', { name: 'Overview route' })",
+      "expectedAnnouncement": "Overview route, heading, level 2",
+      "expectedTokens": [
+        "overview route",
+        "heading",
+        "level 2"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

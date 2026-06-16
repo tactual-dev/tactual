@@ -25,7 +25,7 @@ describe("compareSimulatorToAriaAt", () => {
     expect(summary.byAT.nvda.matched).toBe(1);
   });
 
-  it("flags a mismatch when prediction text isn't in actual output", () => {
+  it("flags a mismatch when prediction text isn't in tested output", () => {
     const cases: AriaAtCase[] = [
       {
         pattern: "checkbox",
@@ -62,7 +62,7 @@ describe("compareSimulatorToAriaAt", () => {
       },
     ];
     const summary = compareSimulatorToAriaAt(cases);
-    // "Home" and "link" are both in the actual output, so this matches
+    // "Home" and "link" are both in the tested output, so this matches
     expect(summary.matched).toBe(1);
   });
 

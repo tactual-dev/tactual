@@ -25,7 +25,9 @@ export const stressFixturesSuite: BenchmarkSuite = {
       source: { type: "file", path: fixturePath("stress-large-page.html") },
       profile: "generic-mobile-web-sr-v0",
       assertions: [
-        { type: "targetCountInRange", min: 100, max: 500 },
+        // Structured table roles are intentionally counted now: the large
+        // fixture has 50 rows x 5 cells plus row/header/table containers.
+        { type: "targetCountInRange", min: 100, max: 650 },
         { type: "hasEdges" },
         { type: "averageScoreInRange", min: 50, max: 100 },
         {

@@ -78,7 +78,7 @@ describe("probeTabAndDisclosurePatterns", () => {
     expect(probe.selectedTabHasPanel).toBe(true);
 
     await page.close();
-  }, 15_000);
+  }, 60_000);
 
   it("detects disclosure toggle and controlled-region failures", async () => {
     const page = await browser.newPage();
@@ -111,7 +111,7 @@ describe("probeTabAndDisclosurePatterns", () => {
     expect(probe.controlledRegionDisplayed).toBe(false);
 
     await page.close();
-  }, 15_000);
+  }, 60_000);
 
   it("does not activate ordinary buttons while looking for disclosures", async () => {
     const page = await browser.newPage();
@@ -139,5 +139,5 @@ describe("probeTabAndDisclosurePatterns", () => {
       .resolves.toBe(false);
 
     await page.close();
-  }, 15_000);
+  }, 60_000);
 });

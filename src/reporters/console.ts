@@ -6,6 +6,7 @@ import { summarize, type DetailedFinding, type IssueGroup, type RemediationCandi
 // ---------------------------------------------------------------------------
 
 const isColorSupported = process.stdout.isTTY === true && !process.env.NO_COLOR;
+const CONSOLE_WIDTH = clamp(process.stdout.columns ?? 100, 80, 120);
 
 const c = {
   reset: isColorSupported ? "\x1b[0m" : "",
@@ -81,9 +82,11 @@ export function formatConsole(result: AnalysisResult, options?: { maxDetailedFin
     lines.push("");
     for (const d of s.diagnostics) {
       if (d.level === "error") {
-        lines.push(`  ${c.bgRed}${c.white}${c.bold} ERROR ${c.reset} ${d.message}`);
+        lines.push(
+          ...wrapConsoleLine(d.message, `  ${c.bgRed}${c.white}${c.bold} ERROR ${c.reset} `),
+        );
       } else {
-        lines.push(`  ${c.yellow}Warning:${c.reset} ${d.message}`);
+        lines.push(...wrapConsoleLine(d.message, `  ${c.yellow}Warning:${c.reset} `));
       }
     }
   }
@@ -196,6 +199,49 @@ function formatIssueGroup(lines: string[], g: IssueGroup): void {
   }
 }
 
+function wrapConsoleLine(message: string, firstPrefix: string): string[] {
+  const prefixLength = visibleLength(firstPrefix);
+  const followPrefix = " ".repeat(prefixLength);
+  const words = message.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
+  let current = firstPrefix;
+  let currentVisible = prefixLength;
+
+  for (const word of words) {
+    const wordLength = visibleLength(word);
+    const separator = currentVisible > prefixLength ? " " : "";
+    const nextVisible = currentVisible + separator.length + wordLength;
+    if (nextVisible > CONSOLE_WIDTH && currentVisible > prefixLength) {
+      lines.push(current);
+      current = `${followPrefix}${word}`;
+      currentVisible = followPrefix.length + wordLength;
+    } else {
+      current += `${separator}${word}`;
+      currentVisible = nextVisible;
+    }
+  }
+
+  if (current.trim().length > 0) lines.push(current);
+  return lines;
+}
+
+function visibleLength(value: string): number {
+  let length = 0;
+  for (let i = 0; i < value.length; i++) {
+    if (value.charCodeAt(i) === 27 && value[i + 1] === "[") {
+      i += 2;
+      while (i < value.length && value[i] !== "m") i++;
+      continue;
+    }
+    length++;
+  }
+  return length;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
+}
+
 function formatRemediationCandidate(lines: string[], candidate: RemediationCandidate): void {
   const uplift = candidate.estimatedScoreUplift
     ? `${c.dim} · ~${candidate.estimatedScoreUplift} score pts${c.reset}`
@@ -290,7 +336,14 @@ function compactPathForConsole(path: string[]): string {
     nextLandmark: ";",
     nextLink: "K",
     nextButton: "B",
+    nextFormField: "F",
     nextControl: "Tab",
+    rotor: "Rotor",
+    touchExplore: "Touch",
+    relationshipJump: "rel",
+    activeDescendant: "active",
+    formsMode: "Forms",
+    compositeNavigation: "Arrow",
     groupEntry: "→",
     groupExit: "←",
     activate: "Enter",
@@ -309,7 +362,12 @@ function compactPathForConsole(path: string[]): string {
     const last = compacted[compacted.length - 1];
     // Only collapse actions where the name is incidental (Tab ×3 over different
     // items is meaningful; H "Cart" carries the target name explicitly).
-    const collapsible = p.action === "nextItem" || p.action === "nextControl";
+    const collapsible =
+      p.action === "nextItem" ||
+      p.action === "nextControl" ||
+      p.action === "nextFormField" ||
+      p.action === "nextButton" ||
+      p.action === "compositeNavigation";
     if (last && collapsible && last.action === p.action) {
       last.count++;
       last.name = p.name; // keep the last name as the landing point

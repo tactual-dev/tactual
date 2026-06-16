@@ -1,0 +1,79 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T10:29:52.530Z",
+  "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "link",
+  "navigation": {
+    "keyName": "k",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "25",
+      "a5"
+    ],
+    "description": "NVDA browse-mode next-link quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 4,
+  "targetCount": 3,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "link",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "link:overview",
+      "kind": "link",
+      "role": "link",
+      "name": "Overview",
+      "selector": "getByRole('link', { name: 'Overview' })",
+      "expectedAnnouncement": "Overview, link",
+      "expectedTokens": [
+        "overview",
+        "link"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "link",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "link:orders",
+      "kind": "link",
+      "role": "link",
+      "name": "Orders",
+      "selector": "getByRole('link', { name: 'Orders' })",
+      "expectedAnnouncement": "Orders, link",
+      "expectedTokens": [
+        "orders",
+        "link"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "link",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "link:settings",
+      "kind": "link",
+      "role": "link",
+      "name": "Settings",
+      "selector": "getByRole('link', { name: 'Settings' })",
+      "expectedAnnouncement": "Settings, link",
+      "expectedTokens": [
+        "settings",
+        "link"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

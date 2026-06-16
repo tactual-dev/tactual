@@ -46,6 +46,15 @@ export const voiceoverIosV0: ATProfile = {
     groupExit: 1.8,
     // No first-letter type-ahead on VoiceOver mobile
     firstLetter: 100,
+    nextFormField: 1.3,
+    nextButton: 1.3,
+    nextLandmark: 1.3,
+    rotor: 1.7,
+    touchExplore: 1.5,
+    relationshipJump: 1.5,
+    activeDescendant: 1.2,
+    formsMode: 1.8,
+    compositeNavigation: 1.2,
   },
 
   weights: {

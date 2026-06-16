@@ -1,0 +1,98 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T10:01:54.744Z",
+  "url": "tactual-fixture://fixtures/calibration-structured-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "heading",
+  "navigation": {
+    "keyName": "h",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "23",
+      "a3"
+    ],
+    "description": "NVDA browse-mode next-heading quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 6,
+  "targetCount": 4,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "heading",
+      "stateId": "state-3d8141f12186",
+      "id": "heading:structured-widget-calibration-lab",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Structured Widget Calibration Lab",
+      "selector": "getByRole('heading', { name: 'Structured Widget Calibration Lab' })",
+      "expectedAnnouncement": "Structured Widget Calibration Lab, heading, level 1",
+      "expectedTokens": [
+        "structured widget calibration lab",
+        "heading",
+        "level 1"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "heading",
+      "stateId": "state-3d8141f12186",
+      "id": "heading:native-invoice-table",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Native invoice table",
+      "selector": "getByRole('heading', { name: 'Native invoice table' })",
+      "expectedAnnouncement": "Native invoice table, heading, level 2",
+      "expectedTokens": [
+        "native invoice table",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "heading",
+      "stateId": "state-3d8141f12186",
+      "id": "heading:aria-account-grid",
+      "kind": "heading",
+      "role": "heading",
+      "name": "ARIA account grid",
+      "selector": "getByRole('heading', { name: 'ARIA account grid' })",
+      "expectedAnnouncement": "ARIA account grid, heading, level 2",
+      "expectedTokens": [
+        "aria account grid",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "heading",
+      "stateId": "state-3d8141f12186",
+      "id": "heading:tree-and-treegrid-widgets",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Tree and treegrid widgets",
+      "selector": "getByRole('heading', { name: 'Tree and treegrid widgets' })",
+      "expectedAnnouncement": "Tree and treegrid widgets, heading, level 2",
+      "expectedTokens": [
+        "tree and treegrid widgets",
+        "heading",
+        "level 2"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

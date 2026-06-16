@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dialog Calibration Lab</title>
+  <style>
+    body { color: #1f2937; font-family: system-ui, sans-serif; line-height: 1.5; margin: 24px; max-width: 920px; }
+    header, main, section, footer { margin-block: 20px; }
+    button, input, select, textarea { display: block; margin: 6px 0 14px; max-width: 360px; padding: 6px 8px; }
+    .dialog-shell { border: 2px solid #374151; padding: 18px; width: min(560px, 100%); }
+    .help { color: #4b5563; margin-top: -8px; }
+    .inline { display: inline-block; margin-right: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Dialog Calibration Lab</h1>
+    <nav aria-label="Dialog sections">
+      <a href="#active-dialog">Active dialog</a>
+      <a href="#background-controls">Background controls</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="active-dialog" role="dialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-help" class="dialog-shell">
+      <h2 id="dialog-title">Edit shipping address</h2>
+      <p id="dialog-help" class="help">Changes update the current checkout draft.</p>
+
+      <label for="street">Street address</label>
+      <input id="street" autocomplete="shipping street-address" value="100 Market Street" aria-describedby="street-help">
+      <p id="street-help" class="help">Include suite or unit when needed.</p>
+
+      <label for="delivery-window">Delivery window</label>
+      <select id="delivery-window">
+        <option>Morning</option>
+        <option selected>Afternoon</option>
+        <option>Evening</option>
+      </select>
+
+      <fieldset>
+        <legend>Delivery alerts</legend>
+        <label class="inline" for="sms-alerts">
+          <input id="sms-alerts" type="checkbox" checked>
+          SMS alerts
+        </label>
+        <label class="inline" for="email-alerts">
+          <input id="email-alerts" type="checkbox">
+          Email alerts
+        </label>
+      </fieldset>
+
+      <button type="button" aria-describedby="save-help">Save address</button>
+      <p id="save-help" class="help">Saves and closes the dialog.</p>
+      <button type="button">Cancel editing</button>
+    </section>
+
+    <section id="background-controls" aria-labelledby="background-heading">
+      <h2 id="background-heading">Background controls</h2>
+      <p>These controls intentionally remain in the page to test whether dialog context is announced clearly.</p>
+      <button type="button">Open payment dialog</button>
+      <a href="#order-summary">Review order summary</a>
+    </section>
+  </main>
+
+  <footer>
+    <a href="#privacy">Privacy notice</a>
+  </footer>
+</body>
+</html>

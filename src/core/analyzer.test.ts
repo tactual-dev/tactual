@@ -206,4 +206,168 @@ describe("analyze", () => {
     const result = analyze([state], genericMobileWebSrV0);
     expect(result.diagnostics.find((d) => d.code === "redundant-tab-stops")).toBeUndefined();
   });
+
+  it("emits data-flow-dependencies when a target flips from disabled to enabled across states", () => {
+    const stateA = makeState({
+      id: "state-a",
+      targets: [
+        { id: "h1", kind: "heading" as const, role: "heading", name: "Form", headingLevel: 1, requiresBranchOpen: false },
+        { id: "submit", kind: "button" as const, role: "button", name: "Submit", requiresBranchOpen: false, _attributeValues: { "aria-disabled": "true" } },
+      ],
+    });
+    const stateB = makeState({
+      id: "state-b",
+      targets: [
+        { id: "h1", kind: "heading" as const, role: "heading", name: "Form", headingLevel: 1, requiresBranchOpen: false },
+        { id: "submit", kind: "button" as const, role: "button", name: "Submit", requiresBranchOpen: false, _attributeValues: { "aria-disabled": "false" } },
+      ],
+    });
+    const result = analyze([stateA, stateB], genericMobileWebSrV0);
+    const diag = result.diagnostics.find((d) => d.code === "data-flow-dependencies");
+    expect(diag).toBeDefined();
+    expect(diag?.affectedCount).toBe(1);
+    expect(diag?.message).toMatch(/"Submit"/);
+  });
+
+  it("does not promote degraded-content warnings from isolated explored branches when the primary capture is healthy", () => {
+    const scripted = makeState({
+      id: "scripted",
+      targets: [
+        { id: "main", kind: "landmark" as const, role: "main", name: "Main", requiresBranchOpen: false },
+        { id: "h1", kind: "heading" as const, role: "heading", name: "Component docs", headingLevel: 1, requiresBranchOpen: false },
+        { id: "h2", kind: "heading" as const, role: "heading", name: "Examples", headingLevel: 2, requiresBranchOpen: false },
+        ...Array.from({ length: 30 }, (_, i) => ({
+          id: `scripted-link-${i}`,
+          kind: "link" as const,
+          role: "link",
+          name: `Link ${i}`,
+          requiresBranchOpen: false,
+        })),
+      ],
+      provenance: "scripted",
+    });
+    const explored = makeState({
+      id: "explored-thin",
+      targets: [
+        { id: "branch-link-1", kind: "link" as const, role: "link", name: "Moved", requiresBranchOpen: false },
+        { id: "branch-link-2", kind: "link" as const, role: "link", name: "Home", requiresBranchOpen: false },
+      ],
+      provenance: "explored",
+    });
+
+    const result = analyze([scripted, explored], genericMobileWebSrV0);
+
+    expect(result.diagnostics.find((d) => d.code === "possibly-degraded-content")).toBeUndefined();
+  });
+
+  it("keeps degraded-content warnings when the scripted capture is also thin", () => {
+    const scripted = makeState({
+      id: "scripted-thin",
+      targets: [
+        { id: "h1", kind: "heading" as const, role: "heading", name: "Moved", requiresBranchOpen: false },
+        { id: "home", kind: "link" as const, role: "link", name: "Home", requiresBranchOpen: false },
+      ],
+      provenance: "scripted",
+    });
+    const explored = makeState({
+      id: "explored-thin",
+      targets: [
+        { id: "branch-link-1", kind: "link" as const, role: "link", name: "Moved", requiresBranchOpen: false },
+        { id: "branch-link-2", kind: "link" as const, role: "link", name: "Home", requiresBranchOpen: false },
+      ],
+      provenance: "explored",
+    });
+
+    const result = analyze([scripted, explored], genericMobileWebSrV0);
+
+    expect(result.diagnostics.find((d) => d.code === "possibly-degraded-content")).toBeDefined();
+  });
+
+  it("honors WCAG 2.5.8 spacing exception: small targets with no neighbor within 24px are exempt", () => {
+    // Two small (16×16) buttons. The first is far from any neighbor —
+    // exempted from the target-size penalty. The second sits next to
+    // another small button (18px center-to-center) — still penalized.
+    const targets = [
+      { id: "h1", kind: "heading" as const, role: "heading", name: "T", headingLevel: 1, requiresBranchOpen: false },
+      // Far-spaced small button — exempt
+      { id: "lonely", kind: "button" as const, role: "button", name: "Lonely", requiresBranchOpen: false, _rect: { x: 0, y: 0, width: 16, height: 16 } },
+      // Pair of close small buttons — both penalized
+      { id: "near-a", kind: "button" as const, role: "button", name: "Near A", requiresBranchOpen: false, _rect: { x: 200, y: 200, width: 16, height: 16 } },
+      { id: "near-b", kind: "button" as const, role: "button", name: "Near B", requiresBranchOpen: false, _rect: { x: 210, y: 200, width: 16, height: 16 } },
+    ];
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    const findingFor = (id: string) => result.findings.find((f) => f.targetId === id);
+    const lonely = findingFor("lonely");
+    const nearA = findingFor("near-a");
+    const nearB = findingFor("near-b");
+
+    const hasSizePenalty = (penalties: string[] | undefined) =>
+      (penalties ?? []).some((p) => p.includes("WCAG 2.5.8"));
+
+    expect(hasSizePenalty(lonely?.penalties)).toBe(false);
+    expect(hasSizePenalty(nearA?.penalties)).toBe(true);
+    expect(hasSizePenalty(nearB?.penalties)).toBe(true);
+  });
+
+  it("emits ambiguous-link-names when same name links go to different URLs", () => {
+    // Two "Read more" links to /a and /b — same name, different hrefs.
+    // This is the AMBIGUOUS case (vs the REDUNDANT case where both go to
+    // the same href).
+    const targets = [
+      { id: "heading-1", kind: "heading" as const, role: "heading", name: "T", headingLevel: 1, requiresBranchOpen: false },
+      { id: "rm-a", kind: "link" as const, role: "link", name: "Read more", requiresBranchOpen: false, _href: "https://example.com/a" },
+      { id: "rm-b", kind: "link" as const, role: "link", name: "Read more", requiresBranchOpen: false, _href: "https://example.com/b" },
+      { id: "rm-c", kind: "link" as const, role: "link", name: "Read more", requiresBranchOpen: false, _href: "https://example.com/c" },
+      { id: "home", kind: "link" as const, role: "link", name: "Home", requiresBranchOpen: false, _href: "https://example.com/" },
+    ];
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    const diag = result.diagnostics.find((d) => d.code === "ambiguous-link-names");
+    expect(diag).toBeDefined();
+    expect(diag?.affectedCount).toBe(1); // one ambiguous group
+    expect(diag?.message).toMatch(/Read more.*3 different URLs/);
+  });
+
+  it("does NOT flag ambiguous-link-names when same-name links share the same href (that's redundant, not ambiguous)", () => {
+    const targets = [
+      { id: "heading-1", kind: "heading" as const, role: "heading", name: "T", headingLevel: 1, requiresBranchOpen: false },
+      { id: "rm-a1", kind: "link" as const, role: "link", name: "Read more", requiresBranchOpen: false, _href: "https://example.com/a" },
+      { id: "rm-a2", kind: "link" as const, role: "link", name: "Read more", requiresBranchOpen: false, _href: "https://example.com/a" },
+    ];
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+    expect(result.diagnostics.find((d) => d.code === "ambiguous-link-names")).toBeUndefined();
+    // The redundant-tab-stops diagnostic catches this case instead.
+    expect(result.diagnostics.find((d) => d.code === "redundant-tab-stops")).toBeDefined();
+  });
+
+  it("attaches a redundant-tab-stop penalty to each duplicate link finding", () => {
+    // Two links named "About" reach the same href → both should carry the
+    // per-target penalty. The link named "About us" reaches the same href
+    // but with a different name; it should NOT be penalized (different
+    // accessible name = legitimately distinct user-facing affordance).
+    const targets = [
+      { id: "heading-1", kind: "heading" as const, role: "heading", name: "T", headingLevel: 1, requiresBranchOpen: false },
+      { id: "link-a1", kind: "link" as const, role: "link", name: "About", requiresBranchOpen: false, _href: "https://example.com/about" },
+      { id: "link-a2", kind: "link" as const, role: "link", name: "About us", requiresBranchOpen: false, _href: "https://example.com/about" },
+      { id: "link-a3", kind: "link" as const, role: "link", name: "About", requiresBranchOpen: false, _href: "https://example.com/about" },
+      { id: "link-unique", kind: "link" as const, role: "link", name: "Home", requiresBranchOpen: false, _href: "https://example.com/" },
+    ];
+    const state = makeState({ targets });
+    const result = analyze([state], genericMobileWebSrV0);
+
+    const findingFor = (id: string) => result.findings.find((f) => f.targetId === id);
+    const a1 = findingFor("link-a1");
+    const a2 = findingFor("link-a2");
+    const a3 = findingFor("link-a3");
+    const unique = findingFor("link-unique");
+
+    expect(a1?.penalties.some((p) => p.startsWith("Redundant tab stop"))).toBe(true);
+    expect(a3?.penalties.some((p) => p.startsWith("Redundant tab stop"))).toBe(true);
+    expect(a2?.penalties.some((p) => p.startsWith("Redundant tab stop"))).toBe(false);
+    expect(unique?.penalties.some((p) => p.startsWith("Redundant tab stop"))).toBe(false);
+  });
 });

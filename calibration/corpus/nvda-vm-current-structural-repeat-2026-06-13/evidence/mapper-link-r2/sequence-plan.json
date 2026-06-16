@@ -1,0 +1,124 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T22:24:06.840Z",
+  "url": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "link",
+  "navigation": {
+    "keyName": "k",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "25",
+      "a5"
+    ],
+    "description": "NVDA browse-mode next-link quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 8,
+  "targetCount": 6,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "link",
+      "stateId": "state-b6cab5abddd4",
+      "id": "link:form-controls",
+      "kind": "link",
+      "role": "link",
+      "name": "Form controls",
+      "selector": "getByRole('link', { name: 'Form controls' })",
+      "expectedAnnouncement": "Form controls, link",
+      "expectedTokens": [
+        "form controls",
+        "link"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "link",
+      "stateId": "state-b6cab5abddd4",
+      "id": "link:composite-widgets",
+      "kind": "link",
+      "role": "link",
+      "name": "Composite widgets",
+      "selector": "getByRole('link', { name: 'Composite widgets' })",
+      "expectedAnnouncement": "Composite widgets, link",
+      "expectedTokens": [
+        "composite widgets",
+        "link"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "link",
+      "stateId": "state-b6cab5abddd4",
+      "id": "link:embedded-checkout",
+      "kind": "link",
+      "role": "link",
+      "name": "Embedded checkout",
+      "selector": "getByRole('link', { name: 'Embedded checkout' })",
+      "expectedAnnouncement": "Embedded checkout, link",
+      "expectedTokens": [
+        "embedded checkout",
+        "link"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "link",
+      "stateId": "state-b6cab5abddd4",
+      "id": "link:download-summary",
+      "kind": "link",
+      "role": "link",
+      "name": "Download summary",
+      "selector": "getByRole('link', { name: 'Download summary' })",
+      "expectedAnnouncement": "Download summary, link",
+      "expectedTokens": [
+        "download summary",
+        "link"
+      ]
+    },
+    {
+      "index": 5,
+      "mode": "link",
+      "stateId": "state-b6cab5abddd4",
+      "id": "f1.link:embedded-payment-terms",
+      "kind": "link",
+      "role": "link",
+      "name": "Embedded payment terms",
+      "selector": "getByRole('link', { name: 'Embedded payment terms' })",
+      "expectedAnnouncement": "Embedded payment terms, link",
+      "expectedTokens": [
+        "embedded payment terms",
+        "link"
+      ]
+    },
+    {
+      "index": 6,
+      "mode": "link",
+      "stateId": "state-b6cab5abddd4",
+      "id": "link:privacy-notice",
+      "kind": "link",
+      "role": "link",
+      "name": "Privacy notice",
+      "selector": "getByRole('link', { name: 'Privacy notice' })",
+      "expectedAnnouncement": "Privacy notice, link",
+      "expectedTokens": [
+        "privacy notice",
+        "link"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

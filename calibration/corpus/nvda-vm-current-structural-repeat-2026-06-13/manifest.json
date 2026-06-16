@@ -1,0 +1,274 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-current-structural-repeat-2026-06-13",
+  "importedAt": "2026-06-13T22:29:03.021Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "good-heading-r1",
+      "fixture": "fixtures/good-page.html",
+      "mode": "heading",
+      "status": "harness-blocked",
+      "plannedTargets": 5,
+      "matchedTargets": 0,
+      "missingTargets": 5,
+      "unmatchedSpeechBlocks": 0,
+      "evidenceUsable": false,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "good-link-r1",
+      "fixture": "fixtures/good-page.html",
+      "mode": "link",
+      "status": "harness-blocked",
+      "plannedTargets": 0,
+      "matchedTargets": 0,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 0,
+      "evidenceUsable": false,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "good-landmark-r1",
+      "fixture": "fixtures/good-page.html",
+      "mode": "landmark",
+      "status": "harness-blocked",
+      "plannedTargets": 0,
+      "matchedTargets": 0,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 0,
+      "evidenceUsable": false,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "mapper-heading-r1",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "heading",
+      "status": "harness-blocked",
+      "plannedTargets": 0,
+      "matchedTargets": 0,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 0,
+      "evidenceUsable": false,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    },
+    {
+      "name": "mapper-link-r1",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "link",
+      "status": "passed",
+      "plannedTargets": 6,
+      "matchedTargets": 6,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 4,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    },
+    {
+      "name": "mapper-landmark-r1",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "landmark",
+      "status": "passed",
+      "plannedTargets": 7,
+      "matchedTargets": 6,
+      "missingTargets": 1,
+      "unmatchedSpeechBlocks": 15,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    },
+    {
+      "name": "good-heading-r2",
+      "fixture": "fixtures/good-page.html",
+      "mode": "heading",
+      "status": "passed",
+      "plannedTargets": 5,
+      "matchedTargets": 5,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 13,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "good-link-r2",
+      "fixture": "fixtures/good-page.html",
+      "mode": "link",
+      "status": "passed",
+      "plannedTargets": 4,
+      "matchedTargets": 4,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 11,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "good-landmark-r2",
+      "fixture": "fixtures/good-page.html",
+      "mode": "landmark",
+      "status": "passed",
+      "plannedTargets": 4,
+      "matchedTargets": 4,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 13,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "mapper-heading-r2",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "heading",
+      "status": "passed",
+      "plannedTargets": 8,
+      "matchedTargets": 8,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 15,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    },
+    {
+      "name": "mapper-link-r2",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "link",
+      "status": "passed",
+      "plannedTargets": 6,
+      "matchedTargets": 6,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 11,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    },
+    {
+      "name": "mapper-landmark-r2",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "landmark",
+      "status": "passed",
+      "plannedTargets": 7,
+      "matchedTargets": 0,
+      "missingTargets": 7,
+      "unmatchedSpeechBlocks": 3,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/good-page.html",
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html",
+      "analysis": "../analyses/fixtures-good-page.analysis.full.json"
+    },
+    {
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+      "analysis": "../analyses/fixtures-calibration-at-mapper-lab.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/mapper-link-r1/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/mapper-landmark-r1/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/good-heading-r2/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/good-link-r2/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/good-landmark-r2/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/mapper-heading-r2/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/mapper-link-r2/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 12,
+    "passed": 8,
+    "failed": 0,
+    "weak": 1,
+    "harnessBlocked": 4,
+    "ingestedCases": 7,
+    "plannedTargets": 52,
+    "matchedTargets": 39,
+    "missingTargets": 13,
+    "unmatchedSpeechBlocks": 85
+  },
+  "scoringSignals": [
+    {
+      "id": "harness-health.blocked",
+      "kind": "harness-health",
+      "dimension": "confidence",
+      "status": "blocked",
+      "confidence": 1,
+      "summary": "4 case(s) blocked by harness health",
+      "scoringImplication": "Do not tune scoring weights from blocked cases; rerun after VM/Guest Control evidence is clean.",
+      "evidence": {
+        "count": 4,
+        "examples": [
+          "good-heading-r1:input-received-no-speech",
+          "good-link-r1:host-calibration-command-failed",
+          "good-landmark-r1:host-calibration-command-failed",
+          "mapper-heading-r1:host-calibration-command-failed"
+        ]
+      }
+    },
+    {
+      "id": "reachability.quick-nav.observed-match",
+      "kind": "observed-reachability",
+      "dimension": "reachability",
+      "status": "review",
+      "confidence": 0.83,
+      "summary": "39/47 planned target(s) matched observed AT navigation",
+      "scoringImplication": "The graph likely over-predicts quick-nav reachability for at least one fixture/mode; review missing roles before changing weights.",
+      "evidence": {
+        "count": 47,
+        "examples": [
+          "mapper-link-r1:6/6",
+          "mapper-landmark-r1:6/7",
+          "good-heading-r2:5/5",
+          "good-link-r2:4/4"
+        ]
+      }
+    },
+    {
+      "id": "speech.context-verbosity",
+      "kind": "context-verbosity",
+      "dimension": "reachability",
+      "status": "review",
+      "confidence": 1,
+      "summary": "82 structural/context token occurrence(s) observed beyond the modeled announcement",
+      "scoringImplication": "Repeated frame, landmark, region, grouping, autocomplete, and boundary terms are candidates for an AT-specific context verbosity cost.",
+      "evidence": {
+        "count": 82,
+        "examples": [
+          "mapper-link-r1:Form controls",
+          "mapper-link-r1:Composite widgets",
+          "mapper-link-r1:Embedded checkout",
+          "mapper-link-r1:Download summary"
+        ]
+      }
+    },
+    {
+      "id": "speech.target-name-coalescing",
+      "kind": "target-name-coalescing",
+      "dimension": "discoverability",
+      "status": "review",
+      "confidence": 1,
+      "summary": "33 observed block(s)/token(s) named captured targets outside the planned match",
+      "scoringImplication": "One speech block may cover multiple targets; this can lower raw step count while increasing disambiguation and target-selection load.",
+      "evidence": {
+        "count": 33,
+        "examples": [
+          "mapper-link-r1:Embedded payment terms",
+          "mapper-link-r1:Embedded payment terms",
+          "mapper-landmark-r1:Account",
+          "mapper-link-r2:Embedded payment terms"
+        ]
+      }
+    }
+  ]
+}
