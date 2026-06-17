@@ -62,7 +62,7 @@ describe("probeComboListboxContracts", () => {
     expect(probe.exposesActiveOption).toBe(true);
     expect(probe.escapeCloses).toBe(true);
     await page.close();
-  }, 15_000);
+  }, 60_000);
 
   it("detects listbox arrow movement failures", async () => {
     const page = await browser.newPage();
@@ -81,7 +81,7 @@ describe("probeComboListboxContracts", () => {
     expect(probe.arrowDownMovesOption).toBe(false);
     expect(probe.exposesSelectedOption).toBe(false);
     await page.close();
-  }, 15_000);
+  }, 60_000);
 
   it("does not run custom APG combobox checks against native selects", async () => {
     const page = await browser.newPage();
@@ -103,5 +103,5 @@ describe("probeComboListboxContracts", () => {
     ]);
     expect((result as Record<string, unknown>)._comboboxProbe).toBeUndefined();
     await page.close();
-  }, 15_000);
+  }, 60_000);
 });

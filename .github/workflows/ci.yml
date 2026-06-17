@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  check:
+  static:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -34,16 +34,55 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+      - name: Calibrate simulator
+        run: npm run calibrate
 
-      - name: Run unit and integration tests
-        run: npx vitest run --exclude src/playwright/explorer.test.ts --exclude src/benchmark/benchmark.test.ts
+      - name: Audit calibration corpus
+        run: npm run calibration:corpus
 
-      - name: Run benchmark suite
-        run: npm run test:benchmark
+      - name: Report calibration matrix
+        run: npm run calibration:matrix
 
       - name: Verify CLI
         run: |
           node dist/cli/index.js --help
           node dist/cli/index.js profiles
+          node dist/cli/index.js calibration-report --help
+
+      - name: Verify MCP server construction
+        run: node --input-type=module -e "import { createMcpServer } from './dist/mcp/index.js'; if (!createMcpServer()) throw new Error('MCP server failed to construct')"
+
+  vitest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20, 22]
+        shard:
+          - core
+          - capture
+          - playwright-platform
+          - playwright-probes
+          - playwright-exploration
+          - pipeline
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Run Vitest shard
+        run: npm run test:shard -- ${{ matrix.shard }}

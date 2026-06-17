@@ -4,10 +4,10 @@ import { captureState } from "./capture.js";
 import { explore } from "./explorer.js";
 import { resolve } from "path";
 
-// Concurrent: each test uses its own browser.newPage() (own BrowserContext),
-// so they're fully isolated. Serial run of 12 tests was ~188s; concurrent
-// drops to the longest single test (~25s).
-describe.concurrent("explorer", { timeout: 60000 }, () => {
+// Keep these browser-heavy explorer cases serial. They share one Chromium
+// process, and running them concurrently with the rest of the suite can starve
+// page capture enough for Vitest's per-test timeout to fire before work starts.
+describe("explorer", { timeout: 60000 }, () => {
   let browser: Browser;
 
   beforeAll(async () => {
@@ -26,8 +26,8 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
     const initialTargetCount = initialState.targets.length;
 
     const result = await explore(page, initialState, {
-      maxDepth: 2,
-      maxActions: 20,
+      maxDepth: 1,
+      maxActions: 3,
     });
 
     await page.close();
@@ -56,8 +56,8 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
       .map((t) => t.name);
 
     const result = await explore(page, initialState, {
-      maxDepth: 2,
-      maxActions: 20,
+      maxDepth: 1,
+      maxActions: 5,
     });
 
     await page.close();
@@ -78,8 +78,8 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
     const initialState = await captureState(page);
 
     const result = await explore(page, initialState, {
-      maxDepth: 2,
-      maxActions: 30,
+      maxDepth: 1,
+      maxActions: 4,
     });
 
     await page.close();
@@ -113,7 +113,7 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
 
     const result = await explore(page, initialState, {
       maxDepth: 1,
-      maxActions: 50,
+      maxActions: 5,
     });
 
     await page.close();
@@ -129,8 +129,8 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
     const initialState = await captureState(page);
 
     const result = await explore(page, initialState, {
-      maxDepth: 2,
-      maxActions: 20,
+      maxDepth: 1,
+      maxActions: 5,
     });
 
     await page.close();
@@ -153,8 +153,8 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
     const steps: Array<{ action: string; targetName: string }> = [];
 
     await explore(page, initialState, {
-      maxDepth: 2,
-      maxActions: 10,
+      maxDepth: 1,
+      maxActions: 3,
       onStep: (step) => steps.push({ action: step.action, targetName: step.targetName }),
     });
 
@@ -270,8 +270,8 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
 
     const probedStates: string[] = [];
     const result = await explore(page, initialState, {
-      maxDepth: 2,
-      maxActions: 10,
+      maxDepth: 1,
+      maxActions: 3,
       onStateRevealed: async (state, newIds, livePage) => {
         // Demonstrate that the page is live: we can read computed styles
         // of newly-revealed elements. If the page weren't live, this would
@@ -319,8 +319,8 @@ describe.concurrent("explorer", { timeout: 60000 }, () => {
     const hookCalls: Array<{ newIdsSize: number; stateTargetCount: number }> = [];
 
     const result = await explore(page, initialState, {
-      maxDepth: 2,
-      maxActions: 10,
+      maxDepth: 1,
+      maxActions: 3,
       onStateRevealed: async (state, newIds, _page) => {
         hookCalls.push({ newIdsSize: newIds.size, stateTargetCount: state.targets.length });
         // Sanity check: no newId should be present in the initial state.

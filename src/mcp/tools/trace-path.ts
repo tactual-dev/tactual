@@ -62,6 +62,7 @@ export function registerTracePath(server: McpServer): void {
           timeout,
           storageState,
           restrictStorageStateToCwd: true,
+          allowFileUrls: false,
           useSharedBrowserPool: true,
           states,
         });

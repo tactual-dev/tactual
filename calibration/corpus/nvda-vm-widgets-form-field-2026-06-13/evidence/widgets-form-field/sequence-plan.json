@@ -1,0 +1,97 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T04:20:01.142Z",
+  "url": "tactual-fixture://fixtures/corpus-widget-contracts.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "form-field",
+  "navigation": {
+    "keyName": "f",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "21",
+      "a1"
+    ],
+    "description": "NVDA browse-mode next-form-field quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 6,
+  "targetCount": 4,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "form-field",
+      "stateId": "state-c594db9362aa",
+      "id": "combobox:good-combobox",
+      "kind": "formField",
+      "role": "combobox",
+      "name": "Good combobox",
+      "selector": "getByRole('combobox', { name: 'Good combobox' })",
+      "expectedAnnouncement": "Good combobox, combo box, collapsed",
+      "expectedTokens": [
+        "good combobox",
+        "combo box",
+        "collapsed"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "form-field",
+      "stateId": "state-c594db9362aa",
+      "id": "combobox:broken-combobox",
+      "kind": "formField",
+      "role": "combobox",
+      "name": "Broken combobox",
+      "selector": "getByRole('combobox', { name: 'Broken combobox' })",
+      "expectedAnnouncement": "Broken combobox, combo box, collapsed",
+      "expectedTokens": [
+        "broken combobox",
+        "combo box",
+        "collapsed"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "form-field",
+      "stateId": "state-c594db9362aa",
+      "id": "listbox:broken-listbox",
+      "kind": "formField",
+      "role": "listbox",
+      "name": "Broken listbox",
+      "selector": "getByRole('listbox', { name: 'Broken listbox' })",
+      "expectedAnnouncement": "Broken listbox, list",
+      "expectedTokens": [
+        "broken listbox",
+        "list"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "form-field",
+      "stateId": "state-c594db9362aa",
+      "id": "button:broken-disclosure",
+      "kind": "button",
+      "role": "button",
+      "name": "Broken disclosure",
+      "selector": "getByRole('button', { name: 'Broken disclosure' })",
+      "expectedAnnouncement": "Broken disclosure, button, collapsed",
+      "expectedTokens": [
+        "broken disclosure",
+        "button",
+        "collapsed"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

@@ -4,7 +4,11 @@ Prompt templates for using Tactual's MCP tools with AI coding agents (Claude Cod
 
 ## Setup
 
-Add to your project's MCP config (see README for editor-specific paths):
+Install Tactual in the project, then add the MCP server to your agent config (see README for editor-specific paths):
+
+```bash
+npm install tactual
+```
 
 ```json
 {
@@ -31,6 +35,12 @@ The agent will call `analyze_url` with default settings and summarize the result
 > Run a full Tactual analysis on https://myapp.com with exploration enabled and keyboard probes. Use the NVDA desktop profile.
 
 This explores hidden UI (menus, dialogs, tabs, disclosures) and tests actual keyboard, widget-contract, and form-error behavior. Takes longer but catches real focus management and APG-pattern issues.
+
+### SPA audit
+
+> Analyze https://app.example.com after it hydrates. Wait for main, record route changes, surface lazy content, include iframes, and check mobile/desktop viewport differences.
+
+The agent should call `analyze_url` with `waitForSelector`, `detectRoutes`, `autoScroll`, `descendFrames`, and `diffViewports`. Add `dismissBanners`, `probeHover`, or `walkTabOrder` when the page has consent overlays, hover-only UI, or suspicious focus-order behavior.
 
 ### Fix the worst findings
 
@@ -81,6 +91,66 @@ The agent should:
 6. If code changes are in scope, patch the shared component, then re-run Tactual and compare before/after with `diff_results`
 
 Use the findings and candidate evidence to keep the proposed change narrow, reproducible, and compatible with the project's review expectations.
+
+### Feed announcement observations back into calibration
+
+> While reviewing this OSS page with Tactual, I verified that NVDA announced the checkout button as "Checkout, link" even though Tactual modeled "Checkout, button". Record this as calibration feedback.
+
+Prefer the `observe-announcement` CLI helper. It can reuse a saved analysis so
+the reviewer does not need to keep the live page and screen reader active while
+typing notes:
+
+```bash
+npx tactual observe-announcement "Checkout" \
+  --analysis checkout-nvda.json \
+  --observed-file nvda-checkout-announcement.txt \
+  --source nvda-vm \
+  --at-version "NVDA 2025.1" \
+  --browser "Chrome 137" \
+  --output calibration.json \
+  --append
+```
+
+Use `observedAnnouncement` when the output is known verbatim, or
+`observedAnnouncementTokens` when only the stable role/name/state tokens matter.
+Include `announcementSource` so reports distinguish manual SR output from
+virtual SR, fixture, or ARIA-AT evidence. The calibration runner compares those
+tokens against Tactual's modeled announcement and reports missing or unexpected
+tokens.
+
+```json
+{
+  "url": "https://preview.example.com/checkout",
+  "profileId": "nvda-desktop-v0",
+  "targetName": "Checkout",
+  "observedAnnouncement": "Checkout, link",
+  "announcementSource": "nvda-vm",
+  "testerId": "oss-review",
+  "timestamp": "2026-06-11T12:00:00Z"
+}
+```
+
+### Run calibration scoring review
+
+> I collected NVDA VM observations in calibration/nvda-vm.json and saved full Tactual analyses in calibration/analyses. Run the calibration report and tell me which scoring assumptions are confirmed, which need review, and which should not affect scoring yet.
+
+The agent should call MCP `calibration_report` so the output is structured and
+easy to inspect:
+
+```json
+{
+  "datasetPath": "calibration/nvda-vm.json",
+  "analysisDir": "calibration/analyses",
+  "format": "json"
+}
+```
+
+Read `scoringSignals` first. Treat `confirmed` signals as regression evidence,
+`review` signals as candidates for repeated calibration, `observed-only` signals
+as useful but not weight-changing yet, and `blocked` signals as harness issues to
+fix before drawing scoring conclusions. Do not tune weights from a single noisy
+announcement mismatch; look for repeated assumption IDs, repeated strategy
+switches, or consistent reachability/discoverability bias.
 
 ### Authenticated content
 

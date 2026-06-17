@@ -45,6 +45,15 @@ export const nvdaDesktopV0: ATProfile = {
     groupExit: 1.0,
     // First-letter type-ahead: single keypress in focused menus
     firstLetter: 1.0,
+    nextFormField: 1.0,
+    nextButton: 1.0,
+    nextLandmark: 1.0,
+    rotor: 2.0,
+    touchExplore: 100,
+    relationshipJump: 1.2,
+    activeDescendant: 1.0,
+    formsMode: 1.5,
+    compositeNavigation: 1.0,
   },
 
   weights: {

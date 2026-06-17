@@ -18,7 +18,7 @@ export function registerValidateUrl(server: McpServer): void {
         "**Requires** (optional deps): jsdom + @guidepup/virtual-screen-reader. " +
         "Installed with tactual if optionalDependencies were honored; otherwise run " +
         "`npm install jsdom @guidepup/virtual-screen-reader` in your project.\n\n" +
-        "**When to use**: closing the predicted-vs-actual loop. If Tactual's predictions " +
+        "**When to use**: closing the modeled-vs-virtual loop. If Tactual's predictions " +
         "diverge a lot from the virtual SR, either the profile weights need calibration " +
         "or the page has structural patterns the analyzer doesn't model. Use sparingly — " +
         "this adds the analyze_url cost plus jsdom parsing + virtual SR navigation time.",
@@ -68,6 +68,7 @@ export function registerValidateUrl(server: McpServer): void {
           channel,
           stealth,
           storageState,
+          allowFileUrls: false,
           restrictStorageStateToCwd: true,
           useSharedBrowserPool: true,
         });

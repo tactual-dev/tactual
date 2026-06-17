@@ -1,0 +1,116 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-oopif-form-field-2026-06-14",
+  "importedAt": "2026-06-14T16:40:25.629Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "oopif-form-field",
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "mode": "form-field",
+      "status": "passed",
+      "plannedTargets": 7,
+      "matchedTargets": 7,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 1,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/calibration-oopif-parent.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+      "analysis": "../analyses/fixtures-calibration-oopif-parent.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/oopif-form-field/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 1,
+    "passed": 1,
+    "failed": 0,
+    "weak": 0,
+    "harnessBlocked": 0,
+    "ingestedCases": 1,
+    "plannedTargets": 7,
+    "matchedTargets": 7,
+    "missingTargets": 0,
+    "unmatchedSpeechBlocks": 1
+  },
+  "scoringSignals": [
+    {
+      "id": "reachability.quick-nav.observed-match",
+      "kind": "observed-reachability",
+      "dimension": "reachability",
+      "status": "confirmed",
+      "confidence": 1,
+      "summary": "7/7 planned target(s) matched observed AT navigation",
+      "scoringImplication": "The calibrated reachable-set model is supported for these fixtures/modes; promote repeated passes into profile-specific quick-nav confidence.",
+      "evidence": {
+        "count": 7,
+        "examples": [
+          "oopif-form-field:7/7"
+        ]
+      }
+    },
+    {
+      "id": "speech.context-verbosity",
+      "kind": "context-verbosity",
+      "dimension": "reachability",
+      "status": "review",
+      "confidence": 0.8,
+      "summary": "6 structural/context token occurrence(s) observed beyond the modeled announcement",
+      "scoringImplication": "Repeated frame, landmark, region, grouping, autocomplete, and boundary terms are candidates for an AT-specific context verbosity cost.",
+      "evidence": {
+        "count": 6,
+        "examples": [
+          "oopif-form-field:Parent email",
+          "oopif-form-field:Card number",
+          "oopif-form-field:Parent email",
+          "oopif-form-field:Card number"
+        ]
+      }
+    },
+    {
+      "id": "speech.target-name-coalescing",
+      "kind": "target-name-coalescing",
+      "dimension": "discoverability",
+      "status": "review",
+      "confidence": 0.7,
+      "summary": "5 observed block(s)/token(s) named captured targets outside the planned match",
+      "scoringImplication": "One speech block may cover multiple targets; this can lower raw step count while increasing disambiguation and target-selection load.",
+      "evidence": {
+        "count": 5,
+        "examples": [
+          "oopif-form-field:Card number",
+          "oopif-form-field:Card number",
+          "oopif-form-field:Card number",
+          "oopif-form-field:Parent email"
+        ]
+      }
+    },
+    {
+      "id": "speech.observed-values",
+      "kind": "value-speech",
+      "dimension": "confidence",
+      "status": "observed-only",
+      "confidence": 0.7,
+      "summary": "4 likely value/data token occurrence(s) observed",
+      "scoringImplication": "Preserve these as observations for target-specific evidence; do not turn page/user data into generic scoring weights.",
+      "evidence": {
+        "count": 4,
+        "examples": [
+          "oopif-form-field:Expiration date",
+          "oopif-form-field:Card number",
+          "oopif-form-field:Parent email",
+          "oopif-form-field:Billing country"
+        ]
+      }
+    }
+  ]
+}

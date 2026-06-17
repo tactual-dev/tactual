@@ -48,7 +48,9 @@ export function registerBenchmark(program: Command): void {
         if (failed > 0) process.exit(1);
       } catch (err) {
         if (err instanceof Error && (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))) {
-          console.error("Playwright is required for benchmarks. Install it: npm install playwright");
+          console.error(
+            "Playwright is required for benchmarks but could not be loaded. Reinstall Tactual or run npm install.",
+          );
           process.exit(1);
         }
         throw err;

@@ -48,6 +48,15 @@ export const jawsDesktopV0: ATProfile = {
     groupExit: 1.0,
     // First-letter type-ahead: single keypress in focused menus
     firstLetter: 1.0,
+    nextFormField: 0.9,
+    nextButton: 1.0,
+    nextLandmark: 1.0,
+    rotor: 1.8,
+    touchExplore: 100,
+    relationshipJump: 1.1,
+    activeDescendant: 0.9,
+    formsMode: 1.0,
+    compositeNavigation: 0.9,
   },
 
   weights: {

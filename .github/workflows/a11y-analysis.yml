@@ -61,6 +61,71 @@ on:
         required: false
         type: string
         default: ""
+      scope-selector:
+        description: Space-separated CSS selectors that define subtree(s) to capture, score, and probe
+        required: false
+        type: string
+        default: ""
+      probe-selector:
+        description: Space-separated CSS selectors that narrow probing without changing capture/scoring
+        required: false
+        type: string
+        default: ""
+      entry-selector:
+        description: CSS selector for a trigger to activate before capture/probe
+        required: false
+        type: string
+        default: ""
+      goal-target:
+        description: Exact-ish target id, name, role, kind, or selector hint for goal-directed probing
+        required: false
+        type: string
+        default: ""
+      goal-pattern:
+        description: Glob pattern for goal-directed probing
+        required: false
+        type: string
+        default: ""
+      probe-strategy:
+        description: Probe strategy (all, overlay, composite-widget, form, navigation, modal-return-focus, menu-pattern)
+        required: false
+        type: string
+        default: all
+      detect-routes:
+        description: Record SPA route changes during analysis
+        required: false
+        type: boolean
+        default: false
+      descend-frames:
+        description: Descend into child iframes; Chromium can recover many cross-origin OOPIFs via CDP
+        required: false
+        type: boolean
+        default: false
+      auto-scroll:
+        description: Scroll before capture so lazy or infinite-scroll content materializes
+        required: false
+        type: boolean
+        default: false
+      dismiss-banners:
+        description: Best-effort dismissal of safe cookie/consent banners before capture
+        required: false
+        type: boolean
+        default: false
+      probe-hover:
+        description: Hover likely triggers to expose hover-only popup content
+        required: false
+        type: boolean
+        default: false
+      walk-tab-order:
+        description: Record Tab traversal to detect focus-order and focus-trap issues
+        required: false
+        type: boolean
+        default: false
+      diff-viewports:
+        description: Compare desktop and mobile captures for hidden content
+        required: false
+        type: boolean
+        default: false
       format:
         description: Output format (json, markdown, console, sarif)
         required: false
@@ -80,7 +145,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: tactual-dev/tactual
-          ref: v0.4.1
+          ref: v0.5.0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -111,6 +176,19 @@ jobs:
           TACTUAL_STEALTH: ${{ inputs.stealth }}
           TACTUAL_CHANNEL: ${{ inputs.channel }}
           TACTUAL_WAIT_FOR_SELECTOR: ${{ inputs.wait-for-selector }}
+          TACTUAL_SCOPE_SELECTOR: ${{ inputs.scope-selector }}
+          TACTUAL_PROBE_SELECTOR: ${{ inputs.probe-selector }}
+          TACTUAL_ENTRY_SELECTOR: ${{ inputs.entry-selector }}
+          TACTUAL_GOAL_TARGET: ${{ inputs.goal-target }}
+          TACTUAL_GOAL_PATTERN: ${{ inputs.goal-pattern }}
+          TACTUAL_PROBE_STRATEGY: ${{ inputs.probe-strategy }}
+          TACTUAL_DETECT_ROUTES: ${{ inputs.detect-routes }}
+          TACTUAL_DESCEND_FRAMES: ${{ inputs.descend-frames }}
+          TACTUAL_AUTO_SCROLL: ${{ inputs.auto-scroll }}
+          TACTUAL_DISMISS_BANNERS: ${{ inputs.dismiss-banners }}
+          TACTUAL_PROBE_HOVER: ${{ inputs.probe-hover }}
+          TACTUAL_WALK_TAB_ORDER: ${{ inputs.walk-tab-order }}
+          TACTUAL_DIFF_VIEWPORTS: ${{ inputs.diff-viewports }}
         run: |
           # Build CLI args as an array so values with spaces and shell
           # metacharacters can't break out of their argument boundary.
@@ -121,10 +199,31 @@ jobs:
           [ "$TACTUAL_EXPLORE" = "true" ] && ARGS+=(--explore)
           [ "$TACTUAL_PROBE" = "true" ] && ARGS+=(--probe)
           [ "$TACTUAL_STEALTH" = "true" ] && ARGS+=(--stealth)
+          [ "$TACTUAL_DETECT_ROUTES" = "true" ] && ARGS+=(--detect-routes)
+          [ "$TACTUAL_DESCEND_FRAMES" = "true" ] && ARGS+=(--descend-frames)
+          [ "$TACTUAL_AUTO_SCROLL" = "true" ] && ARGS+=(--auto-scroll)
+          [ "$TACTUAL_DISMISS_BANNERS" = "true" ] && ARGS+=(--dismiss-banners)
+          [ "$TACTUAL_PROBE_HOVER" = "true" ] && ARGS+=(--probe-hover)
+          [ "$TACTUAL_WALK_TAB_ORDER" = "true" ] && ARGS+=(--walk-tab-order)
+          [ "$TACTUAL_DIFF_VIEWPORTS" = "true" ] && ARGS+=(--diff-viewports)
           [ -n "$TACTUAL_CHANNEL" ] && ARGS+=(--channel "$TACTUAL_CHANNEL")
           [ -n "$TACTUAL_WAIT_FOR_SELECTOR" ] && ARGS+=(--wait-for-selector "$TACTUAL_WAIT_FOR_SELECTOR")
+          [ -n "$TACTUAL_ENTRY_SELECTOR" ] && ARGS+=(--entry-selector "$TACTUAL_ENTRY_SELECTOR")
+          [ -n "$TACTUAL_GOAL_TARGET" ] && ARGS+=(--goal-target "$TACTUAL_GOAL_TARGET")
+          [ -n "$TACTUAL_GOAL_PATTERN" ] && ARGS+=(--goal-pattern "$TACTUAL_GOAL_PATTERN")
           if [ -n "$TACTUAL_PROBE_MODE" ] && [ "$TACTUAL_PROBE_MODE" != "standard" ]; then
             ARGS+=(--probe-mode "$TACTUAL_PROBE_MODE")
+          fi
+          if [ -n "$TACTUAL_PROBE_STRATEGY" ] && [ "$TACTUAL_PROBE_STRATEGY" != "all" ]; then
+            ARGS+=(--probe-strategy "$TACTUAL_PROBE_STRATEGY")
+          fi
+          if [ -n "$TACTUAL_SCOPE_SELECTOR" ]; then
+            read -r -a _scope <<< "$TACTUAL_SCOPE_SELECTOR"
+            ARGS+=(--scope-selector "${_scope[@]}")
+          fi
+          if [ -n "$TACTUAL_PROBE_SELECTOR" ]; then
+            read -r -a _probe_scope <<< "$TACTUAL_PROBE_SELECTOR"
+            ARGS+=(--probe-selector "${_probe_scope[@]}")
           fi
 
           EXT="txt"

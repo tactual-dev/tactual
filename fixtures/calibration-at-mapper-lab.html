@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AT Mapper Calibration Lab</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      line-height: 1.45;
+      margin: 24px;
+      max-width: 960px;
+    }
+    section,
+    form {
+      border-top: 1px solid #bbb;
+      margin-top: 24px;
+      padding-top: 16px;
+    }
+    label,
+    legend {
+      display: block;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+    input,
+    select,
+    button {
+      display: block;
+      margin: 4px 0 10px;
+      max-width: 320px;
+    }
+    .inline-label {
+      display: inline;
+      font-weight: 400;
+    }
+    .help {
+      color: #555;
+      font-size: 0.95rem;
+      margin: 0 0 8px;
+    }
+    [role="tablist"] {
+      display: flex;
+      gap: 8px;
+    }
+    [role="tabpanel"] {
+      border: 1px solid #999;
+      margin-top: 8px;
+      padding: 12px;
+    }
+    iframe {
+      border: 1px solid #777;
+      display: block;
+      height: 260px;
+      margin-top: 12px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <header role="banner">
+    <h1>AT Mapper Calibration Lab</h1>
+    <nav aria-label="Account">
+      <a href="#forms">Form controls</a>
+      <a href="#widgets">Composite widgets</a>
+      <a href="#embedded">Embedded checkout</a>
+    </nav>
+  </header>
+
+  <main aria-label="Calibration workspace">
+    <section id="overview" aria-labelledby="overview-heading">
+      <h2 id="overview-heading">Overview</h2>
+      <p>This page intentionally combines ordinary controls with stateful ARIA so NVDA observations can challenge Tactual's announcement mapper.</p>
+      <button type="button">Save draft</button>
+      <button type="button" aria-pressed="false">Mute alerts</button>
+      <button type="button" aria-expanded="false" aria-controls="advanced-filters">Advanced filters</button>
+      <div id="advanced-filters" hidden>
+        <label for="filter-owner">Filter owner</label>
+        <input id="filter-owner">
+      </div>
+    </section>
+
+    <form id="forms" aria-labelledby="forms-heading">
+      <h2 id="forms-heading">Form controls</h2>
+
+      <label for="site-search">Site search</label>
+      <input id="site-search" type="search" value="orders" aria-describedby="site-search-help">
+      <p id="site-search-help" class="help">Searches current account records.</p>
+
+      <label for="email">Email address</label>
+      <input id="email" type="email" required aria-required="true" aria-invalid="true" aria-describedby="email-error" value="ben@example">
+      <p id="email-error" class="help">Enter a complete email address.</p>
+
+      <label for="plan">Plan</label>
+      <select id="plan" aria-describedby="plan-help">
+        <option>Basic</option>
+        <option selected>Pro</option>
+        <option>Enterprise</option>
+      </select>
+      <p id="plan-help" class="help">Current plan affects billing permissions.</p>
+
+      <fieldset>
+        <legend>Notifications</legend>
+        <input id="daily" type="checkbox" checked>
+        <label class="inline-label" for="daily">Daily summary</label>
+        <input id="weekly" type="checkbox">
+        <label class="inline-label" for="weekly">Weekly digest</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Billing contact</legend>
+        <input id="contact-me" type="radio" name="billing-contact" checked>
+        <label class="inline-label" for="contact-me">Use my profile</label>
+        <input id="contact-team" type="radio" name="billing-contact">
+        <label class="inline-label" for="contact-team">Use team owner</label>
+      </fieldset>
+
+      <label for="seat-count">Seats</label>
+      <input id="seat-count" type="number" min="1" max="50" value="8">
+
+      <label for="priority">Priority</label>
+      <input id="priority" type="range" min="0" max="10" value="7" aria-valuetext="High priority">
+    </form>
+
+    <section id="widgets" aria-labelledby="widgets-heading">
+      <h2 id="widgets-heading">Composite widgets</h2>
+      <button type="button" aria-haspopup="menu" aria-expanded="false" aria-controls="action-menu">Actions</button>
+      <ul id="action-menu" role="menu" hidden>
+        <li role="menuitem">Duplicate record</li>
+        <li role="menuitem">Archive record</li>
+      </ul>
+
+      <label for="assignee">Assignee</label>
+      <input id="assignee" role="combobox" aria-expanded="false" aria-controls="assignee-options" aria-autocomplete="list" aria-describedby="assignee-help">
+      <p id="assignee-help" class="help">Type a teammate name.</p>
+      <div id="assignee-options" role="listbox" hidden>
+        <div id="assignee-ada" role="option">Ada Lovelace</div>
+        <div id="assignee-grace" role="option">Grace Hopper</div>
+      </div>
+
+      <div role="tablist" aria-label="Record details">
+        <button id="summary-tab" role="tab" aria-selected="true" aria-controls="summary-panel">Summary</button>
+        <button id="activity-tab" role="tab" aria-selected="false" aria-controls="activity-panel">Activity</button>
+      </div>
+      <div id="summary-panel" role="tabpanel" aria-labelledby="summary-tab">
+        <h3>Summary panel</h3>
+        <a href="#summary-download">Download summary</a>
+      </div>
+      <div id="activity-panel" role="tabpanel" aria-labelledby="activity-tab" hidden>
+        <h3>Activity panel</h3>
+        <a href="#activity-download">Download activity</a>
+      </div>
+    </section>
+
+    <section id="spa" aria-labelledby="spa-heading">
+      <h2 id="spa-heading">SPA route changes</h2>
+      <button type="button" id="route-orders">Orders route</button>
+      <button type="button" id="route-settings">Settings route</button>
+      <p id="route-status" role="status" aria-live="polite">Route is overview.</p>
+    </section>
+
+    <section id="embedded" aria-labelledby="embedded-heading">
+      <h2 id="embedded-heading">Embedded checkout</h2>
+      <iframe src="/fixtures/calibration-at-mapper-frame.html" title="Embedded checkout frame"></iframe>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    <a href="#privacy">Privacy notice</a>
+  </footer>
+
+  <script>
+    document.getElementById("route-orders").addEventListener("click", () => {
+      history.pushState({}, "", "#orders");
+      document.title = "Orders - AT Mapper Calibration Lab";
+      document.getElementById("route-status").textContent = "Route is orders.";
+    });
+    document.getElementById("route-settings").addEventListener("click", () => {
+      history.pushState({}, "", "#settings");
+      document.title = "Settings - AT Mapper Calibration Lab";
+      document.getElementById("route-status").textContent = "Route is settings.";
+    });
+  </script>
+</body>
+</html>

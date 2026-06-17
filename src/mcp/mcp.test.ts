@@ -39,6 +39,7 @@ describe("MCP server", () => {
       import("./tools/trace-path.js"),
       import("./tools/save-auth.js"),
       import("./tools/analyze-pages.js"),
+      import("./tools/calibration-report.js"),
     ]);
     const registers = [
       mods[0].registerAnalyzeUrl,
@@ -49,6 +50,7 @@ describe("MCP server", () => {
       mods[5].registerTracePath,
       mods[6].registerSaveAuth,
       mods[7].registerAnalyzePages,
+      mods[8].registerCalibrationReport,
     ];
     for (const reg of registers) {
       reg(stub as unknown as Parameters<typeof reg>[0]);
@@ -58,6 +60,7 @@ describe("MCP server", () => {
     expect(names).toEqual([
       "analyze_pages",
       "analyze_url",
+      "calibration_report",
       "diff_results",
       "list_profiles",
       "save_auth",
@@ -127,6 +130,29 @@ describe("MCP server", () => {
     expect(keys).toContain("strategy");
     expect(keys).toContain("channel");
     expect(keys).toContain("stealth");
+  });
+
+  it("calibration_report input schema has the expected shape", async () => {
+    const registrations: Array<{
+      name: string;
+      schema: { inputSchema?: Record<string, unknown> };
+    }> = [];
+    const stub = {
+      registerTool: (name: string, schema: { inputSchema?: Record<string, unknown> }) => {
+        registrations.push({ name, schema });
+      },
+    };
+    const { registerCalibrationReport } = await import("./tools/calibration-report.js");
+    registerCalibrationReport(stub as unknown as Parameters<typeof registerCalibrationReport>[0]);
+
+    const calibration = registrations.find((r) => r.name === "calibration_report");
+    expect(calibration).toBeDefined();
+    const keys = Object.keys(calibration!.schema.inputSchema ?? {});
+    expect(keys).toContain("datasetPath");
+    expect(keys).toContain("analysisPaths");
+    expect(keys).toContain("analysisDir");
+    expect(keys).toContain("allowMissing");
+    expect(keys).toContain("format");
   });
 });
 

@@ -1,0 +1,138 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T22:13:44.270Z",
+  "url": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "landmark",
+  "navigation": {
+    "keyName": "d",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "20",
+      "a0"
+    ],
+    "description": "NVDA browse-mode next-landmark quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 7,
+  "targetCount": 7,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "landmark",
+      "stateId": "state-b6cab5abddd4",
+      "id": "banner-1",
+      "kind": "landmark",
+      "role": "banner",
+      "name": "",
+      "selector": "header",
+      "expectedAnnouncement": "banner landmark",
+      "expectedTokens": [
+        "banner landmark"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "landmark",
+      "stateId": "state-b6cab5abddd4",
+      "id": "navigation:account",
+      "kind": "landmark",
+      "role": "navigation",
+      "name": "Account",
+      "selector": "getByRole('navigation', { name: 'Account' })",
+      "expectedAnnouncement": "Account, navigation landmark",
+      "expectedTokens": [
+        "account",
+        "navigation landmark"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "landmark",
+      "stateId": "state-b6cab5abddd4",
+      "id": "main:calibration-workspace",
+      "kind": "landmark",
+      "role": "main",
+      "name": "Calibration workspace",
+      "selector": "getByRole('main', { name: 'Calibration workspace' })",
+      "expectedAnnouncement": "Calibration workspace, main landmark",
+      "expectedTokens": [
+        "calibration workspace",
+        "main landmark"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "landmark",
+      "stateId": "state-b6cab5abddd4",
+      "id": "region:overview",
+      "kind": "landmark",
+      "role": "region",
+      "name": "Overview",
+      "selector": "getByRole('region', { name: 'Overview' })",
+      "expectedAnnouncement": "Overview, region",
+      "expectedTokens": [
+        "overview",
+        "region"
+      ]
+    },
+    {
+      "index": 5,
+      "mode": "landmark",
+      "stateId": "state-b6cab5abddd4",
+      "id": "form:form-controls",
+      "kind": "landmark",
+      "role": "form",
+      "name": "Form controls",
+      "selector": "getByRole('form', { name: 'Form controls' })",
+      "expectedAnnouncement": "Form controls, form landmark",
+      "expectedTokens": [
+        "form controls",
+        "form landmark"
+      ]
+    },
+    {
+      "index": 6,
+      "mode": "landmark",
+      "stateId": "state-b6cab5abddd4",
+      "id": "region:composite-widgets",
+      "kind": "landmark",
+      "role": "region",
+      "name": "Composite widgets",
+      "selector": "getByRole('region', { name: 'Composite widgets' })",
+      "expectedAnnouncement": "Composite widgets, region",
+      "expectedTokens": [
+        "composite widgets",
+        "region"
+      ]
+    },
+    {
+      "index": 7,
+      "mode": "landmark",
+      "stateId": "state-b6cab5abddd4",
+      "id": "region:spa-route-changes",
+      "kind": "landmark",
+      "role": "region",
+      "name": "SPA route changes",
+      "selector": "getByRole('region', { name: 'SPA route changes' })",
+      "expectedAnnouncement": "SPA route changes, region",
+      "expectedTokens": [
+        "spa route changes",
+        "region"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

@@ -16,6 +16,7 @@ import { registerSuggestRemediations } from "./tools/suggest-remediations.js";
 import { registerTracePath } from "./tools/trace-path.js";
 import { registerSaveAuth } from "./tools/save-auth.js";
 import { registerAnalyzePages } from "./tools/analyze-pages.js";
+import { registerCalibrationReport } from "./tools/calibration-report.js";
 
 export { extractFindings, getOverallScore } from "./helpers.js";
 export { closeSharedBrowser } from "./browser.js";
@@ -39,6 +40,7 @@ export function createMcpServer(): McpServer {
   registerTracePath(server);
   registerSaveAuth(server);
   registerAnalyzePages(server);
+  registerCalibrationReport(server);
 
   return server;
 }

@@ -34,6 +34,8 @@ index.ts (public API re-exports)
 │   ├── glob.ts               ← Shared glob-to-regex utility
 │   ├── contrast.ts           ← WCAG-style luminance/contrast helpers
 │   ├── context-options.ts    ← Browser/context construction, stealth, storageState validation
+│   ├── browser.ts            ← Shared browser-pool helper for long-lived callers
+│   ├── at-navigation.ts      ← Richer AT strategy helpers used by graph costs
 │   ├── finding-builder.ts    ← Slim orchestrator: structural context + truncatePath
 │   ├── finding-scoring.ts    ← assembleScoreInputs, deriveOperability, deriveRecovery, classifyActionType
 │   ├── finding-penalties.ts  ← generatePenalties orchestrator for graph/state/probe penalties
@@ -45,9 +47,10 @@ index.ts (public API re-exports)
 │   ├── finding-widget-probe-penalties.ts
 │   ├── finding-form-probe-penalties.ts
 │   ├── state-machine.ts      ← APG state prediction (simulateAction) for pattern-deviation detection
+│   ├── state-flow-analyzer.ts ← Detects controls enabled only after explored-state transitions
 │   ├── analyzer.ts           ← Staged analyzer: diagnostics → graph → findings → result
 │   ├── config.ts             ← tactual.json / .tactualrc.json loading and merging
-│   ├── diagnostics.ts        ← Detection: bot walls, login walls, sparse content (strong vs weak signals)
+│   ├── diagnostics.ts        ← Capture, structure, ARIA, visual, media, language, and SPA diagnostics
 │   ├── presets.ts            ← Scoring presets (ecommerce-checkout, docs-site, dashboard, form-heavy)
 │   ├── result-extraction.ts  ← Shared result-shape normalization for diff/suggest tools
 │   ├── trace-helpers.ts      ← Shared target matching and modeled announcement helpers
@@ -62,6 +65,7 @@ index.ts (public API re-exports)
 │   ├── diff-results.ts       ← Structured result diff payload
 │   ├── save-auth.ts          ← Authentication flow + storageState persistence
 │   ├── suggest-remediations.ts ← Ranked remediation extraction
+│   ├── calibration-report.ts ← Calibration corpus report aggregation
 │   ├── inline-validation.ts  ← Optional validation attachment during analyze-url
 │   └── probe-helpers.ts      ← Shared probe budgets, targeting, and explore reveal hook
 ├── scoring/
@@ -81,9 +85,21 @@ index.ts (public API re-exports)
 │   ├── summarize.ts      ← Summarization: stats, issue groups w/ score-uplift, compact path rendering
 │   └── index.ts          ← formatReport dispatcher
 ├── playwright/
-│   ├── capture.ts        ← ariaSnapshot → Target extraction + _rect/_inlineInText/_href enrichment
+│   ├── capture.ts        ← ariaSnapshot/CDP AX → Target extraction + DOM metadata enrichment
+│   ├── cdp-ax-serializer.ts ← Converts Chromium AX trees into ariaSnapshot-compatible YAML
+│   ├── cdp-listener-probe.ts ← CDP event-listener scan for JS-attached click handlers
 │   ├── attach.ts         ← Flow recording on Page
 │   ├── explorer.ts       ← Bounded branch exploration with onStateRevealed hook
+│   ├── route-tracker.ts  ← pushState/replaceState/popstate/hashchange observation
+│   ├── framework-detect.ts, framework-settle.ts ← SPA hydration/settle signals
+│   ├── auto-scroll.ts    ← Page, container, and iframe scroll surfacing before capture
+│   ├── banner-dismiss.ts ← Cookie/consent banner dismissal helper
+│   ├── hover-probe.ts    ← Hover-triggered content discovery
+│   ├── tab-order.ts      ← Bounded keyboard Tab sequence capture
+│   ├── viewport-diff.ts  ← Desktop/mobile accessibility-surface comparison
+│   ├── cvd-simulation.ts ← Color-vision-deficiency contrast simulation
+│   ├── aria-validator.ts ← ARIA role/attribute/value taxonomy checks
+│   ├── lang-switch-detect.ts ← Heuristic language-switch detection
 │   ├── probes.ts         ← Runtime keyboard probes (focus, activate, Escape, Tab) + prioritizeTargetsForProbing
 │   ├── menu-probe.ts     ← APG menu-pattern probe (event-driven waits, sample-and-broadcast)
 │   ├── modal-probe.ts    ← APG dialog-pattern probe (focus trap, shift+tab, Escape)
@@ -91,8 +107,10 @@ index.ts (public API re-exports)
 │   ├── widget-probe.ts   ← Tab/disclosure contract probes
 │   ├── composite-widget-probe.ts ← Combobox/listbox contract probes
 │   ├── form-error-probe.ts ← Required-field error-flow probes
+│   ├── form-fill-probe.ts ← Explicit form-fill/enablement helper
 │   ├── visibility-probe.ts ← Per-icon forced-colors/contrast sampling
 │   ├── sr-simulator.ts   ← SR announcement simulation (detects demoted landmarks)
+│   ├── dom-invader*.ts, evo-explorer.ts ← Internal experimental helpers, not public exports
 │   └── safety.ts         ← Safe-action policy (with --allow-action override)
 ├── validation/
 │   ├── index.ts          ← validateFindings: @guidepup/virtual-screen-reader driver
@@ -102,8 +120,8 @@ index.ts (public API re-exports)
 │   ├── commands/         ← One file per command; large commands delegate to action handlers
 │   └── helpers/          ← CLI-only diff formatting and shared utilities
 ├── mcp/
-│   ├── index.ts          ← Slim createMcpServer() — registers 8 tools from tools/
-│   ├── tools/            ← One file per tool (analyze_url, validate_url, trace_path, analyze_pages, save_auth, diff_results, suggest_remediations, list_profiles)
+│   ├── index.ts          ← Slim createMcpServer() — registers 9 tools from tools/
+│   ├── tools/            ← One file per tool (analyze_url, validate_url, trace_path, analyze_pages, save_auth, diff_results, suggest_remediations, list_profiles, calibration_report)
 │   ├── browser.ts        ← Shared browser pool (reused across calls)
 │   ├── http.ts           ← Streamable HTTP transport (session-based)
 │   ├── helpers.ts        ← Compatibility re-exports for core result helpers
@@ -127,7 +145,7 @@ The navigation graph is a directed weighted adjacency list (core/graph.ts). Grap
 
 ### Single package, multiple entry points
 
-Rather than a monorepo with 7 packages, Tactual is one npm package with sub-path exports (`tactual`, `tactual/playwright`, `tactual/mcp`, `tactual/validation`, `tactual/calibration`). Playwright is an optional peer dependency — users who only want the library API don't need to install it. The MCP SDK is a runtime dependency so installed packages can import `tactual/mcp` and run `tactual-mcp` directly.
+Rather than a monorepo with 7 packages, Tactual is one npm package with sub-path exports (`tactual`, `tactual/playwright`, `tactual/mcp`, `tactual/validation`, `tactual/calibration`). Playwright is a runtime dependency so one-off CLI and MCP installs can capture pages without peer-dependency setup. The MCP SDK is also a runtime dependency so installed packages can import `tactual/mcp` and run `tactual-mcp` directly.
 
 ### Profiles drive costs, not the graph
 
@@ -257,7 +275,7 @@ Structural fallback:
 
 ## Security Model
 
-- **URL validation**: All URLs are validated before navigation (url-validation.ts). Blocks javascript:, data:, vbscript:, blob: protocols and embedded credentials.
+- **URL validation**: All URLs are validated before navigation (url-validation.ts). Blocks javascript:, data:, vbscript:, blob: protocols and embedded credentials. CLI/library callers may use `file:` URLs for local fixtures; MCP tools disable `file:` URLs because their inputs can be agent-controlled.
 - **Safe-action policy**: Explorer won't click elements matching destructive patterns (delete, submit, purchase, etc.). See safety.ts for known limitations.
 - **No data exfiltration**: Tactual reads the accessibility tree but never sends data to external services. All processing is local.
-- **Playwright sandboxing**: Analysis runs in Playwright's Chromium which has its own sandbox. No raw filesystem access from analyzed pages.
+- **Playwright sandboxing**: Analysis runs in Playwright's Chromium which has its own sandbox. Analyzed pages do not get raw filesystem access beyond what the browser permits.

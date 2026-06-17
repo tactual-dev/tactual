@@ -1,6 +1,7 @@
 import { NavigationGraph } from "./graph.js";
 import type { PageState, Target, Edge } from "./types.js";
 import { computeStateSignature, CONTROL_KINDS } from "./types.js";
+import { formFieldQuickNavTargets } from "./at-navigation.js";
 import type { ATProfile } from "../profiles/types.js";
 
 /**
@@ -148,6 +149,15 @@ function generateIntraStateEdges(
   const controls = targets.filter((t) => CONTROL_KINDS.has(t.kind));
   generateSkipEdges(graph, state, controls, "nextControl", profile, eid);
 
+  // More specific AT quick-nav categories. Desktop ATs expose these as
+  // single-letter quick keys or element lists; mobile ATs expose comparable
+  // categories through rotor / reading-controls. Modeling them separately
+  // prevents "nextControl" from hiding the real difference between jumping
+  // by any control and jumping directly by form fields, buttons, or regions.
+  generateSkipEdges(graph, state, formFieldQuickNavTargets(targets, profile.id), "nextFormField", profile, eid);
+  generateSkipEdges(graph, state, targets.filter((t) => t.kind === "button"), "nextButton", profile, eid);
+  generateSkipEdges(graph, state, targets.filter((t) => t.kind === "landmark" || t.kind === "search"), "nextLandmark", profile, eid);
+
   // State entry to each heading (heading navigation from top)
   for (const heading of headings) {
     graph.addEdge({
@@ -184,6 +194,21 @@ function generateIntraStateEdges(
   if (profile.actionCosts.firstLetter < 10) {
     generateFirstLetterEdges(graph, state, targets, profile, eid);
   }
+
+  if (profile.actionCosts.rotor < 50) {
+    generateRotorEdges(graph, state, targets, profile, eid);
+  }
+
+  if (profile.actionCosts.formsMode < 50) {
+    generateFormsModeEdges(graph, state, targets, profile, eid);
+  }
+
+  if (profile.actionCosts.touchExplore < 50) {
+    generateTouchExploreEdges(graph, state, targets, profile, eid);
+  }
+
+  generateRelationshipEdges(graph, state, targets, profile, eid);
+  generateCompositeWidgetEdges(graph, state, targets, profile, eid);
 }
 
 /**
@@ -279,6 +304,245 @@ function generateFirstLetterEdges(
       });
     }
   }
+}
+
+function generateRotorEdges(
+  graph: NavigationGraph,
+  state: PageState,
+  targets: Target[],
+  profile: ATProfile,
+  eid: () => string,
+): void {
+  const rotorTargets = targets.filter(
+    (t) =>
+      t.kind === "heading" ||
+      t.kind === "landmark" ||
+      t.kind === "search" ||
+      t.kind === "link" ||
+      t.kind === "button" ||
+      t.kind === "formField",
+  );
+  for (let i = 0; i < rotorTargets.length; i++) {
+    const target = rotorTargets[i];
+    graph.addEdge({
+      id: eid(),
+      from: state.id,
+      to: `${state.id}:${target.id}`,
+      action: "rotor",
+      cost: profile.actionCosts.rotor + i * 0.15,
+      reason: `AT rotor / element-list jump to "${target.name || target.role}"`,
+      confidence: profile.platform === "mobile" ? 0.85 : 0.75,
+      profile: profile.id,
+    });
+  }
+}
+
+function generateFormsModeEdges(
+  graph: NavigationGraph,
+  state: PageState,
+  targets: Target[],
+  profile: ATProfile,
+  eid: () => string,
+): void {
+  const formFields = targets.filter((t) => t.kind === "formField");
+  for (let i = 0; i < formFields.length; i++) {
+    const field = formFields[i];
+    graph.addEdge({
+      id: eid(),
+      from: state.id,
+      to: `${state.id}:${field.id}`,
+      action: "formsMode",
+      cost: profile.actionCosts.formsMode + i * profile.actionCosts.nextFormField,
+      reason: `Switch to forms/focus mode and reach "${field.name || field.role}"`,
+      confidence: profile.platform === "desktop" ? 0.85 : 0.65,
+      profile: profile.id,
+    });
+  }
+}
+
+function generateTouchExploreEdges(
+  graph: NavigationGraph,
+  state: PageState,
+  targets: Target[],
+  profile: ATProfile,
+  eid: () => string,
+): void {
+  const viewport = state.viewport;
+  const spatialTargets = targets.filter((target) => {
+    const rect = (target as Record<string, unknown>)._rect as
+      | { x: number; y: number; width: number; height: number }
+      | undefined;
+    if (!rect || rect.width <= 0 || rect.height <= 0) return false;
+    if (!viewport) return true;
+    return (
+      rect.x < viewport.width &&
+      rect.x + rect.width > 0 &&
+      rect.y < viewport.height &&
+      rect.y + rect.height > 0
+    );
+  });
+
+  for (const target of spatialTargets) {
+    const rect = (target as Record<string, unknown>)._rect as
+      { x: number; y: number; width: number; height: number };
+    const verticalPenalty = viewport ? Math.max(0, Math.min(2, rect.y / Math.max(1, viewport.height))) : 0.5;
+    graph.addEdge({
+      id: eid(),
+      from: state.id,
+      to: `${state.id}:${target.id}`,
+      action: "touchExplore",
+      cost: profile.actionCosts.touchExplore + verticalPenalty,
+      reason: `Spatial touch exploration to visible ${target.kind}: "${target.name || target.role}"`,
+      confidence: 0.65,
+      profile: profile.id,
+    });
+  }
+}
+
+interface RelatedTargetRef {
+  id?: string;
+  role?: string;
+  name?: string;
+}
+
+interface TargetRelationshipMetadata {
+  controls?: RelatedTargetRef[];
+  owns?: RelatedTargetRef[];
+  activeDescendant?: RelatedTargetRef;
+  flowto?: RelatedTargetRef[];
+  hasPopup?: string;
+}
+
+function generateRelationshipEdges(
+  graph: NavigationGraph,
+  state: PageState,
+  targets: Target[],
+  profile: ATProfile,
+  eid: () => string,
+): void {
+  for (const source of targets) {
+    const relationships = (source as Record<string, unknown>)._ariaRelationships as
+      | TargetRelationshipMetadata
+      | undefined;
+    if (!relationships) continue;
+
+    const sourceId = `${state.id}:${source.id}`;
+    for (const ref of [
+      ...(relationships.controls ?? []),
+      ...(relationships.owns ?? []),
+      ...(relationships.flowto ?? []),
+    ]) {
+      const target = findRelatedTarget(targets, ref);
+      if (!target || target.id === source.id) continue;
+      graph.addEdge({
+        id: eid(),
+        from: sourceId,
+        to: `${state.id}:${target.id}`,
+        action: "relationshipJump",
+        cost: profile.actionCosts.relationshipJump,
+        reason: `Follow ARIA relationship from "${source.name || source.role}" to "${target.name || target.role}"`,
+        confidence: 0.75,
+        profile: profile.id,
+      });
+    }
+
+    if (relationships.activeDescendant) {
+      const target = findRelatedTarget(targets, relationships.activeDescendant);
+      if (target && target.id !== source.id) {
+        graph.addEdge({
+          id: eid(),
+          from: sourceId,
+          to: `${state.id}:${target.id}`,
+          action: "activeDescendant",
+          cost: profile.actionCosts.activeDescendant,
+          reason: `Move to active descendant "${target.name || target.role}"`,
+          confidence: 0.8,
+          profile: profile.id,
+        });
+      }
+    }
+  }
+}
+
+function generateCompositeWidgetEdges(
+  graph: NavigationGraph,
+  state: PageState,
+  targets: Target[],
+  profile: ATProfile,
+  eid: () => string,
+): void {
+  const compositeRoles = new Set([
+    "menuitem",
+    "menuitemcheckbox",
+    "menuitemradio",
+    "tab",
+    "radio",
+  ]);
+
+  let group: Target[] = [];
+  const flush = () => {
+    if (group.length < 2) {
+      group = [];
+      return;
+    }
+    for (let i = 0; i < group.length - 1; i++) {
+      const from = `${state.id}:${group[i].id}`;
+      const to = `${state.id}:${group[i + 1].id}`;
+      graph.addEdge({
+        id: eid(),
+        from,
+        to,
+        action: "compositeNavigation",
+        cost: profile.actionCosts.compositeNavigation,
+        reason: `Arrow-key navigation inside ${group[i].role} group`,
+        confidence: 0.8,
+        profile: profile.id,
+      });
+      graph.addEdge({
+        id: eid(),
+        from: to,
+        to: from,
+        action: "compositeNavigation",
+        cost: profile.actionCosts.compositeNavigation,
+        reason: `Reverse arrow-key navigation inside ${group[i].role} group`,
+        confidence: 0.8,
+        profile: profile.id,
+      });
+    }
+    group = [];
+  };
+
+  for (const target of targets) {
+    if (compositeRoles.has(target.role)) {
+      const compatibleGroup =
+        group.length === 0 ||
+        group[0].role === target.role ||
+        (group[0].role.startsWith("menuitem") && target.role.startsWith("menuitem"));
+      if (!compatibleGroup) flush();
+      group.push(target);
+    } else {
+      flush();
+    }
+  }
+  flush();
+}
+
+function findRelatedTarget(
+  targets: Target[],
+  ref: RelatedTargetRef,
+): Target | undefined {
+  if (ref.id) {
+    const byDomId = targets.find((t) => (t as Record<string, unknown>)._domId === ref.id);
+    if (byDomId) return byDomId;
+  }
+  if (ref.role && ref.name !== undefined) {
+    const exact = targets.find((t) => t.role === ref.role && (t.name ?? "") === ref.name);
+    if (exact) return exact;
+  }
+  if (ref.name) {
+    return targets.find((t) => (t.name ?? "") === ref.name);
+  }
+  return undefined;
 }
 
 function indexByKind(targets: Target[], kind: Target["kind"]): Target[] {

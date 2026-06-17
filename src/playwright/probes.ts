@@ -57,6 +57,14 @@ export interface ProbeResults {
    *  read from a detached node (all attrs empty) and pattern-deviation
    *  comparisons against the prediction should be skipped. */
   elementStillConnected?: boolean;
+  /**
+   * Text that appeared in an aria-live region (or role=alert/status/log)
+   * after the activation. This is what a screen reader would announce to
+   * the user after they pressed the trigger — independent of the trigger's
+   * own state change. Captured during probe by snapshotting live-region
+   * content before and after Enter.
+   */
+  liveAnnouncement?: string;
   /** Internal retry hint for probe orchestration. */
   failureReason?: "not-visible" | "error";
 }
@@ -268,6 +276,7 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
     // 3. Check pre-activation state
     const preStateMap = await getElementStateMap(locator);
     const preState = stateMapToString(preStateMap);
+    const preLiveRegions = await snapshotLiveRegions(page);
 
     // 4. Press Enter to activate
     await page.keyboard.press("Enter");
@@ -311,6 +320,8 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
     // Restore: Escape any remaining state, then click body to defocus
     await restoreAfterProbe(page);
 
+    const liveAnnouncement = await diffLiveRegions(page, preLiveRegions);
+
     return {
       focusable: hasFocus,
       escapeRestoresFocus: overlayRecovery.escapeRestoresFocus,
@@ -325,10 +336,57 @@ async function probeTarget(page: Page, target: Target): Promise<ProbeResults> {
       probeSucceeded: true,
       ariaStateBeforeEnter: preStateMap,
       ariaStateAfterEnter: postStateMap,
+      ...(liveAnnouncement ? { liveAnnouncement } : {}),
     };
   } catch {
     return failProbe("error");
   }
+}
+
+const LIVE_REGION_SELECTOR =
+  '[aria-live="polite"], [aria-live="assertive"], [role="alert"], [role="status"], [role="log"]';
+
+interface LiveRegionSnapshot {
+  index: number;
+  text: string;
+}
+
+async function snapshotLiveRegions(page: Page): Promise<LiveRegionSnapshot[]> {
+  return page
+    .evaluate((selector) => {
+      const els = document.querySelectorAll(selector);
+      const out: { index: number; text: string }[] = [];
+      for (let i = 0; i < els.length; i++) {
+        out.push({ index: i, text: (els[i].textContent ?? "").trim() });
+      }
+      return out;
+    }, LIVE_REGION_SELECTOR)
+    .catch(() => [] as LiveRegionSnapshot[]);
+}
+
+async function diffLiveRegions(
+  page: Page,
+  before: LiveRegionSnapshot[],
+): Promise<string | undefined> {
+  // SR engines typically poll live regions ~150–250 ms after a state change.
+  // 250 ms is enough for React/Vue to commit DOM updates without making the
+  // probe pipeline noticeably slower.
+  await page.waitForTimeout(250);
+  const after = await snapshotLiveRegions(page);
+  const beforeByIndex = new Map(before.map((r) => [r.index, r.text]));
+  const announcements: string[] = [];
+  for (const region of after) {
+    const prev = beforeByIndex.get(region.index) ?? "";
+    if (region.text && region.text !== prev) {
+      // The whole region's new text may include unchanged surrounding copy
+      // (live regions are often containers around dynamic spans). For SR,
+      // the announcement is the entire post-update text — same as what an
+      // SR would speak — so report it as-is.
+      announcements.push(region.text);
+    }
+  }
+  if (announcements.length === 0) return undefined;
+  return announcements.join(" | ");
 }
 
 function failProbe(failureReason: ProbeResults["failureReason"]): ProbeResults {

@@ -68,7 +68,7 @@ export interface CalibrationSummary {
   mismatched: number;
   byAT: Record<ATKind, { matched: number; mismatched: number }>;
   mismatches: CalibrationMismatch[];
-  /** Fraction of cases where the simulator's prediction was found in the actual output */
+  /** Fraction of cases where the simulator's prediction was found in tested output */
   coverage: number;
 }
 

@@ -1,7 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "fs";
+import { resolve } from "path";
 import type { PageState } from "../core/types.js";
 import { registerAnalyzePages } from "./tools/analyze-pages.js";
 import { registerAnalyzeUrl } from "./tools/analyze-url.js";
+import { registerCalibrationReport } from "./tools/calibration-report.js";
 import { registerDiffResults } from "./tools/diff-results.js";
 import { registerListProfiles } from "./tools/list-profiles.js";
 import { registerSaveAuth } from "./tools/save-auth.js";
@@ -73,6 +76,14 @@ function makeState(): PageState {
 }
 
 describe("MCP tool handlers", () => {
+  const calibrationDir = resolve("__test_tactual_mcp_calibration");
+  const datasetPath = resolve(calibrationDir, "dataset.json");
+  const analysisPath = resolve(calibrationDir, "analysis.json");
+
+  afterEach(() => {
+    if (existsSync(calibrationDir)) rmSync(calibrationDir, { recursive: true, force: true });
+  });
+
   it("executes list_profiles and returns profile details", async () => {
     const { name, handler } = captureTool(registerListProfiles as ToolRegistrar);
     const response = await handler({});
@@ -142,6 +153,41 @@ describe("MCP tool handlers", () => {
     });
   });
 
+  it("executes calibration_report and returns scoring signals", async () => {
+    writeCalibrationFixture();
+    const { handler } = captureTool(registerCalibrationReport as ToolRegistrar);
+    const response = await handler({
+      datasetPath,
+      analysisPaths: [analysisPath],
+      format: "json",
+    });
+
+    expect(response.isError).toBeUndefined();
+    const report = JSON.parse(text(response)) as {
+      datasetName: string;
+      scoringSignals: Array<{ id: string }>;
+    };
+    expect(report.datasetName).toBe("mcp-calibration");
+    expect(report.scoringSignals).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ id: "navigation.strategy-switch-pressure" }),
+      ]),
+    );
+  });
+
+  it("turns calibration_report missing analysis into an MCP error", async () => {
+    writeCalibrationFixture({ datasetUrl: "https://example.test/missing" });
+    const { handler } = captureTool(registerCalibrationReport as ToolRegistrar);
+    const response = await handler({
+      datasetPath,
+      analysisPaths: [analysisPath],
+      format: "json",
+    });
+
+    expect(response.isError).toBe(true);
+    expect(text(response)).toContain("Missing analysis JSON");
+  });
+
   it("executes trace_path against pre-captured states without launching a browser", async () => {
     const { handler } = captureTool(registerTracePath as ToolRegistrar);
     const response = await handler({
@@ -179,6 +225,20 @@ describe("MCP tool handlers", () => {
     expect(text(response)).toContain("Error tracing path on https://example.test");
   });
 
+  it("blocks local file URLs through trace_path", async () => {
+    const { handler } = captureTool(registerTracePath as ToolRegistrar);
+    const response = await handler({
+      url: "file:///etc/passwd",
+      target: "*submit*",
+      profile: "generic-mobile-web-sr-v0",
+      explore: false,
+      timeout: 1000,
+    });
+
+    expect(response.isError).toBe(true);
+    expect(text(response)).toContain("file: URLs are not allowed");
+  });
+
   it("turns analyze_url validation failures into MCP errors", async () => {
     const { handler } = captureTool(registerAnalyzeUrl as ToolRegistrar);
     const response = await handler({
@@ -196,6 +256,23 @@ describe("MCP tool handlers", () => {
     expect(text(response)).toContain("Blocked protocol");
   });
 
+  it("blocks local file URLs through analyze_url", async () => {
+    const { handler } = captureTool(registerAnalyzeUrl as ToolRegistrar);
+    const response = await handler({
+      url: "file:///etc/passwd",
+      profile: "generic-mobile-web-sr-v0",
+      format: "json",
+      explore: false,
+      probe: false,
+      summaryOnly: true,
+      includeStates: false,
+      timeout: 1000,
+    });
+
+    expect(response.isError).toBe(true);
+    expect(text(response)).toContain("file: URLs are not allowed");
+  });
+
   it("turns analyze_pages max-url failures into MCP errors", async () => {
     const { handler } = captureTool(registerAnalyzePages as ToolRegistrar);
     const response = await handler({
@@ -206,6 +283,18 @@ describe("MCP tool handlers", () => {
 
     expect(response.isError).toBe(true);
     expect(text(response)).toContain("Maximum 20 URLs per call");
+  });
+
+  it("blocks local file URLs through analyze_pages", async () => {
+    const { handler } = captureTool(registerAnalyzePages as ToolRegistrar);
+    const response = await handler({
+      urls: ["file:///etc/passwd"],
+      profile: "generic-mobile-web-sr-v0",
+      timeout: 1000,
+    });
+
+    expect(response.isError).toBeUndefined();
+    expect(text(response)).toContain("invalid-url: file: URLs are not allowed");
   });
 
   it("turns validate_url URL failures into MCP errors", async () => {
@@ -221,6 +310,19 @@ describe("MCP tool handlers", () => {
     expect(text(response)).toContain("Blocked protocol");
   });
 
+  it("blocks local file URLs through validate_url", async () => {
+    const { handler } = captureTool(registerValidateUrl as ToolRegistrar);
+    const response = await handler({
+      url: "file:///etc/passwd",
+      maxTargets: 1,
+      strategy: "semantic",
+      timeout: 1000,
+    });
+
+    expect(response.isError).toBe(true);
+    expect(text(response)).toContain("file: URLs are not allowed");
+  });
+
   it("turns save_auth URL failures into MCP errors before browser launch", async () => {
     const { handler } = captureTool(registerSaveAuth as ToolRegistrar);
     const response = await handler({
@@ -232,6 +334,19 @@ describe("MCP tool handlers", () => {
 
     expect(response.isError).toBe(true);
     expect(text(response)).toContain("Blocked protocol");
+  });
+
+  it("blocks local file URLs through save_auth before browser launch", async () => {
+    const { handler } = captureTool(registerSaveAuth as ToolRegistrar);
+    const response = await handler({
+      url: "file:///etc/passwd",
+      steps: [],
+      outputPath: "auth.json",
+      timeout: 1000,
+    });
+
+    expect(response.isError).toBe(true);
+    expect(text(response)).toContain("file: URLs are not allowed");
   });
 
   it("turns malformed save_auth steps into MCP errors before browser launch", async () => {
@@ -247,3 +362,99 @@ describe("MCP tool handlers", () => {
     expect(text(response)).toContain("Valid step types: click, fill, wait, waitForUrl");
   });
 });
+
+function writeCalibrationFixture(opts: { datasetUrl?: string } = {}): void {
+  const url = opts.datasetUrl ?? "https://example.test/checkout";
+  mkdirSync(resolve("__test_tactual_mcp_calibration"), { recursive: true });
+  writeFileSync(
+    resolve("__test_tactual_mcp_calibration", "dataset.json"),
+    JSON.stringify({
+      name: "mcp-calibration",
+      collectedAt: "2026-06-13T00:00:00Z",
+      observations: [
+        {
+          url,
+          profileId: "nvda-desktop-v0",
+          targetId: "initial:checkout",
+          targetName: "Checkout",
+          observedAnnouncement: "Checkout, button",
+          announcementSource: "fixture",
+          actualStepsToReach: 9,
+          strategyUsed: "mixed",
+          requiredStrategySwitch: true,
+          knewTargetExisted: true,
+          timeToDiscoverSeconds: 8,
+          discoveryMethod: "linear-scan",
+          couldOperate: true,
+          couldRecover: true,
+          difficultyRating: 4,
+          testerId: "mcp-test",
+          timestamp: "2026-06-13T00:01:00Z",
+        },
+      ],
+    }),
+  );
+  writeFileSync(
+    resolve("__test_tactual_mcp_calibration", "analysis.json"),
+    JSON.stringify({
+      flow: {
+        id: "flow",
+        name: "https://example.test/checkout",
+        states: ["initial"],
+        profile: "nvda-desktop-v0",
+        timestamp: Date.now(),
+      },
+      states: [
+        {
+          id: "initial",
+          url: "https://example.test/checkout",
+          route: "/checkout",
+          snapshotHash: "a",
+          interactiveHash: "b",
+          openOverlays: [],
+          targets: [
+            {
+              id: "checkout",
+              kind: "button",
+              role: "button",
+              name: "Checkout",
+              selector: "button",
+            },
+          ],
+          timestamp: Date.now(),
+          provenance: "scripted",
+        },
+      ],
+      findings: [
+        {
+          targetId: "initial:checkout",
+          profile: "nvda-desktop-v0",
+          scores: {
+            discoverability: 96,
+            reachability: 94,
+            operability: 92,
+            recovery: 90,
+            interopRisk: 88,
+            overall: 95,
+          },
+          severity: "strong",
+          bestPath: ["initial", "initial:checkout"],
+          alternatePaths: [],
+          penalties: [],
+          suggestedFixes: [],
+          confidence: 0.9,
+        },
+      ],
+      diagnostics: [],
+      metadata: {
+        version: "0.0.0-test",
+        profile: "nvda-desktop-v0",
+        duration: 1,
+        stateCount: 1,
+        targetCount: 1,
+        findingCount: 1,
+        edgeCount: 1,
+      },
+    }),
+  );
+}

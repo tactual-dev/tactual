@@ -163,10 +163,11 @@ describe("profile-parameterized: all 5 profiles", () => {
       // nextItem is the base action — should be the lowest or tied for lowest
       expect(costs.nextItem).toBeLessThanOrEqual(costs.find);
 
-      // find is the most expensive real action (firstLetter uses 100 as
-      // sentinel for "not available" on mobile — exclude from comparison)
+      // find is the most expensive real action. Some actions use 100 as a
+      // sentinel for "not available" on a profile (first-letter on mobile,
+      // touch exploration on desktop), so exclude unsupported sentinels.
       for (const action of Object.keys(costs) as Array<keyof typeof costs>) {
-        if (action === "firstLetter") continue;
+        if (costs[action] >= 50) continue;
         expect(costs.find).toBeGreaterThanOrEqual(costs[action]);
       }
 

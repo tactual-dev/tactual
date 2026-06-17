@@ -1,5 +1,62 @@
 # Changelog
 
+## 0.5.0 (2026-06-16)
+
+Release focused on SPA reliability, cross-origin iframe coverage, richer AT-tree
+navigation modeling, one-command install ergonomics, and clearer release/test
+documentation. This release also expands the default diagnostic surface beyond
+navigation-cost reliability checks, so unchanged pages may produce new warnings
+and different score distributions.
+
+### Highlights
+
+- Playwright is now a regular runtime dependency of `tactual`, so `npx tactual@latest ...`, installed CLI usage, the MCP binary, and packaged smoke tests no longer depend on callers installing Playwright into the same temporary npx cache.
+- SPA capture now has explicit helpers for hydrated app shells and modern frontend patterns: framework-aware settle checks, convergence polling, route-change tracking, auto-scroll for lazy content, same-origin iframe descent, Chromium CDP recovery for many cross-origin OOPIF accessibility trees, hover-content probing, tab-order walking, and desktop/mobile viewport diffs.
+- Navigation-cost modeling can now use richer AT strategies including rotor/element-list jumps, forms mode, touch exploration, relationship jumps, active descendants, and composite-widget arrow traversal.
+- Always-on diagnostics now cover a wider set of structural, ARIA, visual, media, document metadata, language, and repeated-navigation signals including invalid ARIA role/attribute usage, missing iframe titles and image alt text, duplicate IDs, nested interactive controls, ambiguous links, broken skip links, missing autocomplete, low-contrast text, color-only conveyance, color-vision-deficiency contrast simulation, language-switch heuristics, and viewport zoom restrictions.
+- Calibration can compare modeled announcements against observed/tested announcement tokens without requiring real SR automation in CI.
+- The README now points agents to a shorter workflow path (`docs/AGENT-RECIPES.md` and `docs/MCP-TOOLS.md`) while keeping the product overview and release-surface examples in one place.
+
+### Analysis Correctness
+
+- Added end-to-end pipeline coverage for `runAnalyzeUrl` with `detectRoutes`, `autoScroll`, and `descendFrames` against a real local HTTP fixture, verifying route diagnostics, lazy content capture, and iframe target attribution through the public analysis path.
+- Added same-origin serializer calibration and cross-origin OOPIF recovery tests so CDP AX trees continue to parse through the normal ariaSnapshot path.
+- Added hard-SPA navigation fixtures covering dense navigation distractors, ARIA relationship metadata, active descendants, tab composites, touch-explore paths, route mutation, and lazy cross-origin iframe targets.
+- Strengthened SPA-focused coverage for framework detection, framework settle behavior, route tracking, viewport diffing, and combined crawl behavior.
+- Added capture-time checks for document metadata, media metadata, ARIA taxonomy/role support, CDP-observed click listeners, visual order divergence, low text contrast, color-only conveyance, color-vision-deficiency contrast loss, and language switches without `lang` markers.
+- Corrected calibration path-cost/bias math to use graph-weighted costs and matched observations, and added announcement-only calibration results.
+
+### Public API and Security
+
+- MCP URL-taking tools now reject `file:` URLs. CLI and library workflows still accept `file:` URLs for local fixtures and offline reports, but remote-control MCP surfaces accept only `http:` and `https:` to avoid local file disclosure through agent-controlled browser navigation.
+- The `tactual/playwright` public export remains focused on accessibility capture, exploration, probes, viewport/CVD helpers, form enablement, and screen-reader simulation. Experimental DOM-XSS and genetic-crawl helper modules remain internal and tested, but are not exported as supported public API in 0.5.0.
+
+### Packaging and Dependencies
+
+- Moved `playwright` from optional peer/dev dependency handling to `dependencies`, preserving the separate browser-binary install step (`npx playwright install chromium` or `--with-deps` in Linux CI).
+- Updated the GitHub Action install path to install `tactual@0.5.0` and then install Chromium browser binaries, rather than installing Playwright as a separate npm package.
+- Bumped package, lockfile, Action, reusable workflow, and MCP server metadata to 0.5.0.
+- Added `npm run test:release` as the repeatable split release gate, plus release smoke and drift-review scripts.
+- Updated vulnerable transitive dependencies so `npm audit --omit=dev` is clean.
+
+### Documentation
+
+- Updated README Action examples to `tactual-dev/tactual@v0.5.0`.
+- Documented the SPA helper flags in the CLI reference and SPA section: `--detect-routes`, `--descend-frames`, `--auto-scroll`, `--dismiss-banners`, `--probe-hover`, `--walk-tab-order`, and `--diff-viewports`.
+- Expanded the diagnostics reference so each emitted diagnostic code can be interpreted and suppressed without reading source.
+- Added an SPA audit recipe for agents using the MCP `analyze_url` tool with `waitForSelector`, route tracking, auto-scroll, iframe descent, and viewport diffing.
+- Added release matrix and limitations documents covering OOPIF/browser boundaries, SPA/runtime side effects, announcement modeling, and the NVDA source/license boundary.
+- Added an announcement-observation recipe and `tactual observe-announcement` helper for recording modeled-vs-observed SR output as calibration evidence.
+- Added an optional `npm run nvda:vm:observe` workflow for organizing controlled NVDA VM speech artifacts and ingesting them as `announcementSource: "nvda-vm"` calibration evidence.
+- Added `npm run benchmark:known-pages`, a manual live-site corpus runner for complex SPA/component-library documentation pages. It exercises the 0.5 capture helpers together, writes ignored evidence under `build/`, and separates documentation-shell navigation cost, component implementation issues, composite-widget interop, visual-mode checks, and capture-quality failures in its report.
+- Clarified that Tactual installs Playwright as a runtime dependency, while browser binaries may still need the standard Playwright install command in CI or fresh environments.
+
+### Compatibility Notes
+
+- Scores, diagnostics, JSON baselines, SARIF findings, and CI thresholds can change on unchanged pages because 0.5.0 captures more structural, visual, ARIA, viewport, language, and metadata evidence by default. Regenerate 0.4.x baselines before using 0.5.0 as a regression gate.
+- The expanded visual diagnostics are heuristics. Treat `low-contrast-text`, `color-only-conveyance`, `color-blindness-contrast-fail`, `visual-order-divergence`, and `lang-switch-without-marker` as review prompts that need page-context confirmation.
+- Branch states discovered by `--explore` no longer promote isolated `possibly-degraded-content` warnings when the primary scripted capture contains substantial content. Bot-block, empty-page, and other hard reliability diagnostics are still reported.
+
 ## 0.4.1 (2026-04-27)
 
 Patch release for installed-package ergonomics: diff output formats now match CLI help, MCP HTTP accepts both common flag forms, and benchmark fixtures ship with the package.

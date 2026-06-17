@@ -1,0 +1,165 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-12T21:19:02.177Z",
+  "url": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "form-field",
+  "navigation": {
+    "keyName": "f",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "21",
+      "a1"
+    ],
+    "description": "NVDA browse-mode next-form-field quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 12,
+  "targetCount": 8,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "searchbox:site-search",
+      "kind": "formField",
+      "role": "searchbox",
+      "name": "Site search",
+      "selector": "getByRole('searchbox', { name: 'Site search' })",
+      "expectedAnnouncement": "Site search, edit, Searches current account records.",
+      "expectedTokens": [
+        "site search",
+        "edit",
+        "searches current account records"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "textbox:email-address",
+      "kind": "formField",
+      "role": "textbox",
+      "name": "Email address",
+      "selector": "getByRole('textbox', { name: 'Email address' })",
+      "expectedAnnouncement": "Email address, edit, required, invalid entry, Enter a complete email address.",
+      "expectedTokens": [
+        "email address",
+        "edit",
+        "required",
+        "invalid entry",
+        "enter a complete email address"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "combobox:plan",
+      "kind": "formField",
+      "role": "combobox",
+      "name": "Plan",
+      "selector": "getByRole('combobox', { name: 'Plan' })",
+      "expectedAnnouncement": "Plan, combo box, collapsed, Current plan affects billing permissions.",
+      "expectedTokens": [
+        "plan",
+        "combo box",
+        "collapsed",
+        "current plan affects billing permissions"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "checkbox:daily-summary",
+      "kind": "formField",
+      "role": "checkbox",
+      "name": "Daily summary",
+      "selector": "getByRole('checkbox', { name: 'Daily summary' })",
+      "expectedAnnouncement": "Daily summary, check box, checked",
+      "expectedTokens": [
+        "daily summary",
+        "check box",
+        "checked"
+      ]
+    },
+    {
+      "index": 5,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "checkbox:weekly-digest",
+      "kind": "formField",
+      "role": "checkbox",
+      "name": "Weekly digest",
+      "selector": "getByRole('checkbox', { name: 'Weekly digest' })",
+      "expectedAnnouncement": "Weekly digest, check box, not checked",
+      "expectedTokens": [
+        "weekly digest",
+        "check box",
+        "not checked"
+      ]
+    },
+    {
+      "index": 6,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "radio:use-my-profile",
+      "kind": "formField",
+      "role": "radio",
+      "name": "Use my profile",
+      "selector": "getByRole('radio', { name: 'Use my profile' })",
+      "expectedAnnouncement": "Use my profile, radio button, checked",
+      "expectedTokens": [
+        "use my profile",
+        "radio button",
+        "checked"
+      ]
+    },
+    {
+      "index": 7,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "radio:use-team-owner",
+      "kind": "formField",
+      "role": "radio",
+      "name": "Use team owner",
+      "selector": "getByRole('radio', { name: 'Use team owner' })",
+      "expectedAnnouncement": "Use team owner, radio button, not checked",
+      "expectedTokens": [
+        "use team owner",
+        "radio button",
+        "not checked"
+      ]
+    },
+    {
+      "index": 8,
+      "mode": "form-field",
+      "stateId": "state-b6cab5abddd4",
+      "id": "spinbutton:seats",
+      "kind": "formField",
+      "role": "spinbutton",
+      "name": "Seats",
+      "selector": "getByRole('spinbutton', { name: 'Seats' })",
+      "expectedAnnouncement": "Seats, spin button, 8",
+      "expectedTokens": [
+        "seats",
+        "spin button",
+        "8"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

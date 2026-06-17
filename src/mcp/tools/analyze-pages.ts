@@ -44,6 +44,7 @@ export function registerAnalyzePages(server: McpServer): void {
           timeout,
           storageState,
           restrictStorageStateToCwd: true,
+          allowFileUrls: false,
           maxUrls: 20,
           useSharedBrowserPool: true,
         });

@@ -54,6 +54,13 @@ export async function handleAnalyzeUrlCommand(
       checkVisibility:
         (opts.checkVisibility as boolean | undefined) ??
         (merged.checkVisibility as boolean | undefined),
+      detectRoutes: opts.detectRoutes as boolean | undefined,
+      descendFrames: opts.descendFrames as boolean | undefined,
+      autoScroll: opts.autoScroll as boolean | undefined,
+      dismissBanners: opts.dismissBanners as boolean | undefined,
+      probeHover: opts.probeHover as boolean | undefined,
+      walkTabOrder: opts.walkTabOrder as boolean | undefined,
+      diffViewports: opts.diffViewports as boolean | undefined,
       headless: opts.headless !== false,
       channel: opts.channel as string | undefined,
       stealth: opts.stealth as boolean | undefined,
@@ -173,10 +180,12 @@ async function emitAnalyzeUrlOutput(
     process.stderr.write(`  Use --allow-action "<pattern>" to override.\n`);
   }
 
-  const output = opts.summaryOnly
-    ? await formatSummaryOnly(url, result)
-    : formatReport(result, opts.format as ReportFormat, {
-        maxDetailedFindings: opts.top ? parseInt(opts.top as string, 10) : undefined,
+  const output = opts.fullJson
+    ? JSON.stringify(result, null, 2)
+    : opts.summaryOnly
+      ? await formatSummaryOnly(url, result)
+      : formatReport(result, opts.format as ReportFormat, {
+          maxDetailedFindings: opts.top ? parseInt(opts.top as string, 10) : undefined,
       });
 
   if (opts.format === "console" && isTTY && !opts.summaryOnly) {
@@ -335,7 +344,9 @@ function handleAnalyzeUrlError(err: unknown): never {
     err instanceof Error &&
     (err.message.includes("Cannot find module") || err.message.includes("Cannot find package"))
   ) {
-    console.error("Playwright is required for analyze-url. Install it: npm install playwright");
+    console.error(
+      "Playwright is required for analyze-url but could not be loaded. Reinstall Tactual or run npm install.",
+    );
     process.exit(1);
   }
   throw err;

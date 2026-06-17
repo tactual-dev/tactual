@@ -255,6 +255,27 @@ describe("formatReport", () => {
       expect(output).toContain("H");
       expect(output).toContain('"Cart"');
     });
+
+    it("wraps long diagnostics into indented console lines", () => {
+      const output = formatReport(makeResult({
+        diagnostics: [
+          {
+            level: "warning",
+            code: "low-contrast-text",
+            message:
+              "This warning is intentionally long because console diagnostics should wrap instead of forming one unreadable terminal-width paragraph when visual or capture diagnostics include examples and remediation context.",
+          },
+        ],
+      }), "console");
+
+      const warningLines = output.split("\n").filter((line) =>
+        line.includes("Warning:") || line.startsWith("           "),
+      );
+      expect(warningLines.length).toBeGreaterThan(1);
+      expect(warningLines[0]).toContain("Warning:");
+      expect(warningLines[1]).toMatch(/^\s+\S/);
+      expect(warningLines[1]).not.toContain("Warning:");
+    });
   });
 
   describe("SARIF format", () => {

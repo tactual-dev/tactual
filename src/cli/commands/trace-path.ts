@@ -83,7 +83,7 @@ export function registerTracePath(program: Command): void {
             err.message.includes("Cannot find package"))
         ) {
           console.error(
-            "Playwright is required. Install it: npm install playwright",
+            "Playwright is required but could not be loaded. Reinstall Tactual or run npm install.",
           );
           process.exit(1);
         }

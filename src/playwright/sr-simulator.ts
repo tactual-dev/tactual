@@ -18,6 +18,7 @@
 
 import type { Page } from "playwright";
 import type { Target } from "../core/types.js";
+import type { ATProfile } from "../profiles/types.js";
 
 // ---------------------------------------------------------------------------
 // NVDA announcement patterns
@@ -114,6 +115,19 @@ const BASE_ANNOUNCEMENTS: Record<string, string> = {
   menuitem: "menu item",
   menuitemcheckbox: "menu item check box",
   menuitemradio: "menu item radio button",
+  // Structured widgets. These are intentionally modeled with conservative
+  // role phrases; table/grid/tree navigation behavior still needs runtime AT
+  // calibration before we add fast-path navigation edges for them.
+  table: "table",
+  grid: "grid",
+  tree: "tree",
+  treegrid: "tree grid",
+  row: "row",
+  columnheader: "column header",
+  rowheader: "row header",
+  gridcell: "grid cell",
+  cell: "cell",
+  treeitem: "tree item",
 };
 
 /**
@@ -122,7 +136,13 @@ const BASE_ANNOUNCEMENTS: Record<string, string> = {
  */
 const AT_OVERRIDES: Record<ATKind, Record<string, string>> = {
   nvda: {
-    // No overrides — BASE is calibrated against NVDA's defaults
+    // Observed with NVDA 2025.3.3 + Chrome 149 via the input/output log:
+    // a focusable ARIA listbox announced as "list", not "list box".
+    listbox: "list",
+    // Observed with NVDA 2026.1.1 + Edge in the controlled VM:
+    // native search inputs are announced as "edit" with the name/placeholder,
+    // not as the compound role phrase "search edit".
+    searchbox: "edit",
   },
   jaws: {
     // JAWS in default verbosity announces landmarks similarly to NVDA.
@@ -148,6 +168,103 @@ function getRoleText(role: string, at: ATKind): string {
   return AT_OVERRIDES[at][role] ?? BASE_ANNOUNCEMENTS[role] ?? role;
 }
 
+export type AnnouncementPartKind =
+  | "name"
+  | "role"
+  | "level"
+  | "state"
+  | "value"
+  | "description";
+
+export interface AnnouncementModelPart {
+  kind: AnnouncementPartKind;
+  text: string;
+  /**
+   * Stable ID for the mapper assumption that produced this spoken part.
+   * Calibration can attach observed evidence to these IDs instead of only
+   * saying "the whole announcement matched/missed".
+   */
+  assumptionId: string;
+  /** Confidence in the mapper assumption before runtime evidence is applied. */
+  confidence: number;
+  /** Short provenance label for the assumption. */
+  source: string;
+}
+
+export interface AnnouncementModel {
+  at: ATKind;
+  targetId: string;
+  targetRole: string;
+  parts: AnnouncementModelPart[];
+  announcement: string;
+}
+
+function assumptionPart(
+  kind: AnnouncementPartKind,
+  text: string | undefined,
+  assumptionId: string,
+  confidence: number,
+  source: string,
+): AnnouncementModelPart | null {
+  if (!text) return null;
+  return { kind, text, assumptionId, confidence, source };
+}
+
+function roleAssumption(
+  role: string,
+  at: ATKind,
+  roleText: string,
+  attrs?: Record<string, string>,
+): AnnouncementModelPart {
+  if (role === "button" && attrs?.["aria-haspopup"]) {
+    return {
+      kind: "role",
+      text: roleText,
+      assumptionId: `announcement.${at}.role.button.haspopup`,
+      confidence: 0.95,
+      source: "aria-at-menu-button",
+    };
+  }
+
+  if (at === "nvda" && role === "button" && attrs?.["aria-pressed"] !== undefined) {
+    return {
+      kind: "role",
+      text: roleText,
+      assumptionId: `announcement.${at}.role.button.pressed`,
+      confidence: 0.9,
+      source: "nvda-vm-2026-edge-toggle-button",
+    };
+  }
+
+  if (AT_OVERRIDES[at][role]) {
+    return {
+      kind: "role",
+      text: roleText,
+      assumptionId: `announcement.${at}.role.${role}`,
+      confidence: at === "nvda" && role === "listbox" ? 0.75 : 0.85,
+      source: `at-override-${at}`,
+    };
+  }
+
+  if (BASE_ANNOUNCEMENTS[role]) {
+    return {
+      kind: "role",
+      text: roleText,
+      assumptionId: `announcement.${at}.role.${role}`,
+      confidence: 0.9,
+      source: "aria-at-base-role-map",
+    };
+  }
+
+  return {
+    kind: "role",
+    text: roleText,
+    assumptionId: `announcement.${at}.role.${role}.raw-fallback`,
+    confidence: 0.4,
+    source: "raw-role-fallback",
+  };
+}
+
 
 /**
  * Build a heuristic screen-reader announcement string for a target.
@@ -168,6 +285,19 @@ function getRoleText(role: string, at: ATKind): string {
  *   { role: "heading", name: "Title", headingLevel: 2 } → "Title, heading, level 2"
  */
 export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
+  return buildAnnouncementModel(target, at).announcement;
+}
+
+/**
+ * Build the same announcement as `buildAnnouncement`, plus the individual
+ * mapper assumptions that produced each spoken name/role/state/value token.
+ *
+ * This is the unit we can calibrate against observed NVDA VM output. When an
+ * observed line says "Submit, link" for a modeled button, calibration can mark
+ * `announcement.nvda.role.button` as contradicted while leaving the accessible
+ * name assumption confirmed.
+ */
+export function buildAnnouncementModel(target: Target, at: ATKind = "nvda"): AnnouncementModel {
   const role = target.role;
   const attrsForRole = (target as Record<string, unknown>)._attributeValues as
     | Record<string, string>
@@ -181,15 +311,33 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
     if (popup === "menu" || popup === "true") {
       roleText = "menu button";
     }
+  } else if (at === "nvda" && role === "button" && attrsForRole?.["aria-pressed"] !== undefined) {
+    // Observed in the controlled NVDA 2026.1.1 + Edge VM: aria-pressed
+    // buttons use the role phrase "toggle button", then announce the
+    // pressed/not-pressed state as a separate token.
+    roleText = "toggle button";
   }
-  const parts: string[] = [];
+  const parts: AnnouncementModelPart[] = [];
 
-  if (target.name) parts.push(target.name);
-  parts.push(roleText);
+  const namePart = assumptionPart(
+    "name",
+    target.name,
+    `announcement.${at}.name.accessible-name`,
+    0.95,
+    "captured-accessible-name",
+  );
+  if (namePart) parts.push(namePart);
+  parts.push(roleAssumption(role, at, roleText, attrsForRole));
 
   // Heading level (NVDA: "Title, heading, level 2")
   if (target.kind === "heading" && target.headingLevel) {
-    parts.push(`level ${target.headingLevel}`);
+    parts.push({
+      kind: "level",
+      text: `level ${target.headingLevel}`,
+      assumptionId: `announcement.${at}.heading.level`,
+      confidence: 0.9,
+      source: "aria-at-heading-level",
+    });
   }
 
   // State info from captured ARIA attributes (reuse attrsForRole)
@@ -203,9 +351,20 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
       role === "menuitemcheckbox" || role === "menuitemradio"
     ) {
       const c = attrs["aria-checked"];
-      if (c === "true") parts.push("checked");
-      else if (c === "false") parts.push("not checked");
-      else if (c === "mixed") parts.push("partially checked");
+      if (c === "true" || c === "false" || c === "mixed") {
+        parts.push({
+          kind: "state",
+          text:
+            c === "true"
+              ? "checked"
+              : c === "false"
+                ? "not checked"
+                : "partially checked",
+          assumptionId: `announcement.${at}.state.checked.${c}`,
+          confidence: 0.9,
+          source: "aria-at-checked-state",
+        });
+      }
     }
 
     // Expanded/collapsed state (HIGH confidence — universal across ATs
@@ -216,21 +375,42 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
     // detectInteropDivergence output as a known uncertainty.
     const exp = attrs["aria-expanded"];
     if (exp !== undefined && !(at === "voiceover" && role === "combobox")) {
-      if (exp === "true") parts.push("expanded");
-      else if (exp === "false") parts.push("collapsed");
+      if (exp === "true" || exp === "false") {
+        parts.push({
+          kind: "state",
+          text: exp === "true" ? "expanded" : "collapsed",
+          assumptionId: `announcement.${at}.state.expanded.${exp}`,
+          confidence: 0.9,
+          source: "aria-at-expanded-state",
+        });
+      }
     }
 
     // Selected state (HIGH confidence — universal)
     if (role === "tab" || role === "option") {
       const sel = attrs["aria-selected"];
-      if (sel === "true") parts.push("selected");
+      if (sel === "true") {
+        parts.push({
+          kind: "state",
+          text: "selected",
+          assumptionId: `announcement.${at}.state.selected.true`,
+          confidence: 0.9,
+          source: "aria-at-selected-state",
+        });
+      }
     }
 
     // Modal dialog (MEDIUM confidence — NVDA & JAWS document modal
     // announcements but VoiceOver behavior varies by version. Including
     // for all ATs as a reasonable approximation.)
     if ((role === "dialog" || role === "alertdialog") && attrs["aria-modal"] === "true") {
-      parts.push("modal");
+      parts.push({
+        kind: "state",
+        text: "modal",
+        assumptionId: `announcement.${at}.state.modal.true`,
+        confidence: 0.75,
+        source: "aria-modal-state",
+      });
     }
 
     // Toggle button — aria-pressed state. ARIA-AT toggle-button pattern
@@ -238,9 +418,20 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
     // HIGH confidence: NVDA, JAWS, and VoiceOver all announce pressed state.
     if (role === "button" && attrs["aria-pressed"] !== undefined) {
       const p = attrs["aria-pressed"];
-      if (p === "true") parts.push("pressed");
-      else if (p === "false") parts.push("not pressed");
-      else if (p === "mixed") parts.push("partially pressed");
+      if (p === "true" || p === "false" || p === "mixed") {
+        parts.push({
+          kind: "state",
+          text:
+            p === "true"
+              ? "pressed"
+              : p === "false"
+                ? "not pressed"
+                : "partially pressed",
+          assumptionId: `announcement.${at}.state.pressed.${p}`,
+          confidence: 0.9,
+          source: "aria-at-pressed-state",
+        });
+      }
     }
 
     // Disabled state. NVDA "unavailable" and VoiceOver "dimmed" are
@@ -248,28 +439,78 @@ export function buildAnnouncement(target: Target, at: ATKind = "nvda"): string {
     // "dimmed": MEDIUM confidence — documented in older Apple guides
     // but exact wording for ARIA-disabled vs HTML-disabled may vary).
     if (attrs["aria-disabled"] === "true") {
-      parts.push(at === "voiceover" ? "dimmed" : "unavailable");
+      parts.push({
+        kind: "state",
+        text: at === "voiceover" ? "dimmed" : "unavailable",
+        assumptionId: `announcement.${at}.state.disabled.true`,
+        confidence: at === "voiceover" ? 0.75 : 0.9,
+        source: "aria-disabled-state",
+      });
     }
     // Readonly, invalid, required (HIGH confidence — universal phrasing)
-    if (attrs["aria-readonly"] === "true") parts.push("read only");
-    if (attrs["aria-invalid"] === "true" || attrs["aria-invalid"] === "grammar" || attrs["aria-invalid"] === "spelling") {
-      parts.push("invalid entry");
+    if (attrs["aria-readonly"] === "true") {
+      parts.push({
+        kind: "state",
+        text: "read only",
+        assumptionId: `announcement.${at}.state.readonly.true`,
+        confidence: 0.9,
+        source: "aria-readonly-state",
+      });
     }
-    if (attrs["aria-required"] === "true") parts.push("required");
+    if (
+      attrs["aria-invalid"] === "true" ||
+      attrs["aria-invalid"] === "grammar" ||
+      attrs["aria-invalid"] === "spelling"
+    ) {
+      parts.push({
+        kind: "state",
+        text: "invalid entry",
+        assumptionId: `announcement.${at}.state.invalid.${attrs["aria-invalid"]}`,
+        confidence: 0.9,
+        source: "aria-invalid-state",
+      });
+    }
+    if (attrs["aria-required"] === "true") {
+      parts.push({
+        kind: "state",
+        text: "required",
+        assumptionId: `announcement.${at}.state.required.true`,
+        confidence: 0.9,
+        source: "aria-required-state",
+      });
+    }
   }
 
   // Slider/spinbutton/progressbar value
   if (value && (role === "slider" || role === "spinbutton" || role === "progressbar")) {
-    parts.push(value);
+    parts.push({
+      kind: "value",
+      text: value,
+      assumptionId: `announcement.${at}.value.${role}`,
+      confidence: 0.85,
+      source: "captured-control-value",
+    });
   }
 
   // aria-describedby resolved text — NVDA reads it after the main announcement
   const description = (target as Record<string, unknown>)._description as string | undefined;
   if (description) {
-    parts.push(description);
+    parts.push({
+      kind: "description",
+      text: description,
+      assumptionId: `announcement.${at}.description.aria-describedby`,
+      confidence: 0.8,
+      source: "captured-aria-description",
+    });
   }
 
-  return parts.join(", ");
+  return {
+    at,
+    targetId: target.id,
+    targetRole: role,
+    parts,
+    announcement: parts.map((part) => part.text).join(", "),
+  };
 }
 
 /** All three AT announcements for a single target. */
@@ -290,7 +531,15 @@ export interface TranscriptStep {
   /** What the screen reader announces */
   announcement: string;
   /** Action a user takes to reach this step */
-  action: "next-item" | "next-heading" | "next-landmark";
+  action:
+    | "next-item"
+    | "next-heading"
+    | "next-landmark"
+    | "next-form-field"
+    | "next-button"
+    | "rotor"
+    | "touch-explore"
+    | "forms-mode";
 }
 
 /**
@@ -311,7 +560,15 @@ export function buildTranscript(targets: Target[], at: ATKind = "nvda"): Transcr
   }));
 }
 
-export type NavigationMode = "linear" | "by-landmark" | "by-heading" | "by-form-control";
+export type NavigationMode =
+  | "linear"
+  | "by-landmark"
+  | "by-heading"
+  | "by-form-control"
+  | "by-button"
+  | "rotor"
+  | "touch-explore"
+  | "forms-mode";
 
 export interface NavigationOptions {
   /** Navigation mode (default: linear) */
@@ -364,6 +621,24 @@ export function buildNavigationTranscript(
     if (mode === "by-form-control") {
       return t.kind === "formField" || t.kind === "button" || t.kind === "link";
     }
+    if (mode === "by-button") return t.kind === "button";
+    if (mode === "forms-mode") return t.kind === "formField";
+    if (mode === "rotor") {
+      return (
+        t.kind === "heading" ||
+        t.kind === "landmark" ||
+        t.kind === "search" ||
+        t.kind === "link" ||
+        t.kind === "button" ||
+        t.kind === "formField"
+      );
+    }
+    if (mode === "touch-explore") {
+      const rect = (t as Record<string, unknown>)._rect as
+        | { width?: number; height?: number }
+        | undefined;
+      return Boolean(rect && (rect.width ?? 0) > 0 && (rect.height ?? 0) > 0);
+    }
     return false;
   };
 
@@ -394,6 +669,11 @@ export function buildNavigationTranscript(
     const action: TranscriptStep["action"] =
       mode === "by-heading" ? "next-heading" :
       mode === "by-landmark" ? "next-landmark" :
+      mode === "by-form-control" ? "next-form-field" :
+      mode === "by-button" ? "next-button" :
+      mode === "rotor" ? "rotor" :
+      mode === "touch-explore" ? "touch-explore" :
+      mode === "forms-mode" ? "forms-mode" :
       "next-item";
 
     steps.push({
@@ -406,6 +686,55 @@ export function buildNavigationTranscript(
   }
 
   return steps;
+}
+
+export interface ProfileNavigationTranscript {
+  profileId: string;
+  platform: ATProfile["platform"];
+  modes: Array<{
+    mode: NavigationMode;
+    cost: number;
+    steps: TranscriptStep[];
+  }>;
+}
+
+/**
+ * Build transcripts through the navigation modes a profile makes cheap enough
+ * to plausibly use. This is the bridge between the static AX-tree model and
+ * empirical AT calibration: ARIA-AT / Guidepup transcripts can be compared
+ * against these per-mode predictions instead of only the flat linear order.
+ */
+export function buildProfileNavigationTranscript(
+  targets: Target[],
+  profile: ATProfile,
+  at: ATKind = profile.id.includes("jaws")
+    ? "jaws"
+    : profile.id.includes("voiceover")
+      ? "voiceover"
+      : "nvda",
+): ProfileNavigationTranscript {
+  const candidates: Array<{ mode: NavigationMode; cost: number }> = [
+    { mode: "linear", cost: profile.actionCosts.nextItem },
+    { mode: "by-heading", cost: profile.actionCosts.nextHeading },
+    { mode: "by-landmark", cost: profile.actionCosts.nextLandmark },
+    { mode: "by-form-control", cost: profile.actionCosts.nextFormField },
+    { mode: "by-button", cost: profile.actionCosts.nextButton },
+    { mode: "rotor", cost: profile.actionCosts.rotor },
+    { mode: "touch-explore", cost: profile.actionCosts.touchExplore },
+    { mode: "forms-mode", cost: profile.actionCosts.formsMode },
+  ];
+
+  return {
+    profileId: profile.id,
+    platform: profile.platform,
+    modes: candidates
+      .filter((candidate) => candidate.cost < 50)
+      .map((candidate) => ({
+        ...candidate,
+        steps: buildNavigationTranscript(targets, { mode: candidate.mode, at }),
+      }))
+      .filter((candidate) => candidate.steps.length > 0),
+  };
 }
 
 /** Build announcements for all three supported screen readers. */

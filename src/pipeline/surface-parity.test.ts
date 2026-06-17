@@ -94,10 +94,14 @@ describe("analyze-url surface parity", () => {
    * CLI-only flags that MCP intentionally lacks. Each has a reason
    * described inline below.
    */
-  const CLI_ONLY = new Set([
+  const MCP_UNSUPPORTED = new Set([
     // Output-file write & stdout control — MCP returns text in-band.
     "output",
     "also-json",
+    // Raw full AnalysisResult output for local calibration artifacts. MCP uses
+    // includeStates for the same target-state need, and the Action stays on
+    // compact reports/SARIF for CI ergonomics.
+    "full-json",
     // Human UX — MCP has no TTY to target.
     "quiet",
     // Preset+config-merge layer that only makes sense for file-driven CLI runs.
@@ -131,6 +135,19 @@ describe("analyze-url surface parity", () => {
     "includeStates",
   ]);
 
+  /**
+   * CLI-local flags that the Action should not expose because it owns output
+   * paths, PR artifact upload, and package-level configuration itself.
+   */
+  const ACTION_UNSUPPORTED = new Set([
+    "output",
+    "also-json",
+    "full-json",
+    "quiet",
+    "preset",
+    "config",
+  ]);
+
   /** Action-only inputs that don't correspond to any CLI flag. */
   const ACTION_ONLY_ERGONOMICS = new Set([
     "node-version",
@@ -155,7 +172,7 @@ describe("analyze-url surface parity", () => {
   it("every CLI flag has an MCP field or is explicitly CLI-only", () => {
     const missing: string[] = [];
     for (const flag of cliFlags) {
-      if (CLI_ONLY.has(flag)) continue;
+      if (MCP_UNSUPPORTED.has(flag)) continue;
       // Derive the expected camelCase key; `--top` maps to `maxFindings`.
       const expected = flag === "top" ? "maxFindings" : camel(flag);
       if (!mcpFields.has(expected)) missing.push(`${flag} (expected field ${expected})`);
@@ -166,12 +183,14 @@ describe("analyze-url surface parity", () => {
   it("every CLI flag has an Action input or is CLI-only (Action is CLI passthrough)", () => {
     const missing: string[] = [];
     for (const flag of cliFlags) {
-      if (CLI_ONLY.has(flag)) continue;
+      if (ACTION_UNSUPPORTED.has(flag)) continue;
       // `--top` maps to `max-findings`; `--threshold` maps to `fail-below`;
-      // `--no-headless` maps to `headless: false`.
+      // `--no-headless` maps to `headless: false`; `--no-check-visibility`
+      // maps to `check-visibility: false`.
       if (flag === "top" && actionInputs.has("max-findings")) continue;
       if (flag === "threshold" && actionInputs.has("fail-below")) continue;
       if (flag === "no-headless" && actionInputs.has("headless")) continue;
+      if (flag === "no-check-visibility" && actionInputs.has("check-visibility")) continue;
       if (!actionInputs.has(flag)) missing.push(flag);
     }
     expect(missing).toEqual([]);
@@ -304,6 +323,11 @@ describe("tool-name parity", () => {
     const src = readCliSource("diff.ts");
     expect(src).toMatch(/\.command\("diff-results"\)/);
     expect(src).toMatch(/\.alias\("diff"\)/);
+  });
+
+  it("calibration reporting exists on CLI and MCP", () => {
+    expect(readCliSource("calibration-report.ts")).toMatch(/\.command\("calibration-report"\)/);
+    expect(readMcpSource("calibration-report.ts")).toMatch(/"calibration_report"/);
   });
 });
 

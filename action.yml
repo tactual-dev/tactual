@@ -136,6 +136,34 @@ inputs:
     description: "Run per-icon visibility probe across profile-declared color-scheme × forced-colors modes. 'true' to force-enable, 'false' to disable, empty to defer to profile default (desktop AT profiles declare the matrix, mobile/generic do not)."
     required: false
     default: ""
+  detect-routes:
+    description: "Record SPA route changes (history.pushState/replaceState, popstate, hashchange) that fire during analysis. Set 'true' to enable; emits an spa-route-changes info diagnostic when any are observed."
+    required: false
+    default: ""
+  descend-frames:
+    description: "Descend into child iframes during capture (capped at 20 frames). Set 'true' to enable; appends frame targets with frame-URL attribution, can recover many Chromium cross-origin OOPIFs via CDP, and emits a frames-descended info diagnostic."
+    required: false
+    default: ""
+  auto-scroll:
+    description: "Scroll to the bottom of the page in steps before capture so lazy/infinite-scroll content materializes (capped at 20 scrolls / 30 s). Set 'true' to enable; emits an auto-scrolled info diagnostic."
+    required: false
+    default: ""
+  dismiss-banners:
+    description: "Best-effort dismiss of cookie/consent/GDPR banners before capture. Set 'true' to enable; clicks safe-accept buttons and skips Decline/Manage/Customize. Emits a banners-dismissed info diagnostic."
+    required: false
+    default: ""
+  probe-hover:
+    description: "Hover candidate triggers to surface hover-only popups/tooltips with no attribute hint. Default budget 10 candidates; adds ~7-8 s. Captures discovered content as _hoverContent on the trigger target."
+    required: false
+    default: ""
+  walk-tab-order:
+    description: "Press Tab up to 30 times and record the focused sequence so the analyzer can flag positive-tabindex anti-patterns and focus traps. Adds ~1-3 s."
+    required: false
+    default: ""
+  diff-viewports:
+    description: "Capture the URL at desktop (1280×800) and mobile (375×667) viewports and diff target/landmark/heading lists. Surfaces a viewport-divergence diagnostic when content uses display:none on small screens. Adds ~3-5 s."
+    required: false
+    default: ""
   # Baseline / regression gate
   baseline:
     description: "Path to a previously-saved analysis JSON. Diffs against current run; prints regression summary."
@@ -209,10 +237,10 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
 
-    - name: Install Tactual and Playwright
+    - name: Install Tactual and browsers
       shell: bash
       run: |
-        npm install tactual@0.4.1 playwright
+        npm install tactual@0.5.0
         npx playwright install chromium --with-deps
 
     - name: Run analysis
@@ -253,6 +281,13 @@ runs:
         TACTUAL_VALIDATE_MAX_TARGETS: ${{ inputs.validate-max-targets }}
         TACTUAL_VALIDATE_STRATEGY: ${{ inputs.validate-strategy }}
         TACTUAL_CHECK_VISIBILITY: ${{ inputs.check-visibility }}
+        TACTUAL_DETECT_ROUTES: ${{ inputs.detect-routes }}
+        TACTUAL_DESCEND_FRAMES: ${{ inputs.descend-frames }}
+        TACTUAL_AUTO_SCROLL: ${{ inputs.auto-scroll }}
+        TACTUAL_DISMISS_BANNERS: ${{ inputs.dismiss-banners }}
+        TACTUAL_PROBE_HOVER: ${{ inputs.probe-hover }}
+        TACTUAL_WALK_TAB_ORDER: ${{ inputs.walk-tab-order }}
+        TACTUAL_DIFF_VIEWPORTS: ${{ inputs.diff-viewports }}
         TACTUAL_BASELINE: ${{ inputs.baseline }}
         TACTUAL_FAIL_ON_REGRESSION: ${{ inputs.fail-on-regression }}
         TACTUAL_CHANNEL: ${{ inputs.channel }}
@@ -281,6 +316,13 @@ runs:
         [ "$TACTUAL_HEADLESS" = "false" ] && ARGS+=(--no-headless)
         [ "$TACTUAL_CHECK_VISIBILITY" = "true" ] && ARGS+=(--check-visibility)
         [ "$TACTUAL_CHECK_VISIBILITY" = "false" ] && ARGS+=(--no-check-visibility)
+        [ "$TACTUAL_DETECT_ROUTES" = "true" ] && ARGS+=(--detect-routes)
+        [ "$TACTUAL_DESCEND_FRAMES" = "true" ] && ARGS+=(--descend-frames)
+        [ "$TACTUAL_AUTO_SCROLL" = "true" ] && ARGS+=(--auto-scroll)
+        [ "$TACTUAL_DISMISS_BANNERS" = "true" ] && ARGS+=(--dismiss-banners)
+        [ "$TACTUAL_PROBE_HOVER" = "true" ] && ARGS+=(--probe-hover)
+        [ "$TACTUAL_WALK_TAB_ORDER" = "true" ] && ARGS+=(--walk-tab-order)
+        [ "$TACTUAL_DIFF_VIEWPORTS" = "true" ] && ARGS+=(--diff-viewports)
 
         # --- single-value flags ---
         [ -n "$TACTUAL_DEVICE" ] && ARGS+=(--device "$TACTUAL_DEVICE")

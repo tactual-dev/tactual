@@ -1,0 +1,62 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-spa-button-2026-06-14",
+  "importedAt": "2026-06-14T05:35:28.761Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "spa-button",
+      "fixture": "fixtures/calibration-spa-route-lab.html",
+      "mode": "button",
+      "status": "passed",
+      "plannedTargets": 2,
+      "matchedTargets": 2,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 13,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-spa-route-lab.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/calibration-spa-route-lab.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+      "analysis": "../analyses/fixtures-calibration-spa-route-lab.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/spa-button/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 1,
+    "passed": 1,
+    "failed": 0,
+    "weak": 0,
+    "harnessBlocked": 0,
+    "ingestedCases": 1,
+    "plannedTargets": 2,
+    "matchedTargets": 2,
+    "missingTargets": 0,
+    "unmatchedSpeechBlocks": 13
+  },
+  "scoringSignals": [
+    {
+      "id": "reachability.quick-nav.observed-match",
+      "kind": "observed-reachability",
+      "dimension": "reachability",
+      "status": "confirmed",
+      "confidence": 1,
+      "summary": "2/2 planned target(s) matched observed AT navigation",
+      "scoringImplication": "The calibrated reachable-set model is supported for these fixtures/modes; promote repeated passes into profile-specific quick-nav confidence.",
+      "evidence": {
+        "count": 2,
+        "examples": [
+          "spa-button:2/2"
+        ]
+      }
+    }
+  ]
+}

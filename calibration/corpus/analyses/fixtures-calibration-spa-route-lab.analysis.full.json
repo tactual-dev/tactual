@@ -1,0 +1,1278 @@
+{
+  "flow": {
+    "id": "flow-1781454818975",
+    "name": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+    "states": [
+      "state-80c10f0ec0c5"
+    ],
+    "profile": "nvda-desktop-v0",
+    "timestamp": 1781454818975
+  },
+  "states": [
+    {
+      "id": "state-80c10f0ec0c5",
+      "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+      "route": "/fixtures/calibration-spa-route-lab.html",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotHash": "80c10f0ec0c56473d65da781ff6b154823d70cdf5ba64052decbb838b6fc9ba4",
+      "canonicalSnapshotHash": "80c10f0ec0c56473d65da781ff6b154823d70cdf5ba64052decbb838b6fc9ba4",
+      "_docMetadata": {
+        "htmlLang": "en",
+        "title": "Overview route - SPA Route Calibration Lab",
+        "zoomRestricted": false,
+        "viewportContent": "width=device-width, initial-scale=1.0"
+      },
+      "_mediaMetadata": {
+        "totalImages": 0,
+        "imagesMissingAlt": 0,
+        "imagesSuspiciousAlt": [],
+        "totalIframes": 0,
+        "iframesMissingTitle": []
+      },
+      "_structuralIssues": {
+        "duplicateIds": [],
+        "nestedInteractive": [],
+        "metaRefresh": false
+      },
+      "_mediaControls": {
+        "mediaWithoutControls": [],
+        "h1Count": 1
+      },
+      "_cvdContrast": {
+        "byType": {
+          "deuteranopia": {
+            "count": 0,
+            "samples": []
+          },
+          "protanopia": {
+            "count": 0,
+            "samples": []
+          },
+          "tritanopia": {
+            "count": 3,
+            "samples": [
+              {
+                "selector": "a",
+                "text": "Overview",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Orders",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Settings",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              }
+            ]
+          }
+        },
+        "totalUniqueElements": 3
+      },
+      "interactiveHash": "fab3acd0182dc464b312ac5df0759d526705bd292d687c049f35ac8df6af5668",
+      "openOverlays": [],
+      "targets": [
+        {
+          "id": "banner-1",
+          "kind": "landmark",
+          "role": "banner",
+          "name": "",
+          "selector": "header",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "heading:spa-route-calibration-lab",
+          "kind": "heading",
+          "role": "heading",
+          "name": "SPA Route Calibration Lab",
+          "selector": "getByRole('heading', { name: 'SPA Route Calibration Lab' })",
+          "headingLevel": 1,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "1"
+          },
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "navigation:app-routes",
+          "kind": "landmark",
+          "role": "navigation",
+          "name": "App routes",
+          "selector": "getByRole('navigation', { name: 'App routes' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:overview",
+          "kind": "link",
+          "role": "link",
+          "name": "Overview",
+          "selector": "getByRole('link', { name: 'Overview' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "App routes"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "App routes"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-spa-route-lab.html#overview",
+          "_rect": {
+            "x": 24,
+            "y": 93,
+            "width": 65,
+            "height": 24
+          }
+        },
+        {
+          "id": "link:orders",
+          "kind": "link",
+          "role": "link",
+          "name": "Orders",
+          "selector": "getByRole('link', { name: 'Orders' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "App routes"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "App routes"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-spa-route-lab.html#orders",
+          "_rect": {
+            "x": 110,
+            "y": 93,
+            "width": 48,
+            "height": 24
+          }
+        },
+        {
+          "id": "link:settings",
+          "kind": "link",
+          "role": "link",
+          "name": "Settings",
+          "selector": "getByRole('link', { name: 'Settings' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "App routes"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "App routes"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-spa-route-lab.html#settings",
+          "_rect": {
+            "x": 178,
+            "y": 93,
+            "width": 57,
+            "height": 24
+          }
+        },
+        {
+          "id": "main-7",
+          "kind": "landmark",
+          "role": "main",
+          "name": "",
+          "selector": "main",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "region:overview-route",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Overview route",
+          "selector": "getByRole('region', { name: 'Overview route' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:overview-route",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Overview route",
+          "selector": "getByRole('heading', { name: 'Overview route' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview route"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Overview route"
+              }
+            ]
+          }
+        },
+        {
+          "id": "button:open-orders-route",
+          "kind": "button",
+          "role": "button",
+          "name": "Open orders route",
+          "selector": "getByRole('button', { name: 'Open orders route' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview route"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Overview route"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 270,
+            "width": 128,
+            "height": 31
+          }
+        },
+        {
+          "id": "button:open-settings-route",
+          "kind": "button",
+          "role": "button",
+          "name": "Open settings route",
+          "selector": "getByRole('button', { name: 'Open settings route' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview route"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Overview route"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 315,
+            "width": 136,
+            "height": 31
+          }
+        },
+        {
+          "id": "searchbox:global-search",
+          "kind": "formField",
+          "role": "searchbox",
+          "name": "Global search",
+          "selector": "getByRole('searchbox', { name: 'Global search' })",
+          "requiresBranchOpen": false,
+          "_value": "invoices",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview route"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Overview route"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 390,
+            "width": 189,
+            "height": 31
+          },
+          "_htmlTag": "input",
+          "_inputType": "search",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "status-13",
+          "kind": "statusMessage",
+          "role": "status",
+          "name": "",
+          "selector": "getByRole('status').nth(12)",
+          "requiresBranchOpen": false,
+          "_value": "Overview route loaded.",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Overview route"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Overview route"
+              }
+            ]
+          }
+        }
+      ],
+      "timestamp": 1781454818967,
+      "provenance": "scripted"
+    }
+  ],
+  "findings": [
+    {
+      "targetId": "banner-1",
+      "selector": "header",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 87,
+        "reachability": 90,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 92
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextItem: banner"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "previousItem: banner"
+        ],
+        [
+          "groupEntry: App routes",
+          "previousItem: SPA Route Calibration Lab",
+          "previousItem: banner"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: banner: Minor: some AT don't announce banner landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.7
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.7
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:orders",
+      "selector": "getByRole('link', { name: 'Orders' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 84,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 96
+      },
+      "severity": "strong",
+      "actionType": "structural",
+      "bestPath": [
+        "nextItem: Overview",
+        "nextItem: Orders"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: App routes",
+          "nextItem: Overview",
+          "nextItem: Orders"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextItem: App routes",
+          "nextItem: Overview",
+          "nextItem: Orders"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: App routes",
+          "nextItem: Overview",
+          "nextItem: Orders"
+        ]
+      ],
+      "penalties": [
+        "Target is not efficiently reachable via heading or landmark navigation"
+      ],
+      "suggestedFixes": [
+        "Add a heading or landmark near this target to enable skip navigation"
+      ],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "status-13",
+      "selector": "getByRole('status').nth(12)",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 92,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 96
+      },
+      "severity": "strong",
+      "bestPath": [
+        "formsMode: Global search",
+        "nextItem: status"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route",
+          "nextItem: Global search",
+          "nextItem: status"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route",
+          "nextItem: Global search",
+          "... (1 more steps)"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "main-7",
+      "selector": "main",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: App routes",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextItem: App routes",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Overview route",
+          "previousItem: Overview route",
+          "previousItem: main"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:open-settings-route",
+      "selector": "getByRole('button', { name: 'Open settings route' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open orders route",
+        "nextItem: Open settings route"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "searchbox:global-search",
+      "selector": "getByRole('searchbox', { name: 'Global search' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 92,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "formsMode: Global search"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route",
+          "nextItem: Global search"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route",
+          "nextItem: Global search"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route",
+          "nextItem: Open settings route",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:overview",
+      "selector": "getByRole('link', { name: 'Overview' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 98,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Overview"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: App routes",
+          "nextItem: Overview"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextItem: App routes",
+          "nextItem: Overview"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: App routes",
+          "nextItem: Overview"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:settings",
+      "selector": "getByRole('link', { name: 'Settings' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 98,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Settings"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: App routes",
+          "nextLandmark: main",
+          "previousItem: Settings"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextItem: App routes",
+          "nextLandmark: main",
+          "previousItem: Settings"
+        ],
+        [
+          "nextHeading: Overview route",
+          "previousItem: Overview route",
+          "previousItem: main",
+          "previousItem: Settings"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:open-orders-route",
+      "selector": "getByRole('button', { name: 'Open orders route' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 98,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Open orders route"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview route",
+          "nextItem: Open orders route"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "nextItem: Open orders route"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:spa-route-calibration-lab",
+      "selector": "getByRole('heading', { name: 'SPA Route Calibration Lab' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: SPA Route Calibration Lab"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: SPA Route Calibration Lab"
+        ],
+        [
+          "groupEntry: App routes",
+          "previousItem: SPA Route Calibration Lab"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "navigation:app-routes",
+      "selector": "getByRole('navigation', { name: 'App routes' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: App routes"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextItem: App routes"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: App routes"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:overview-route",
+      "selector": "getByRole('region', { name: 'Overview route' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview route",
+          "previousItem: Overview route"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextHeading: Overview route",
+          "previousItem: Overview route"
+        ],
+        [
+          "groupEntry: App routes",
+          "nextLandmark: main",
+          "nextItem: Overview route"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:overview-route",
+      "selector": "getByRole('heading', { name: 'Overview route' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Overview route"
+        ],
+        [
+          "nextHeading: SPA Route Calibration Lab",
+          "nextHeading: Overview route"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: SPA Route Calibration Lab",
+          "nextHeading: Overview route"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "warning",
+      "code": "no-skip-link",
+      "message": "No skip-to-content link found. Keyboard and screen-reader users must Tab through all navigation elements to reach the main content. A skip link is the single most impactful fix for navigation cost. Concrete savings: a skip link would bypass 3 controls (50% of page interactive targets).",
+      "affectedCount": 3,
+      "totalCount": 6
+    },
+    {
+      "level": "info",
+      "code": "no-contentinfo-landmark",
+      "message": "No <footer> / contentinfo landmark found. Adding <footer> helps screen-reader users locate site-wide links."
+    },
+    {
+      "level": "info",
+      "code": "structural-summary",
+      "message": "Structural overview: 2 headings · landmarks: main, banner, navigation · missing: contentinfo · skip link: no · 13 total targets"
+    },
+    {
+      "level": "warning",
+      "code": "color-blindness-contrast-fail",
+      "message": "3 text elements lose contrast under simulated color-vision deficiency (tritanopia: 3). Examples (tritanopia): a \"Overview\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Orders\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Settings\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1). Approximately 8% of male and 0.5% of female users have a CVD; choose color combinations whose contrast survives the deuteranopia/protanopia/tritanopia transforms or rely on luminance + non-color cues.",
+      "affectedCount": 3
+    }
+  ],
+  "metadata": {
+    "version": "0.5.0",
+    "profile": "nvda-desktop-v0",
+    "duration": 13,
+    "stateCount": 1,
+    "targetCount": 13,
+    "findingCount": 13,
+    "edgeCount": 58
+  }
+}

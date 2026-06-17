@@ -4,7 +4,7 @@
  * This module provides state capture, target extraction, and bounded
  * exploration using Playwright's accessibility snapshots and page automation.
  *
- * Requires `playwright` as a peer dependency.
+ * Uses the Playwright runtime dependency bundled with Tactual.
  */
 
 export { captureState, parseAriaSnapshot, type CaptureOptions } from "./capture.js";
@@ -26,9 +26,44 @@ export {
 } from "./composite-widget-probe.js";
 export { probeFormErrorFlows, type FormErrorProbeResults } from "./form-error-probe.js";
 export {
+  waitForFrameworkSettled,
+  type SettleStrategy,
+  type SettleOptions,
+  type SettleResult,
+} from "./framework-settle.js";
+export {
+  detectFrameworks,
+  type FrameworkSignal,
+} from "./framework-detect.js";
+export {
+  simulateCvd,
+  contrastWithCvd,
+  contrastRatio,
+  detectCvdContrastIssues,
+  type CvdType,
+  type CvdContrastSummary,
+  type CvdContrastSample,
+  type CvdTypeResult,
+} from "./cvd-simulation.js";
+export {
+  diffViewports,
+  type ViewportDiffOptions,
+  type ViewportDiffResult,
+  type ViewportDivergences,
+  type ViewportSnapshot,
+  type ViewportSize,
+} from "./viewport-diff.js";
+export {
+  probeFormEnablement,
+  type FormEnablement,
+  type FormFillOptions,
+  type FormFillResult,
+} from "./form-fill-probe.js";
+export {
   simulateScreenReader,
   buildAnnouncement,
   buildMultiATAnnouncement,
+  buildProfileNavigationTranscript,
   detectInteropDivergence,
   buildTranscript,
   buildNavigationTranscript,

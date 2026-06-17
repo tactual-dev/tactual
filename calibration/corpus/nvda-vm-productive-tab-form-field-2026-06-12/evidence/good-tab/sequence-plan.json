@@ -1,0 +1,144 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-12T21:16:57.102Z",
+  "url": "tactual-fixture://fixtures/good-page.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "tab",
+  "navigation": {
+    "keyName": "Tab",
+    "scancodes": [
+      "0f",
+      "8f"
+    ],
+    "description": "Sequential keyboard Tab traversal through focusable controls."
+  },
+  "state": "first",
+  "maxSteps": 8,
+  "targetCount": 8,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:products",
+      "kind": "link",
+      "role": "link",
+      "name": "Products",
+      "selector": "getByRole('link', { name: 'Products' })",
+      "expectedAnnouncement": "Products, link",
+      "expectedTokens": [
+        "products",
+        "link"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:about",
+      "kind": "link",
+      "role": "link",
+      "name": "About",
+      "selector": "getByRole('link', { name: 'About' })",
+      "expectedAnnouncement": "About, link",
+      "expectedTokens": [
+        "about",
+        "link"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:contact",
+      "kind": "link",
+      "role": "link",
+      "name": "Contact",
+      "selector": "getByRole('link', { name: 'Contact' })",
+      "expectedAnnouncement": "Contact, link",
+      "expectedTokens": [
+        "contact",
+        "link"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:add-to-cart",
+      "kind": "button",
+      "role": "button",
+      "name": "Add to Cart",
+      "selector": "getByRole('button', { name: 'Add to Cart' })",
+      "expectedAnnouncement": "Add to Cart, button",
+      "expectedTokens": [
+        "add to cart",
+        "button"
+      ]
+    },
+    {
+      "index": 5,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:add-to-cart-2",
+      "kind": "button",
+      "role": "button",
+      "name": "Add to Cart",
+      "selector": "getByRole('button', { name: 'Add to Cart' })",
+      "expectedAnnouncement": "Add to Cart, button",
+      "expectedTokens": [
+        "add to cart",
+        "button"
+      ]
+    },
+    {
+      "index": 6,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "searchbox:search",
+      "kind": "formField",
+      "role": "searchbox",
+      "name": "Search:",
+      "selector": "getByRole('searchbox', { name: 'Search:' })",
+      "expectedAnnouncement": "Search:, edit",
+      "expectedTokens": [
+        "search",
+        "edit"
+      ]
+    },
+    {
+      "index": 7,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:search",
+      "kind": "button",
+      "role": "button",
+      "name": "Search",
+      "selector": "getByRole('button', { name: 'Search' })",
+      "expectedAnnouncement": "Search, button",
+      "expectedTokens": [
+        "search",
+        "button"
+      ]
+    },
+    {
+      "index": 8,
+      "mode": "tab",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:privacy-policy",
+      "kind": "link",
+      "role": "link",
+      "name": "Privacy Policy",
+      "selector": "getByRole('link', { name: 'Privacy Policy' })",
+      "expectedAnnouncement": "Privacy Policy, link",
+      "expectedTokens": [
+        "privacy policy",
+        "link"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

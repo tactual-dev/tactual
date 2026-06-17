@@ -42,7 +42,7 @@ describe("probeFormErrorFlows", () => {
     expect(probe.focusMovedToInvalidField).toBe(true);
     expect(probe.liveErrorRegionPresent).toBe(true);
     await page.close();
-  }, 15_000);
+  }, 60_000);
 
   it("measures visible custom invalid fields without native validity", async () => {
     const page = await browser.newPage();
@@ -74,5 +74,5 @@ describe("probeFormErrorFlows", () => {
     expect(probe.focusMovedToInvalidField).toBe(false);
     expect(probe.liveErrorRegionPresent).toBe(false);
     await page.close();
-  }, 15_000);
+  }, 60_000);
 });

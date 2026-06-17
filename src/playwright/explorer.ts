@@ -123,7 +123,13 @@ export async function explore(
   const explorationStart = Date.now();
 
   const states: PageState[] = [initialState];
-  const seenHashes = new Set<string>([initialState.snapshotHash]);
+  // Use canonicalSnapshotHash for dedup so dynamic counts/timestamps inside
+  // names ("3 unread", "Saved 5 minutes ago") don't register as a new state
+  // on every snapshot. Falls back to snapshotHash when canonical isn't set
+  // (e.g., older states from analyze-pages). See capture.ts canonicalizeYaml.
+  const stateKey = (state: PageState): string =>
+    (state as Record<string, unknown>).canonicalSnapshotHash as string ?? state.snapshotHash;
+  const seenHashes = new Set<string>([stateKey(initialState)]);
   const knownTargetIds = new Set(initialState.targets.map((t) => t.id));
 
   let actionsPerformed = 0;
@@ -231,7 +237,7 @@ export async function explore(
         });
 
         // Check novelty
-        const isNovel = !seenHashes.has(newState.snapshotHash);
+        const isNovel = !seenHashes.has(stateKey(newState));
         const newTargets = newState.targets.filter((t) => !knownTargetIds.has(t.id));
 
         if (isNovel) {
@@ -278,7 +284,7 @@ export async function explore(
           }
 
           states.push(markedState);
-          seenHashes.add(newState.snapshotHash);
+          seenHashes.add(stateKey(newState));
 
           for (const t of newState.targets) {
             knownTargetIds.add(t.id);
@@ -382,6 +388,21 @@ async function findExplorableElements(page: Page): Promise<ExplorableElement[]> 
       type: "accordion",
     });
   }
+
+  // Custom-pattern triggers: real-world apps frequently open modals,
+  // dropdowns, and disclosures via patterns the APG ARIA detection above
+  // misses — Bootstrap's data-toggle / data-bs-toggle conventions, custom
+  // data-*-trigger attributes, or bare aria-controls without the matching
+  // aria-haspopup/aria-expanded signal. The existing safety policy
+  // (destructive-label denylist) and budget still gate activation, so
+  // false positives waste a budget slot but can't cause damage.
+  await collectCustomTriggers(page, explorables);
+
+  // Wave 24: framework-aware candidates. React/Vue components often
+  // attach onClick to non-interactive elements (div with onClick=…)
+  // without any ARIA hint. Check fiber-attached props on a sample of
+  // elements; treat those with click-like handlers as candidates.
+  await collectFrameworkTriggers(page, explorables);
 
   // Pagination / load-more / step-next triggers. Detected via a combination
   // of accessible-name patterns AND structural hints. These reveal new
@@ -573,4 +594,188 @@ async function restoreState(
       await page.waitForTimeout(100);
     }
   }
+}
+
+// ---------------------------------------------------------------------------
+// Custom-pattern trigger detection
+// ---------------------------------------------------------------------------
+
+const CUSTOM_TRIGGER_SELECTORS = [
+  // aria-controls without the conventional ARIA expansion signal — common in
+  // hand-rolled dropdowns and toggle widgets that wire state via JS only.
+  '[aria-controls]:not([aria-haspopup]):not([aria-expanded])',
+  // Bootstrap 4 / Bootstrap 5 conventions
+  '[data-toggle="modal"]', '[data-bs-toggle="modal"]',
+  '[data-toggle="dropdown"]', '[data-bs-toggle="dropdown"]',
+  '[data-toggle="collapse"]', '[data-bs-toggle="collapse"]',
+  '[data-toggle="offcanvas"]', '[data-bs-toggle="offcanvas"]',
+  // Common in-house conventions seen across React / Vue / Stimulus apps
+  '[data-modal-trigger]',
+  '[data-popup-trigger]',
+  '[data-menu-trigger]',
+  '[data-dropdown-trigger]',
+].join(", ");
+
+interface CustomTriggerData {
+  tag: string;
+  role: string | null;
+  tabindex: string | null;
+  ariaLabel: string | null;
+  textContent: string | null;
+  ariaControls: string | null;
+  dataToggle: string | null;
+  hasModalTrigger: boolean;
+  hasPopupTrigger: boolean;
+  hasMenuTrigger: boolean;
+  hasDropdownTrigger: boolean;
+}
+
+/**
+ * Framework-aware exploration candidates. The CDP listener probe finds elements
+ * with click handlers; this complements it for explorer purposes by treating
+ * those handlers as activatable triggers instead of just diagnostics.
+ *
+ * Implementation: scan a sample of div / span / li / td elements for
+ * React fiber __reactProps$ keys (which carry onClick), Vue 3 _vei
+ * (Vue Event Invokers) markers, or any element with cursor: pointer
+ * + non-trivial text. The cursor + text combo is a strong heuristic
+ * for "author wants this to look clickable."
+ */
+async function collectFrameworkTriggers(
+  page: Page,
+  explorables: ExplorableElement[],
+): Promise<void> {
+  const candidates = await page
+    .evaluate(() => {
+      const SCAN_CAP = 800;
+      const out: Array<{ index: number; tag: string; name: string }> = [];
+      const els = document.querySelectorAll("div, span, li, td");
+      for (let i = 0; i < els.length && out.length < 30; i++) {
+        const el = els[i];
+        const tag = el.tagName.toLowerCase();
+        // Skip if this element is already a tracked candidate kind
+        // (button/link via tag) — those are caught by other passes.
+        const role = el.getAttribute("role");
+        if (role === "button" || role === "link" || role === "menuitem" || role === "tab") continue;
+        if (el.hasAttribute("aria-haspopup") || el.hasAttribute("aria-expanded")) continue;
+        const tabindex = el.getAttribute("tabindex");
+        if (tabindex !== null && parseInt(tabindex, 10) >= 0) continue;
+        // Visibility check — invisible elements aren't useful
+        const rect = el.getBoundingClientRect();
+        if (rect.width === 0 || rect.height === 0) continue;
+        // Has React/Vue framework click handler?
+        let hasFrameworkClick = false;
+        const obj = el as unknown as Record<string, unknown>;
+        for (const key of Object.keys(obj)) {
+          if (key.startsWith("__reactProps$")) {
+            const props = obj[key] as Record<string, unknown> | undefined;
+            if (props && (typeof props.onClick === "function" || typeof props.onMouseDown === "function")) {
+              hasFrameworkClick = true;
+              break;
+            }
+          }
+          if (key.startsWith("_vei")) {
+            // Vue 3 event invoker registry — presence indicates @click bound
+            hasFrameworkClick = true;
+            break;
+          }
+        }
+        if (!hasFrameworkClick) {
+          // Cursor:pointer + text is a softer fallback signal
+          const cursor = getComputedStyle(el).cursor;
+          const text = (el.textContent ?? "").trim();
+          if (cursor !== "pointer" || text.length < 3 || text.length > 80) continue;
+        }
+        const aria = el.getAttribute("aria-label");
+        const text = (aria ?? el.textContent ?? "").trim().slice(0, 60);
+        if (!text) continue;
+        out.push({ index: i, tag, name: text });
+        if (i >= SCAN_CAP) break;
+      }
+      return out;
+    })
+    .catch(() => [] as Array<{ index: number; tag: string; name: string }>);
+
+  for (const cand of candidates) {
+    const alreadyQueued = explorables.some(
+      (existing) => existing.name === cand.name && existing.role === "button",
+    );
+    if (alreadyQueued) continue;
+    const locator = page
+      .locator(`${cand.tag}`)
+      .nth(cand.index);
+    explorables.push({
+      locator,
+      role: "button",
+      name: cand.name,
+      type: "interactive",
+    });
+  }
+}
+
+async function collectCustomTriggers(
+  page: Page,
+  explorables: ExplorableElement[],
+): Promise<void> {
+  const triggers = page.locator(CUSTOM_TRIGGER_SELECTORS);
+  const count = await triggers.count();
+
+  for (let i = 0; i < count; i++) {
+    const el = triggers.nth(i);
+    const data = await el
+      .evaluate((node: Element): CustomTriggerData => ({
+        tag: node.tagName.toLowerCase(),
+        role: node.getAttribute("role"),
+        tabindex: node.getAttribute("tabindex"),
+        ariaLabel: node.getAttribute("aria-label"),
+        textContent: node.textContent,
+        ariaControls: node.getAttribute("aria-controls"),
+        dataToggle:
+          node.getAttribute("data-toggle") ?? node.getAttribute("data-bs-toggle"),
+        hasModalTrigger: node.hasAttribute("data-modal-trigger"),
+        hasPopupTrigger: node.hasAttribute("data-popup-trigger"),
+        hasMenuTrigger: node.hasAttribute("data-menu-trigger"),
+        hasDropdownTrigger: node.hasAttribute("data-dropdown-trigger"),
+      }))
+      .catch(() => null);
+    if (!data) continue;
+
+    if (!isInteractiveTrigger(data)) continue;
+
+    const role = data.role ?? (data.tag === "a" ? "link" : "button");
+    const name = (data.ariaLabel ?? data.textContent ?? "").trim();
+
+    // Dedup against the APG-style triggers already collected above. Same
+    // role + name from the same DOM element shouldn't be queued twice.
+    const alreadyQueued = explorables.some(
+      (existing) => existing.role === role && existing.name === name,
+    );
+    if (alreadyQueued) continue;
+
+    explorables.push({
+      locator: el,
+      role,
+      name,
+      type: classifyCustomTrigger(data),
+    });
+  }
+}
+
+function isInteractiveTrigger(data: CustomTriggerData): boolean {
+  if (data.tag === "button" || data.tag === "a") return true;
+  if (data.role === "button" || data.role === "link") return true;
+  if (data.tabindex !== null) return true;
+  return false;
+}
+
+function classifyCustomTrigger(data: CustomTriggerData): ExploreType {
+  if (data.dataToggle === "modal" || data.hasModalTrigger) return "dialog-trigger";
+  if (data.dataToggle === "offcanvas") return "dialog-trigger";
+  if (data.dataToggle === "collapse") return "disclosure";
+  if (data.dataToggle === "dropdown") return "menu-trigger";
+  if (data.hasMenuTrigger || data.hasDropdownTrigger || data.hasPopupTrigger)
+    return "menu-trigger";
+  // aria-controls without further hint — treat as expandable; the explorer's
+  // novelty check determines whether activation actually revealed content.
+  return "expandable";
 }

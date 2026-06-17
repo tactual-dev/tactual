@@ -43,7 +43,7 @@ export function generatePenalties(
     penalties,
     suggestedFixes,
   );
-  addTargetSizePenalties(target, penalties, suggestedFixes);
+  addTargetSizePenalties(target, state, penalties, suggestedFixes);
 
   const stateResults = detectStatePenalties(target);
   penalties.push(...stateResults.penalties);
@@ -61,7 +61,46 @@ export function generatePenalties(
   penalties.push(...probeResults.penalties);
   suggestedFixes.push(...probeResults.suggestedFixes);
 
+  addRedundantLinkPenalty(target, state, penalties, suggestedFixes);
+
   return { penalties, suggestedFixes };
+}
+
+/**
+ * Per-target counterpart to the page-level `redundant-tab-stops` diagnostic.
+ * For each link that shares both `_href` and accessible name with another
+ * link in the same state, push a penalty surfacing the duplication on the
+ * specific finding. Doesn't modify the score (consistent with other penalty
+ * helpers); the diagnostic carries the page-level total.
+ */
+function addRedundantLinkPenalty(
+  target: Target,
+  state: PageState,
+  penalties: string[],
+  suggestedFixes: string[],
+): void {
+  if (target.kind !== "link" || !target.name) return;
+  const href = (target as Record<string, unknown>)._href as string | undefined;
+  if (!href) return;
+
+  let duplicateCount = 0;
+  for (const other of state.targets) {
+    if (other.id === target.id) continue;
+    if (other.kind !== "link") continue;
+    if (other.name !== target.name) continue;
+    if ((other as Record<string, unknown>)._href !== href) continue;
+    duplicateCount++;
+  }
+  if (duplicateCount === 0) return;
+
+  const total = duplicateCount + 1;
+  penalties.push(
+    `Redundant tab stop: this is one of ${total} links named "${target.name}" reaching ${href}. ` +
+      `Screen-reader and keyboard users tab through each one to no new content.`,
+  );
+  suggestedFixes.push(
+    `Consolidate the ${total} duplicate links into one, or mark the extras with tabindex="-1" / aria-hidden="true" so SR/keyboard users only encounter the canonical link.`,
+  );
 }
 
 function addInteropPenalties(
@@ -134,18 +173,29 @@ function addGraphPenalties(
 
 function addTargetSizePenalties(
   target: Target,
+  state: PageState,
   penalties: string[],
   suggestedFixes: string[],
 ): void {
-  // WCAG 2.5.8 target-size. The spec exempts inline text links via
-  // _inlineInText, which captureState sets on links whose parent block
-  // contains meaningfully more text than the link itself.
+  // WCAG 2.5.8 target-size. Two exemptions honored:
+  //   1. Inline text links — `_inlineInText` set by captureState when a
+  //      link's parent block has meaningfully more text than the link.
+  //   2. Spacing — undersized targets are exempt if no other interactive
+  //      target's center sits within 24 CSS px (per spec, "if a 24 CSS
+  //      pixel diameter circle is centered on the bounding box, the
+  //      circles do not intersect another target"). We approximate: if
+  //      the nearest neighbor's center is >= 24 px from this target's
+  //      center, it's exempt.
   const rect = (target as Record<string, unknown>)._rect as
-    | { width: number; height: number }
+    | { x?: number; y?: number; width: number; height: number }
     | undefined;
   const inlineInText = (target as Record<string, unknown>)._inlineInText === true;
   if (!rect || rect.width <= 0 || rect.height <= 0 || inlineInText) return;
   if (rect.width >= 24 && rect.height >= 24) return;
+
+  if (typeof rect.x === "number" && typeof rect.y === "number" && hasSpacingExemption(target, rect, state)) {
+    return;
+  }
 
   penalties.push(
     `Target is ${rect.width}×${rect.height}px, below the WCAG 2.5.8 minimum (24×24 for AA). ` +
@@ -156,6 +206,48 @@ function addTargetSizePenalties(
     "Increase min-width and min-height to 24px, or enlarge the clickable area via padding. " +
       "An invisible padded hit region can enlarge touch target without changing visual design.",
   );
+}
+
+const TARGET_SIZE_INTERACTIVE_KINDS: ReadonlySet<string> = new Set([
+  "button",
+  "link",
+  "formField",
+  "menuTrigger",
+  "menuItem",
+  "tab",
+  "search",
+]);
+
+function hasSpacingExemption(
+  target: Target,
+  rect: { x?: number; y?: number; width: number; height: number },
+  state: PageState,
+): boolean {
+  const cx = (rect.x ?? 0) + rect.width / 2;
+  const cy = (rect.y ?? 0) + rect.height / 2;
+
+  for (const other of state.targets) {
+    if (other.id === target.id) continue;
+    if (!TARGET_SIZE_INTERACTIVE_KINDS.has(other.kind)) continue;
+    const otherRect = (other as Record<string, unknown>)._rect as
+      | { x?: number; y?: number; width: number; height: number }
+      | undefined;
+    if (
+      !otherRect ||
+      typeof otherRect.x !== "number" ||
+      typeof otherRect.y !== "number" ||
+      otherRect.width <= 0 ||
+      otherRect.height <= 0
+    ) {
+      continue;
+    }
+    const ocx = otherRect.x + otherRect.width / 2;
+    const ocy = otherRect.y + otherRect.height / 2;
+    const dist = Math.hypot(cx - ocx, cy - ocy);
+    if (dist < 24) return false;
+  }
+  // No interactive neighbor within 24 px → spacing exception applies.
+  return true;
 }
 
 function addFallbackDiscoverabilityPenalty(

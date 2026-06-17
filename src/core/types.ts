@@ -138,6 +138,24 @@ export const NavigationAction = z.enum([
   "groupExit",
   /** First-letter type-ahead in focused menus (desktop AT only) */
   "firstLetter",
+  /** Jump to the next form/control using form-field quick navigation. */
+  "nextFormField",
+  /** Jump to the next button using button quick navigation / rotor category. */
+  "nextButton",
+  /** Jump to the next landmark/region using rotor or quick-key navigation. */
+  "nextLandmark",
+  /** Enter an AT element list / rotor category before navigating within it. */
+  "rotor",
+  /** Explore a visible item spatially by touch, rather than source order. */
+  "touchExplore",
+  /** Follow explicit ARIA relationships such as controls, owns, or flowto. */
+  "relationshipJump",
+  /** Move to the currently active descendant in a composite widget. */
+  "activeDescendant",
+  /** Switch into forms/focus mode for form control interaction. */
+  "formsMode",
+  /** Move within a composite widget using arrow-key style navigation. */
+  "compositeNavigation",
 ]);
 
 // eslint-disable-next-line no-redeclare

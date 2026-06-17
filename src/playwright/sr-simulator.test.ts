@@ -2,13 +2,16 @@ import { describe, it, expect } from "vitest";
 import {
   isLandmarkDemoted,
   buildAnnouncement,
+  buildAnnouncementModel,
   buildMultiATAnnouncement,
   detectInteropDivergence,
   buildTranscript,
   buildNavigationTranscript,
+  buildProfileNavigationTranscript,
   type NestingContext,
 } from "./sr-simulator.js";
 import type { Target } from "../core/types.js";
+import { voiceoverIosV0 } from "../profiles/voiceover-ios.js";
 
 const target = (overrides: Partial<Target> & { kind: Target["kind"]; role: string }): Target =>
   ({
@@ -97,6 +100,14 @@ describe("buildAnnouncement", () => {
   it("unlabeled button: 'button'", () => {
     expect(buildAnnouncement(target({ kind: "button", role: "button", name: "" })))
       .toBe("button");
+  });
+
+  it("NVDA pressed-state button uses toggle button role text", () => {
+    expect(buildAnnouncement(target({
+      kind: "button", role: "button", name: "Mute alerts",
+      _attributeValues: { "aria-pressed": "false" },
+    } as Partial<Target> & { kind: Target["kind"]; role: string })))
+      .toBe("Mute alerts, toggle button, not pressed");
   });
 
   it("link: 'Home, link'", () => {
@@ -193,8 +204,19 @@ describe("buildAnnouncement", () => {
   });
 
   it("unmapped role falls back to raw role", () => {
-    expect(buildAnnouncement(target({ kind: "button", role: "treeitem", name: "Folder" })))
-      .toBe("Folder, treeitem");
+    expect(buildAnnouncement(target({ kind: "other", role: "customrole", name: "Folder" })))
+      .toBe("Folder, customrole");
+  });
+
+  it("announces structured widget roles conservatively", () => {
+    expect(buildAnnouncement(target({ kind: "other", role: "grid", name: "Account review grid" })))
+      .toBe("Account review grid, grid");
+    expect(buildAnnouncement(target({ kind: "other", role: "treegrid", name: "Expandable accounts" })))
+      .toBe("Expandable accounts, tree grid");
+    expect(buildAnnouncement(target({ kind: "other", role: "columnheader", name: "Account" })))
+      .toBe("Account, column header");
+    expect(buildAnnouncement(target({ kind: "other", role: "treeitem", name: "Folder" })))
+      .toBe("Folder, tree item");
   });
 
   it("appends aria-describedby resolved text", () => {
@@ -205,6 +227,23 @@ describe("buildAnnouncement", () => {
       "Email, edit, you must use a work address",
     );
   });
+
+  it("exposes mapper assumptions for announcement parts", () => {
+    const model = buildAnnouncementModel(target({
+      kind: "formField",
+      role: "checkbox",
+      name: "Subscribe",
+      _attributeValues: { "aria-checked": "true" },
+    } as Partial<Target> & { kind: Target["kind"]; role: string }));
+
+    expect(model.announcement).toBe("Subscribe, check box, checked");
+    expect(model.parts.map((part) => part.kind)).toEqual(["name", "role", "state"]);
+    expect(model.parts.map((part) => part.assumptionId)).toEqual([
+      "announcement.nvda.name.accessible-name",
+      "announcement.nvda.role.checkbox",
+      "announcement.nvda.state.checked.true",
+    ]);
+  });
 });
 
 describe("multi-AT announcements", () => {
@@ -213,6 +252,12 @@ describe("multi-AT announcements", () => {
     expect(buildAnnouncement(t, "nvda")).toBe("Email, edit");
     expect(buildAnnouncement(t, "jaws")).toBe("Email, edit");
     expect(buildAnnouncement(t, "voiceover")).toBe("Email, text field");
+  });
+
+  it("NVDA says 'list' for focusable listbox where JAWS keeps 'list box'", () => {
+    const t = target({ kind: "formField", role: "listbox", name: "Plans" });
+    expect(buildAnnouncement(t, "nvda")).toBe("Plans, list");
+    expect(buildAnnouncement(t, "jaws")).toBe("Plans, list box");
   });
 
   it("VoiceOver says 'dimmed' where NVDA/JAWS say 'unavailable'", () => {
@@ -354,6 +399,31 @@ describe("buildNavigationTranscript", () => {
   it("by-form-control mode emits buttons, links, form fields", () => {
     const transcript = buildNavigationTranscript(targets, { mode: "by-form-control" });
     expect(transcript.map((s) => s.targetId)).toEqual(["before", "btn", "after"]);
+  });
+
+  it("supports rotor, button, touch, and forms-mode transcripts", () => {
+    const touchTargets = [
+      ...targets,
+      target({
+        id: "email",
+        kind: "formField",
+        role: "textbox",
+        name: "Email",
+        _rect: { x: 10, y: 10, width: 120, height: 32 },
+      } as Partial<Target> & { kind: Target["kind"]; role: string }),
+    ];
+
+    expect(buildNavigationTranscript(touchTargets, { mode: "by-button" }).map((s) => s.action)).toEqual(["next-button"]);
+    expect(buildNavigationTranscript(touchTargets, { mode: "forms-mode" }).map((s) => s.targetId)).toEqual(["email"]);
+    expect(buildNavigationTranscript(touchTargets, { mode: "touch-explore" }).map((s) => s.targetId)).toEqual(["email"]);
+    expect(buildNavigationTranscript(touchTargets, { mode: "rotor" }).length).toBeGreaterThan(3);
+  });
+
+  it("builds profile-driven navigation transcripts from profile costs", () => {
+    const transcript = buildProfileNavigationTranscript(targets, voiceoverIosV0);
+    expect(transcript.profileId).toBe("voiceover-ios-v0");
+    expect(transcript.modes.some((mode) => mode.mode === "rotor")).toBe(true);
+    expect(transcript.modes.some((mode) => mode.mode === "touch-explore")).toBe(false);
   });
 
   it("respects --at parameter for announcements", () => {

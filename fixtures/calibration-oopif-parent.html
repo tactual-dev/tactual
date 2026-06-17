@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OOPIF Calibration Parent</title>
+  <style>
+    body { color: #1f2937; font-family: system-ui, sans-serif; line-height: 1.5; margin: 24px; max-width: 960px; }
+    iframe { border: 2px solid #374151; height: 360px; width: min(760px, 100%); }
+    button, input { display: block; margin: 6px 0 14px; padding: 6px 8px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>OOPIF Calibration Parent</h1>
+    <nav aria-label="Parent navigation">
+      <a href="#parent-form">Parent form</a>
+      <a href="#embedded-checkout">Embedded checkout</a>
+    </nav>
+  </header>
+  <main>
+    <section id="parent-form" aria-labelledby="parent-heading">
+      <h2 id="parent-heading">Parent account controls</h2>
+      <label for="parent-email">Parent email</label>
+      <input id="parent-email" type="email" value="parent@example.test">
+      <button type="button">Save parent account</button>
+    </section>
+
+    <section id="embedded-checkout" aria-labelledby="embedded-heading">
+      <h2 id="embedded-heading">Cross-origin checkout frame</h2>
+      <iframe id="checkout-frame" title="Cross-origin checkout frame"></iframe>
+    </section>
+  </main>
+
+  <script>
+    const frame = document.getElementById("checkout-frame");
+    const host = location.hostname;
+    const secondaryPort = Number(location.port || "41789") + 1;
+    frame.src = `${location.protocol}//${host}:${secondaryPort}/fixtures/calibration-oopif-child.html`;
+  </script>
+</body>
+</html>

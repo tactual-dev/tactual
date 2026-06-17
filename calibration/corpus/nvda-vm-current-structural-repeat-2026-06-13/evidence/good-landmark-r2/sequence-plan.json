@@ -1,0 +1,92 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T22:19:49.917Z",
+  "url": "tactual-fixture://fixtures/good-page.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "landmark",
+  "navigation": {
+    "keyName": "d",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "20",
+      "a0"
+    ],
+    "description": "NVDA browse-mode next-landmark quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 4,
+  "targetCount": 4,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "landmark",
+      "stateId": "state-eca40ef650c1",
+      "id": "banner-1",
+      "kind": "landmark",
+      "role": "banner",
+      "name": "",
+      "selector": "header",
+      "expectedAnnouncement": "banner landmark",
+      "expectedTokens": [
+        "banner landmark"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "landmark",
+      "stateId": "state-eca40ef650c1",
+      "id": "navigation:main-navigation",
+      "kind": "landmark",
+      "role": "navigation",
+      "name": "Main Navigation",
+      "selector": "getByRole('navigation', { name: 'Main Navigation' })",
+      "expectedAnnouncement": "Main Navigation, navigation landmark",
+      "expectedTokens": [
+        "main navigation",
+        "navigation landmark"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "landmark",
+      "stateId": "state-eca40ef650c1",
+      "id": "main-7",
+      "kind": "landmark",
+      "role": "main",
+      "name": "",
+      "selector": "main",
+      "expectedAnnouncement": "main landmark",
+      "expectedTokens": [
+        "main landmark"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "landmark",
+      "stateId": "state-eca40ef650c1",
+      "id": "region:product-list",
+      "kind": "landmark",
+      "role": "region",
+      "name": "Product List",
+      "selector": "getByRole('region', { name: 'Product List' })",
+      "expectedAnnouncement": "Product List, region",
+      "expectedTokens": [
+        "product list",
+        "region"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T22:17:52.466Z",
+  "url": "tactual-fixture://fixtures/good-page.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "link",
+  "navigation": {
+    "keyName": "k",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "25",
+      "a5"
+    ],
+    "description": "NVDA browse-mode next-link quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 4,
+  "targetCount": 4,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "link",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:products",
+      "kind": "link",
+      "role": "link",
+      "name": "Products",
+      "selector": "getByRole('link', { name: 'Products' })",
+      "expectedAnnouncement": "Products, link",
+      "expectedTokens": [
+        "products",
+        "link"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "link",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:about",
+      "kind": "link",
+      "role": "link",
+      "name": "About",
+      "selector": "getByRole('link', { name: 'About' })",
+      "expectedAnnouncement": "About, link",
+      "expectedTokens": [
+        "about",
+        "link"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "link",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:contact",
+      "kind": "link",
+      "role": "link",
+      "name": "Contact",
+      "selector": "getByRole('link', { name: 'Contact' })",
+      "expectedAnnouncement": "Contact, link",
+      "expectedTokens": [
+        "contact",
+        "link"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "link",
+      "stateId": "state-eca40ef650c1",
+      "id": "link:privacy-policy",
+      "kind": "link",
+      "role": "link",
+      "name": "Privacy Policy",
+      "selector": "getByRole('link', { name: 'Privacy Policy' })",
+      "expectedAnnouncement": "Privacy Policy, link",
+      "expectedTokens": [
+        "privacy policy",
+        "link"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

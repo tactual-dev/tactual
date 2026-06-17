@@ -14,6 +14,8 @@ import { registerTranscript } from "./commands/transcript.js";
 import { registerInit } from "./commands/init.js";
 import { registerBenchmark } from "./commands/benchmark.js";
 import { registerValidate } from "./commands/validate.js";
+import { registerObserveAnnouncement } from "./commands/observe-announcement.js";
+import { registerCalibrationReport } from "./commands/calibration-report.js";
 
 const program = new Command();
 
@@ -39,5 +41,7 @@ registerTranscript(program);
 registerInit(program);
 registerBenchmark(program);
 registerValidate(program);
+registerObserveAnnouncement(program);
+registerCalibrationReport(program);
 
 program.parse();

@@ -60,6 +60,9 @@ Read `ARCHITECTURE.md` before larger refactors and `README.md` before changing u
 ```bash
 npm run build
 npm run test
+npm run test:shard -- --list
+npm run test:shard -- capture
+npm run test:shards
 npm run typecheck
 npm run lint
 npm run test:benchmark

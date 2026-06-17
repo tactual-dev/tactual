@@ -1,0 +1,2156 @@
+{
+  "flow": {
+    "id": "flow-1781454972141",
+    "name": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+    "states": [
+      "state-4af961a9dd6c"
+    ],
+    "profile": "nvda-desktop-v0",
+    "timestamp": 1781454972141
+  },
+  "states": [
+    {
+      "id": "state-4af961a9dd6c",
+      "url": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+      "route": "/fixtures/calibration-oopif-parent.html",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "snapshotHash": "4af961a9dd6ce1739d1e54c0879dff1afc2253f50048dfed62084668f6b3a8d8",
+      "canonicalSnapshotHash": "4af961a9dd6ce1739d1e54c0879dff1afc2253f50048dfed62084668f6b3a8d8",
+      "_docMetadata": {
+        "htmlLang": "en",
+        "title": "OOPIF Calibration Parent",
+        "zoomRestricted": false,
+        "viewportContent": "width=device-width, initial-scale=1.0"
+      },
+      "_mediaMetadata": {
+        "totalImages": 0,
+        "imagesMissingAlt": 0,
+        "imagesSuspiciousAlt": [],
+        "totalIframes": 1,
+        "iframesMissingTitle": []
+      },
+      "_structuralIssues": {
+        "duplicateIds": [],
+        "nestedInteractive": [],
+        "metaRefresh": false
+      },
+      "_mediaControls": {
+        "mediaWithoutControls": [],
+        "h1Count": 1
+      },
+      "_cvdContrast": {
+        "byType": {
+          "deuteranopia": {
+            "count": 0,
+            "samples": []
+          },
+          "protanopia": {
+            "count": 0,
+            "samples": []
+          },
+          "tritanopia": {
+            "count": 2,
+            "samples": [
+              {
+                "selector": "a",
+                "text": "Parent form",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              },
+              {
+                "selector": "a",
+                "text": "Embedded checkout",
+                "normalRatio": 9.4,
+                "cvdRatio": 2.44,
+                "threshold": 4.5
+              }
+            ]
+          }
+        },
+        "totalUniqueElements": 2
+      },
+      "interactiveHash": "15d4606cbbdebc34de880a4316d035d1e16ceb2a43c5bbab6de15430ab6a4937",
+      "openOverlays": [],
+      "targets": [
+        {
+          "id": "banner-1",
+          "kind": "landmark",
+          "role": "banner",
+          "name": "",
+          "selector": "header",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "heading:oopif-calibration-parent",
+          "kind": "heading",
+          "role": "heading",
+          "name": "OOPIF Calibration Parent",
+          "selector": "getByRole('heading', { name: 'OOPIF Calibration Parent' })",
+          "headingLevel": 1,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "1"
+          },
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "navigation:parent-navigation",
+          "kind": "landmark",
+          "role": "navigation",
+          "name": "Parent navigation",
+          "selector": "getByRole('navigation', { name: 'Parent navigation' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "banner"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              }
+            ]
+          }
+        },
+        {
+          "id": "link:parent-form",
+          "kind": "link",
+          "role": "link",
+          "name": "Parent form",
+          "selector": "getByRole('link', { name: 'Parent form' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Parent navigation"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Parent navigation"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-oopif-parent.html#parent-form",
+          "_rect": {
+            "x": 24,
+            "y": 94,
+            "width": 83,
+            "height": 21
+          }
+        },
+        {
+          "id": "link:embedded-checkout",
+          "kind": "link",
+          "role": "link",
+          "name": "Embedded checkout",
+          "selector": "getByRole('link', { name: 'Embedded checkout' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "navigation",
+              "name": "Parent navigation"
+            },
+            "ancestors": [
+              {
+                "role": "banner"
+              },
+              {
+                "role": "navigation",
+                "name": "Parent navigation"
+              }
+            ]
+          },
+          "_href": "tactual-fixture://fixtures/calibration-oopif-parent.html#embedded-checkout",
+          "_rect": {
+            "x": 111,
+            "y": 94,
+            "width": 145,
+            "height": 21
+          }
+        },
+        {
+          "id": "main-6",
+          "kind": "landmark",
+          "role": "main",
+          "name": "",
+          "selector": "main",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 0
+          }
+        },
+        {
+          "id": "region:parent-account-controls",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Parent account controls",
+          "selector": "getByRole('region', { name: 'Parent account controls' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:parent-account-controls",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Parent account controls",
+          "selector": "getByRole('heading', { name: 'Parent account controls' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Parent account controls"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Parent account controls"
+              }
+            ]
+          }
+        },
+        {
+          "id": "textbox:parent-email",
+          "kind": "formField",
+          "role": "textbox",
+          "name": "Parent email",
+          "selector": "getByRole('textbox', { name: 'Parent email' })",
+          "requiresBranchOpen": false,
+          "_value": "parent@example.test",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Parent account controls"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Parent account controls"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 223,
+            "width": 189,
+            "height": 31
+          },
+          "_htmlTag": "input",
+          "_inputType": "email",
+          "_nativeHtmlControl": "input"
+        },
+        {
+          "id": "button:save-parent-account",
+          "kind": "button",
+          "role": "button",
+          "name": "Save parent account",
+          "selector": "getByRole('button', { name: 'Save parent account' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Parent account controls"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Parent account controls"
+              }
+            ]
+          },
+          "_rect": {
+            "x": 24,
+            "y": 268,
+            "width": 142,
+            "height": 31
+          }
+        },
+        {
+          "id": "region:cross-origin-checkout-frame",
+          "kind": "landmark",
+          "role": "region",
+          "name": "Cross-origin checkout frame",
+          "selector": "getByRole('region', { name: 'Cross-origin checkout frame' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "main"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              }
+            ]
+          }
+        },
+        {
+          "id": "heading:cross-origin-checkout-frame",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Cross-origin checkout frame",
+          "selector": "getByRole('heading', { name: 'Cross-origin checkout frame' })",
+          "headingLevel": 2,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "2"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "region",
+              "name": "Cross-origin checkout frame"
+            },
+            "ancestors": [
+              {
+                "role": "main"
+              },
+              {
+                "role": "region",
+                "name": "Cross-origin checkout frame"
+              }
+            ]
+          }
+        },
+        {
+          "id": "f1.main:embedded-payment-form",
+          "kind": "landmark",
+          "role": "main",
+          "name": "Embedded payment form",
+          "selector": "getByRole('main', { name: 'Embedded payment form' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 1,
+            "parent": {
+              "role": "document"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          }
+        },
+        {
+          "id": "f1.heading:embedded-payment-form",
+          "kind": "heading",
+          "role": "heading",
+          "name": "Embedded payment form",
+          "selector": "getByRole('heading', { name: 'Embedded payment form' })",
+          "headingLevel": 1,
+          "requiresBranchOpen": false,
+          "_attributes": [
+            "aria-level"
+          ],
+          "_attributeValues": {
+            "aria-level": "1"
+          },
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "main",
+              "name": "Embedded payment form"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          }
+        },
+        {
+          "id": "f1.form:payment-details",
+          "kind": "landmark",
+          "role": "form",
+          "name": "Payment details",
+          "selector": "getByRole('form', { name: 'Payment details' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "main",
+              "name": "Embedded payment form"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          }
+        },
+        {
+          "id": "f1.textbox:card-number",
+          "kind": "formField",
+          "role": "textbox",
+          "name": "Card number",
+          "selector": "getByRole('textbox', { name: 'Card number' })",
+          "requiresBranchOpen": false,
+          "_value": "4242 4242 4242 4242",
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "form",
+              "name": "Payment details"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              },
+              {
+                "role": "form",
+                "name": "Payment details"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          },
+          "_rect": {
+            "x": 18,
+            "y": 139,
+            "width": 189,
+            "height": 31
+          },
+          "_htmlTag": "input",
+          "_inputType": "text",
+          "_nativeHtmlControl": "input",
+          "_autocomplete": "cc-number"
+        },
+        {
+          "id": "f1.textbox:expiration-date",
+          "kind": "formField",
+          "role": "textbox",
+          "name": "Expiration date",
+          "selector": "getByRole('textbox', { name: 'Expiration date' })",
+          "requiresBranchOpen": false,
+          "_value": "12/30",
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "form",
+              "name": "Payment details"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              },
+              {
+                "role": "form",
+                "name": "Payment details"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          },
+          "_rect": {
+            "x": 18,
+            "y": 230,
+            "width": 189,
+            "height": 31
+          },
+          "_htmlTag": "input",
+          "_inputType": "text",
+          "_nativeHtmlControl": "input",
+          "_autocomplete": "cc-exp"
+        },
+        {
+          "id": "f1.combobox:billing-country",
+          "kind": "formField",
+          "role": "combobox",
+          "name": "Billing country",
+          "selector": "getByRole('combobox', { name: 'Billing country' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "form",
+              "name": "Payment details"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              },
+              {
+                "role": "form",
+                "name": "Payment details"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          },
+          "_rect": {
+            "x": 18,
+            "y": 321,
+            "width": 119,
+            "height": 31
+          },
+          "_htmlTag": "select",
+          "_nativeHtmlControl": "select",
+          "_attributeValues": {
+            "aria-expanded": "false"
+          },
+          "_attributes": [
+            "aria-expanded"
+          ]
+        },
+        {
+          "id": "f1.button:pay-now",
+          "kind": "button",
+          "role": "button",
+          "name": "Pay now",
+          "selector": "getByRole('button', { name: 'Pay now' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "form",
+              "name": "Payment details"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              },
+              {
+                "role": "form",
+                "name": "Payment details"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          },
+          "_rect": {
+            "x": 18,
+            "y": 364,
+            "width": 71,
+            "height": 31
+          }
+        },
+        {
+          "id": "f1.button:remember-card",
+          "kind": "button",
+          "role": "button",
+          "name": "Remember card",
+          "selector": "getByRole('button', { name: 'Remember card' })",
+          "requiresBranchOpen": false,
+          "_atTree": {
+            "depth": 3,
+            "parent": {
+              "role": "form",
+              "name": "Payment details"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              },
+              {
+                "role": "form",
+                "name": "Payment details"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          },
+          "_attributeValues": {
+            "aria-pressed": "false"
+          },
+          "_attributes": [
+            "aria-pressed"
+          ],
+          "_rect": {
+            "x": 18,
+            "y": 407,
+            "width": 116,
+            "height": 31
+          }
+        },
+        {
+          "id": "f1.status-9",
+          "kind": "statusMessage",
+          "role": "status",
+          "name": "",
+          "selector": "getByRole('status').nth(8)",
+          "requiresBranchOpen": false,
+          "_value": "Payment frame ready.",
+          "_atTree": {
+            "depth": 2,
+            "parent": {
+              "role": "main",
+              "name": "Embedded payment form"
+            },
+            "ancestors": [
+              {
+                "role": "document"
+              },
+              {
+                "role": "main",
+                "name": "Embedded payment form"
+              }
+            ]
+          },
+          "_frame": {
+            "url": "tactual-fixture://fixtures/calibration-oopif-child.html",
+            "name": "checkout-frame",
+            "source": "ariaSnapshot",
+            "ownerRect": {
+              "x": 24,
+              "y": 375,
+              "width": 764,
+              "height": 364
+            }
+          }
+        }
+      ],
+      "timestamp": 1781454972126,
+      "provenance": "scripted"
+    }
+  ],
+  "findings": [
+    {
+      "targetId": "banner-1",
+      "selector": "header",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 87,
+        "reachability": 90,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 1,
+        "overall": 92
+      },
+      "severity": "strong",
+      "actionType": "pattern-review",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextItem: banner"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "previousItem: banner"
+        ],
+        [
+          "groupEntry: Parent navigation",
+          "previousItem: OOPIF Calibration Parent",
+          "previousItem: banner"
+        ]
+      ],
+      "penalties": [
+        "Interop risk: banner: Minor: some AT don't announce banner landmark by default"
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.7,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.7
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.7
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.status-9",
+      "selector": "getByRole('status').nth(8)",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 89,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 95
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Save parent account",
+        "nextButton: Pay now",
+        "nextItem: Remember card",
+        "nextItem: status"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now",
+          "nextItem: Remember card",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame",
+          "previousItem: Save parent account",
+          "nextButton: Pay now",
+          "nextItem: Remember card",
+          "... (1 more steps)"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now",
+          "... (2 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:parent-form",
+      "selector": "getByRole('link', { name: 'Parent form' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 91,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 96
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Parent form"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Parent navigation",
+          "nextItem: Parent form"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextItem: Parent navigation",
+          "nextItem: Parent form"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Parent navigation",
+          "nextItem: Parent form"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "link:embedded-checkout",
+      "selector": "getByRole('link', { name: 'Embedded checkout' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 95,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 97
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Embedded checkout"
+      ],
+      "alternatePaths": [
+        [
+          "groupEntry: Parent navigation",
+          "nextLandmark: main",
+          "previousItem: Embedded checkout"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextItem: Parent navigation",
+          "nextLandmark: main",
+          "previousItem: Embedded checkout"
+        ],
+        [
+          "nextHeading: Parent account controls",
+          "previousItem: Parent account controls",
+          "previousItem: main",
+          "previousItem: Embedded checkout"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "main-6",
+      "selector": "main",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 94,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Parent navigation",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextItem: Parent navigation",
+          "nextLandmark: main"
+        ],
+        [
+          "nextHeading: Parent account controls",
+          "previousItem: Parent account controls",
+          "previousItem: main"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "button:save-parent-account",
+      "selector": "getByRole('button', { name: 'Save parent account' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Save parent account"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame",
+          "previousItem: Save parent account"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.textbox:card-number",
+      "selector": "getByRole('textbox', { name: 'Card number' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 94,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Card number"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextFormField: Card number"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form",
+          "nextItem: Payment details",
+          "nextItem: Card number"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextFormField: Card number"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.combobox:billing-country",
+      "selector": "getByRole('combobox', { name: 'Billing country' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 92,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "actionType": "code-fix",
+      "bestPath": [
+        "previousItem: Save parent account",
+        "nextButton: Pay now",
+        "previousItem: Billing country"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now",
+          "previousItem: Billing country"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame",
+          "previousItem: Save parent account",
+          "nextButton: Pay now",
+          "previousItem: Billing country"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [
+        "Cross-AT divergence (HIGH confidence for native <select>, MEDIUM for ARIA combobox): VoiceOver announces this combobox as 'popup button' with state implicit in the role text, while NVDA/JAWS announce 'combo box, expanded/collapsed' explicitly. Verify with real testing if this control is on a critical path."
+      ],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.button:remember-card",
+      "selector": "getByRole('button', { name: 'Remember card' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 92,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 98
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Save parent account",
+        "nextButton: Pay now",
+        "nextItem: Remember card"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now",
+          "nextItem: Remember card"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame",
+          "previousItem: Save parent account",
+          "nextButton: Pay now",
+          "nextItem: Remember card"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "textbox:parent-email",
+      "selector": "getByRole('textbox', { name: 'Parent email' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 96,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Parent email"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame",
+          "previousItem: Save parent account",
+          "previousItem: Parent email"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.textbox:expiration-date",
+      "selector": "getByRole('textbox', { name: 'Expiration date' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "nextItem: Card number",
+        "nextItem: Expiration date"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextFormField: Card number",
+          "nextItem: Expiration date"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form",
+          "nextItem: Payment details",
+          "nextItem: Card number",
+          "nextItem: Expiration date"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextFormField: Card number",
+          "... (1 more steps)"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.button:pay-now",
+      "selector": "getByRole('button', { name: 'Pay now' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 95,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 99
+      },
+      "severity": "strong",
+      "bestPath": [
+        "previousItem: Save parent account",
+        "nextButton: Pay now"
+      ],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now"
+        ],
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame",
+          "previousItem: Save parent account",
+          "nextButton: Pay now"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextItem: Parent email",
+          "nextItem: Save parent account",
+          "nextButton: Pay now"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:oopif-calibration-parent",
+      "selector": "getByRole('heading', { name: 'OOPIF Calibration Parent' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: OOPIF Calibration Parent"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: OOPIF Calibration Parent"
+        ],
+        [
+          "groupEntry: Parent navigation",
+          "previousItem: OOPIF Calibration Parent"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "navigation:parent-navigation",
+      "selector": "getByRole('navigation', { name: 'Parent navigation' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "groupEntry: Parent navigation"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextItem: Parent navigation"
+        ],
+        [
+          "nextItem: banner",
+          "nextLandmark: Parent navigation"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:parent-account-controls",
+      "selector": "getByRole('region', { name: 'Parent account controls' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls",
+          "previousItem: Parent account controls"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "previousItem: Parent account controls"
+        ],
+        [
+          "groupEntry: Parent navigation",
+          "nextLandmark: main",
+          "nextItem: Parent account controls"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:parent-account-controls",
+      "selector": "getByRole('heading', { name: 'Parent account controls' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Parent account controls"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls"
+        ],
+        [
+          "nextItem: banner",
+          "nextItem: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "region:cross-origin-checkout-frame",
+      "selector": "getByRole('region', { name: 'Cross-origin checkout frame' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame"
+        ],
+        [
+          "nextHeading: Parent account controls",
+          "previousItem: Parent account controls",
+          "nextLandmark: Cross-origin checkout frame"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame",
+          "previousItem: Cross-origin checkout frame"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "heading:cross-origin-checkout-frame",
+      "selector": "getByRole('heading', { name: 'Cross-origin checkout frame' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Cross-origin checkout frame"
+        ],
+        [
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.main:embedded-payment-form",
+      "selector": "getByRole('main', { name: 'Embedded payment form' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "nextItem: Embedded payment form"
+        ],
+        [
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame",
+          "nextItem: Embedded payment form"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame",
+          "nextItem: Embedded payment form"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.heading:embedded-payment-form",
+      "selector": "getByRole('heading', { name: 'Embedded payment form' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form"
+        ],
+        [
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    },
+    {
+      "targetId": "f1.form:payment-details",
+      "selector": "getByRole('form', { name: 'Payment details' })",
+      "profile": "nvda-desktop-v0",
+      "scores": {
+        "discoverability": 100,
+        "reachability": 100,
+        "operability": 100,
+        "recovery": 100,
+        "interopRisk": 0,
+        "overall": 100
+      },
+      "severity": "strong",
+      "bestPath": [],
+      "alternatePaths": [
+        [
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form",
+          "nextItem: Payment details"
+        ],
+        [
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form",
+          "nextItem: Payment details"
+        ],
+        [
+          "nextHeading: OOPIF Calibration Parent",
+          "nextHeading: Parent account controls",
+          "nextHeading: Cross-origin checkout frame",
+          "nextHeading: Embedded payment form",
+          "nextItem: Payment details"
+        ]
+      ],
+      "penalties": [],
+      "suggestedFixes": [],
+      "confidence": 0.8,
+      "evidence": [
+        {
+          "kind": "measured",
+          "source": "playwright-accessibility-tree",
+          "description": "Target role, name, and structural position came from the browser accessibility snapshot.",
+          "confidence": 1
+        },
+        {
+          "kind": "modeled",
+          "source": "navigation-graph",
+          "description": "Best path and navigation cost were computed from captured targets and AT profile action weights.",
+          "confidence": 0.8
+        },
+        {
+          "kind": "heuristic",
+          "source": "tactual-scoring-rules",
+          "description": "Scores, severity, action type, penalties, and fixes were derived from Tactual scoring heuristics.",
+          "confidence": 0.8
+        }
+      ],
+      "evidenceSummary": {
+        "measured": 1,
+        "validated": 0,
+        "modeled": 1,
+        "heuristic": 1
+      }
+    }
+  ],
+  "diagnostics": [
+    {
+      "level": "warning",
+      "code": "no-skip-link",
+      "message": "No skip-to-content link found. Keyboard and screen-reader users must Tab through all navigation elements to reach the main content. A skip link is the single most impactful fix for navigation cost. Concrete savings: a skip link would bypass 2 controls (22% of page interactive targets).",
+      "affectedCount": 2,
+      "totalCount": 9
+    },
+    {
+      "level": "info",
+      "code": "no-contentinfo-landmark",
+      "message": "No <footer> / contentinfo landmark found. Adding <footer> helps screen-reader users locate site-wide links."
+    },
+    {
+      "level": "info",
+      "code": "structural-summary",
+      "message": "Structural overview: 4 headings · landmarks: main, banner, navigation · missing: contentinfo · skip link: no · 21 total targets"
+    },
+    {
+      "level": "warning",
+      "code": "missing-autocomplete",
+      "message": "1 form field of standard input types lack a useful autocomplete attribute (or use autocomplete=\"off\"): email \"Parent email\". Password managers and SR autofill rely on autocomplete tokens (e.g. autocomplete=\"current-password\", autocomplete=\"email\"); without them, users re-type values they shouldn't have to.",
+      "affectedCount": 1
+    },
+    {
+      "level": "warning",
+      "code": "color-blindness-contrast-fail",
+      "message": "2 text elements lose contrast under simulated color-vision deficiency (tritanopia: 2). Examples (tritanopia): a \"Parent form\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1); a \"Embedded checkout\" — 9.4:1 normal → 2.44:1 tritanopia (needs 4.5:1). Approximately 8% of male and 0.5% of female users have a CVD; choose color combinations whose contrast survives the deuteranopia/protanopia/tritanopia transforms or rely on luminance + non-color cues.",
+      "affectedCount": 2
+    },
+    {
+      "level": "info",
+      "code": "frames-descended",
+      "message": "Iframe descent: captured 1 iframe (tactual-fixture://fixtures/calibration-oopif-child.html)."
+    }
+  ],
+  "metadata": {
+    "version": "0.5.0",
+    "profile": "nvda-desktop-v0",
+    "duration": 10,
+    "stateCount": 1,
+    "targetCount": 21,
+    "findingCount": 21,
+    "edgeCount": 102
+  }
+}

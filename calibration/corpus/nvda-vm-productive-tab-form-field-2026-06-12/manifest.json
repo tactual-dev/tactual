@@ -1,0 +1,66 @@
+{
+  "schema": "tactual-calibration-corpus-manifest@1",
+  "label": "nvda-vm-productive-tab-form-field-2026-06-12",
+  "importedAt": "2026-06-13T17:31:27.806Z",
+  "dataset": "dataset.json",
+  "analysesDir": "../analyses",
+  "cases": [
+    {
+      "name": "good-tab",
+      "fixture": "fixtures/good-page.html",
+      "mode": "tab",
+      "status": "passed",
+      "plannedTargets": 8,
+      "matchedTargets": 5,
+      "missingTargets": 3,
+      "unmatchedSpeechBlocks": 7,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html"
+    },
+    {
+      "name": "mapper-form-field",
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "mode": "form-field",
+      "status": "passed",
+      "plannedTargets": 8,
+      "matchedTargets": 8,
+      "missingTargets": 0,
+      "unmatchedSpeechBlocks": 18,
+      "evidenceUsable": true,
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html"
+    }
+  ],
+  "importedAnalyses": [
+    {
+      "fixture": "fixtures/good-page.html",
+      "canonicalUrl": "tactual-fixture://fixtures/good-page.html",
+      "analysis": "../analyses/fixtures-good-page.analysis.full.json"
+    },
+    {
+      "fixture": "fixtures/calibration-at-mapper-lab.html",
+      "canonicalUrl": "tactual-fixture://fixtures/calibration-at-mapper-lab.html",
+      "analysis": "../analyses/fixtures-calibration-at-mapper-lab.analysis.full.json"
+    }
+  ],
+  "importedEvidence": [
+    {
+      "evidence": "evidence/good-tab/sequence-plan.json"
+    },
+    {
+      "evidence": "evidence/mapper-form-field/sequence-plan.json"
+    }
+  ],
+  "totals": {
+    "cases": 2,
+    "passed": 2,
+    "failed": 0,
+    "weak": 0,
+    "harnessBlocked": 0,
+    "ingestedCases": 2,
+    "plannedTargets": 16,
+    "matchedTargets": 13,
+    "missingTargets": 3,
+    "unmatchedSpeechBlocks": 25
+  },
+  "scoringSignals": []
+}

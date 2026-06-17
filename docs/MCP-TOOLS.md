@@ -1,6 +1,6 @@
 # MCP Tools Reference
 
-Tactual's MCP server exposes 8 tools for AI-assisted accessibility analysis. Start the server with `npx tactual-mcp` (stdio) or `npx tactual-mcp --http` (HTTP).
+Tactual's MCP server exposes 9 tools for AI-assisted accessibility analysis. Start the server with `npx tactual-mcp` (stdio) or `npx tactual-mcp --http` (HTTP).
 
 ## analyze_url
 
@@ -41,11 +41,18 @@ Analyze a web page for screen-reader navigation cost. Returns scored findings sh
 | `includeStates`     | boolean  | no       | `false`                    | Include captured states for passing to `trace_path`                                                                                                                                                                                                                                                                                                                                                                                            |
 | `storageState`      | string   | no       |                            | Path to Playwright storageState JSON (from `save_auth`)                                                                                                                                                                                                                                                                                                                                                                                        |
 | `checkVisibility`   | boolean  | no       |                            | Run per-icon contrast sampling across profile-declared `(colorScheme × forcedColors)` modes. `undefined` defers to the profile default (desktop AT profiles declare the full matrix; mobile/generic do not). `true` forces enable, `false` forces disable. Adds ~50–200ms per declared mode per page. Emits `Icon invisible in <mode>` / `Low icon contrast in <mode>` / `Author-set SVG fill in <mode>` penalties depending on contrast tier. |
+| `detectRoutes`      | boolean  | no       | `false`                    | Record SPA route changes (`history.pushState`, `replaceState`, `popstate`, `hashchange`) that fire during analysis.                                                                                                                                                                                                                                                                                                                           |
+| `descendFrames`     | boolean  | no       | `false`                    | Descend into child iframes during capture, capped at 20 frames, and append frame targets with frame-URL attribution. Same-origin frames use Playwright snapshots; Chromium can recover many inaccessible cross-origin OOPIF trees via CDP.                                                                                                                                                                                                        |
+| `autoScroll`        | boolean  | no       | `false`                    | Scroll before capture so lazy or infinite-scroll content materializes. Capped at 20 scrolls / 30s.                                                                                                                                                                                                                                                                                                                                             |
+| `dismissBanners`    | boolean  | no       | `false`                    | Best-effort dismissal of cookie/consent/GDPR banners. Clicks safe accept buttons and skips Decline/Manage/Customize.                                                                                                                                                                                                                                                                                                                          |
+| `probeHover`        | boolean  | no       | `false`                    | Hover likely triggers to surface hover-only popups or tooltips with no attribute hint. Adds roughly 7-8s.                                                                                                                                                                                                                                                                                                                                      |
+| `walkTabOrder`      | boolean  | no       | `false`                    | Press Tab up to 30 times and record the focused-element sequence for focus-order and focus-trap diagnostics.                                                                                                                                                                                                                                                                                                                                   |
+| `diffViewports`     | boolean  | no       | `false`                    | Compare desktop (1280x800) and mobile (375x667) captures to catch targets, landmarks, or headings hidden at one viewport. Adds roughly 3-5s.                                                                                                                                                                                                                                                                                                  |
 
 **Returns** (varies by format):
 
 - `sarif`: SARIF 2.1.0 document with results as Code Scanning findings
-- `json`: summarized `{ targets, findings[], diagnostics, metadata, summary, states[] }` (findings capped by `maxFindings`; states only with `includeStates`). Findings include evidence summaries when measured, validated, modeled, or heuristic evidence is available.
+- `json`: summarized stats, severity counts, diagnostics, grouped issues, remediation candidates, and worst findings (capped by `maxFindings`; states only with `includeStates`). Findings include evidence summaries when measured, validated, modeled, or heuristic evidence is available.
 - `summaryOnly`: `{ url, profile, stats, severityCounts, diagnostics, topIssues[] }`
 
 **Example:**
@@ -56,7 +63,7 @@ Analyze a web page for screen-reader navigation cost. Returns scored findings sh
 
 ## validate_url
 
-Validate Tactual's predicted paths against a virtual screen reader. Runs `analyze_url` internally, then drives `@guidepup/virtual-screen-reader` over the captured DOM to check reachability + actual step count. Returns per-target `{ reachable, actualSteps, accuracy }` plus a mean accuracy across all validated targets. Closer to 1.0 means Tactual's predictions match this virtual-screen-reader validation run, not a guarantee of full real-AT fidelity.
+Validate Tactual's predicted paths against a virtual screen reader. Runs `analyze_url` internally, then drives `@guidepup/virtual-screen-reader` over the captured DOM to check reachability + virtual step count. Returns per-target `{ reachable, actualSteps, accuracy }` plus a mean accuracy across all validated targets. Closer to 1.0 means Tactual's predictions match this virtual-screen-reader validation run, not a guarantee of full real-AT fidelity.
 
 Useful for calibrating Tactual's profile weights, detecting pages with structural patterns the analyzer doesn't model, and closing the predicted-vs-validated loop in MCP workflows.
 
@@ -71,7 +78,11 @@ Useful for calibrating Tactual's profile weights, detecting pages with structura
 | `channel`    | string  | no       |                   | Browser channel: `chrome`, `chrome-beta`, `msedge`                                                                       |
 | `stealth`    | boolean | no       | `false`           | Apply anti-bot-detection defaults                                                                                        |
 
-**Requires (optional deps):** `jsdom` + `@guidepup/virtual-screen-reader`. Install with `npm install jsdom @guidepup/virtual-screen-reader` in your project. The tool returns a clear install message if missing.
+**Requires optional deps:** `jsdom` + `@guidepup/virtual-screen-reader`. They are installed by a normal `npm install tactual`; if you installed with optional dependencies omitted, run `npm install jsdom @guidepup/virtual-screen-reader` in your project. The tool returns a clear install message if missing.
+
+MCP URL-taking tools accept `http:` and `https:` URLs. The CLI still accepts
+`file:` URLs for local fixtures, but MCP blocks them to avoid exposing local
+files through agent-controlled browser navigation.
 
 **Returns** `{ url, profile, strategy, totalValidated, reachable, unreachable, meanAccuracy, results: [{ targetId, predictedCost, actualSteps, reachable, accuracy, ... }] }`.
 
@@ -79,6 +90,39 @@ Useful for calibrating Tactual's profile weights, detecting pages with structura
 
 ```json
 { "url": "https://react.dev", "maxTargets": 10, "strategy": "semantic" }
+```
+
+## calibration_report
+
+Run a calibration dataset against saved full Tactual analysis JSON. This is the
+agent-facing equivalent of `tactual calibration-report`: it returns structured
+`scoringSignals`, per-target calibration errors, announcement drift, and
+recommendations. JSON is the default because agents usually need to inspect the
+fields directly; use markdown for human review output.
+
+File inputs are read-only and must resolve inside the current working directory.
+
+| Parameter       | Type     | Required | Default | Description                                                       |
+| --------------- | -------- | -------- | ------- | ----------------------------------------------------------------- |
+| `datasetPath`   | string   | yes      |         | Calibration dataset JSON path                                     |
+| `analysisPaths` | string[] | no       |         | Full analysis JSON files produced by `analyze_url` / `analyze-url` |
+| `analysisDir`   | string   | no       |         | Directory containing full analysis JSON files                     |
+| `allowMissing`  | boolean  | no       | `false` | Allow observations whose URLs have no matching analysis JSON       |
+| `format`        | enum     | no       | `json`  | `json` or `markdown`                                              |
+
+**Returns:** `CalibrationReport` JSON by default, including
+`scoringSignals`, `announcementResults`, aggregate bias metrics, and
+recommendations. Fails by default when a dataset URL lacks a matching analysis
+file so calibration does not silently compare against the wrong run.
+
+**Example:**
+
+```json
+{
+  "datasetPath": "calibration/nvda-vm.json",
+  "analysisDir": "calibration/analyses",
+  "format": "json"
+}
 ```
 
 ## trace_path
@@ -238,6 +282,24 @@ Analyze multiple pages in one call with site-level aggregation. Use for site tri
 // Then: analyze with storageState
 { "tool": "analyze_url", "args": { "url": "https://app.com/dashboard", "storageState": "tactual-auth.json" } }
 ```
+
+**Calibration scoring review:**
+
+```json
+{
+  "tool": "calibration_report",
+  "args": {
+    "datasetPath": "calibration/nvda-vm.json",
+    "analysisDir": "calibration/analyses",
+    "format": "json"
+  }
+}
+```
+
+Start with `scoringSignals`: `confirmed` supports regression confidence,
+`review` needs repeated evidence before tuning weights, `observed-only` should
+remain target-specific evidence, and `blocked` means the harness needs repair
+before scoring conclusions.
 
 **Site triage then drill down:**
 

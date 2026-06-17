@@ -1,0 +1,114 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T22:15:53.308Z",
+  "url": "tactual-fixture://fixtures/good-page.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "heading",
+  "navigation": {
+    "keyName": "h",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "23",
+      "a3"
+    ],
+    "description": "NVDA browse-mode next-heading quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 5,
+  "targetCount": 5,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "heading",
+      "stateId": "state-eca40ef650c1",
+      "id": "heading:good-example-store",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Good Example Store",
+      "selector": "getByRole('heading', { name: 'Good Example Store' })",
+      "expectedAnnouncement": "Good Example Store, heading, level 1",
+      "expectedTokens": [
+        "good example store",
+        "heading",
+        "level 1"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "heading",
+      "stateId": "state-eca40ef650c1",
+      "id": "heading:featured-products",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Featured Products",
+      "selector": "getByRole('heading', { name: 'Featured Products' })",
+      "expectedAnnouncement": "Featured Products, heading, level 2",
+      "expectedTokens": [
+        "featured products",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "heading",
+      "stateId": "state-eca40ef650c1",
+      "id": "heading:widget-a",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Widget A",
+      "selector": "getByRole('heading', { name: 'Widget A' })",
+      "expectedAnnouncement": "Widget A, heading, level 3",
+      "expectedTokens": [
+        "widget a",
+        "heading",
+        "level 3"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "heading",
+      "stateId": "state-eca40ef650c1",
+      "id": "heading:widget-b",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Widget B",
+      "selector": "getByRole('heading', { name: 'Widget B' })",
+      "expectedAnnouncement": "Widget B, heading, level 3",
+      "expectedTokens": [
+        "widget b",
+        "heading",
+        "level 3"
+      ]
+    },
+    {
+      "index": 5,
+      "mode": "heading",
+      "stateId": "state-eca40ef650c1",
+      "id": "heading:search-products",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Search Products",
+      "selector": "getByRole('heading', { name: 'Search Products' })",
+      "expectedAnnouncement": "Search Products, heading, level 2",
+      "expectedTokens": [
+        "search products",
+        "heading",
+        "level 2"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

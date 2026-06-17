@@ -1,0 +1,79 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-13T23:10:11.240Z",
+  "url": "tactual-fixture://fixtures/good-page.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "button",
+  "navigation": {
+    "keyName": "b",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "30",
+      "b0"
+    ],
+    "description": "NVDA browse-mode next-button quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 3,
+  "targetCount": 3,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "button",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:add-to-cart",
+      "kind": "button",
+      "role": "button",
+      "name": "Add to Cart",
+      "selector": "getByRole('button', { name: 'Add to Cart' })",
+      "expectedAnnouncement": "Add to Cart, button",
+      "expectedTokens": [
+        "add to cart",
+        "button"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "button",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:add-to-cart-2",
+      "kind": "button",
+      "role": "button",
+      "name": "Add to Cart",
+      "selector": "getByRole('button', { name: 'Add to Cart' })",
+      "expectedAnnouncement": "Add to Cart, button",
+      "expectedTokens": [
+        "add to cart",
+        "button"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "button",
+      "stateId": "state-eca40ef650c1",
+      "id": "button:search",
+      "kind": "button",
+      "role": "button",
+      "name": "Search",
+      "selector": "getByRole('button', { name: 'Search' })",
+      "expectedAnnouncement": "Search, button",
+      "expectedTokens": [
+        "search",
+        "button"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

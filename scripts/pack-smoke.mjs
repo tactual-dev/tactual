@@ -36,8 +36,11 @@ try {
     smokeFile,
     `
       import { listProfiles, getProfile, formatReport } from "tactual";
+      import * as playwrightSurface from "tactual/playwright";
+      import { captureState } from "tactual/playwright";
       import { createMcpServer } from "tactual/mcp";
       import { validateFindings } from "tactual/validation";
+      import { runCalibration, formatCalibrationReport } from "tactual/calibration";
 
       const profiles = listProfiles();
       if (!profiles.includes("generic-mobile-web-sr-v0")) {
@@ -49,11 +52,20 @@ try {
       if (typeof formatReport !== "function") {
         throw new Error("formatReport export missing");
       }
+      if (typeof captureState !== "function") {
+        throw new Error("playwright export missing");
+      }
+      if ("probeDomInvader" in playwrightSurface || "probeDomInvaderTaint" in playwrightSurface || "evoExplore" in playwrightSurface) {
+        throw new Error("experimental security/crawler helpers leaked into tactual/playwright public export");
+      }
       if (!createMcpServer()) {
         throw new Error("MCP server export did not create a server");
       }
       if (typeof validateFindings !== "function") {
         throw new Error("validation export missing");
+      }
+      if (typeof runCalibration !== "function" || typeof formatCalibrationReport !== "function") {
+        throw new Error("calibration export missing");
       }
     `,
     "utf-8",
@@ -65,6 +77,10 @@ try {
   const cliVersion = run(node, [cliPath, "--version"], { cwd: projectDir }).trim();
   if (cliVersion !== pkg.version) {
     throw new Error(`CLI version ${cliVersion} did not match package ${pkg.version}`);
+  }
+  const topHelp = run(node, [cliPath, "--help"], { cwd: projectDir });
+  if (!topHelp.includes("calibration-report")) {
+    throw new Error("Installed CLI help is missing calibration-report command");
   }
   const cliHelp = run(node, [cliPath, "analyze-url", "--help"], { cwd: projectDir });
   const expectedAnalyzeFlags = [

@@ -1,0 +1,79 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T16:33:39.265Z",
+  "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "form-field",
+  "navigation": {
+    "keyName": "f",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "21",
+      "a1"
+    ],
+    "description": "NVDA browse-mode next-form-field quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 4,
+  "targetCount": 3,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "form-field",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "button:open-orders-route",
+      "kind": "button",
+      "role": "button",
+      "name": "Open orders route",
+      "selector": "getByRole('button', { name: 'Open orders route' })",
+      "expectedAnnouncement": "Open orders route, button",
+      "expectedTokens": [
+        "open orders route",
+        "button"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "form-field",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "button:open-settings-route",
+      "kind": "button",
+      "role": "button",
+      "name": "Open settings route",
+      "selector": "getByRole('button', { name: 'Open settings route' })",
+      "expectedAnnouncement": "Open settings route, button",
+      "expectedTokens": [
+        "open settings route",
+        "button"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "form-field",
+      "stateId": "state-80c10f0ec0c5",
+      "id": "searchbox:global-search",
+      "kind": "formField",
+      "role": "searchbox",
+      "name": "Global search",
+      "selector": "getByRole('searchbox', { name: 'Global search' })",
+      "expectedAnnouncement": "Global search, edit",
+      "expectedTokens": [
+        "global search",
+        "edit"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

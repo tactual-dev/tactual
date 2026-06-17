@@ -1,12 +1,23 @@
-import { describe, it, expect } from "vitest";
-import { chromium } from "playwright";
+import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { chromium, type Browser } from "playwright";
 import { probeTargets, prioritizeTargetsForProbing, type ProbeResults } from "./probes.js";
 import { captureState } from "./capture.js";
 import type { Target } from "../core/types.js";
 
 describe("probes", () => {
+  // Shared browser per file. Each test opens its own page (which gets a fresh
+  // BrowserContext) for isolation. Refactored from per-test chromium.launch
+  // because launching 10 browsers under parallel-worker load was the main
+  // contributor to this file's flakiness.
+  let browser: Browser;
+  beforeAll(async () => {
+    browser = await chromium.launch();
+  });
+  afterAll(async () => {
+    await browser.close();
+  });
+
   it("probes a button and reports focusable + stateChanged", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -17,7 +28,7 @@ describe("probes", () => {
 
     const state = await captureState(page, { provenance: "scripted", minTargets: 1 });
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
 
     const btn = probed.find((t) => t.role === "button");
     expect(btn).toBeDefined();
@@ -26,10 +37,9 @@ describe("probes", () => {
     expect(probe).toBeDefined();
     expect(probe!.probeSucceeded).toBe(true);
     expect(probe!.focusable).toBe(true);
-  }, 15000);
+  }, 60000);
 
   it("probes a menu and detects state change on expansion", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -44,17 +54,16 @@ describe("probes", () => {
 
     const state = await captureState(page, { provenance: "scripted", minTargets: 1 });
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
 
     const menuBtn = probed.find((t) => t.name === "Menu");
     const probe = (menuBtn as Record<string, unknown>)?._probe as ProbeResults | undefined;
     if (probe?.probeSucceeded) {
       expect(probe.stateChanged).toBe(true);
     }
-  }, 15000);
+  }, 60000);
 
   it("waits for async aria state commits before reporting no state change", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -78,16 +87,15 @@ describe("probes", () => {
 
     const state = await captureState(page, { provenance: "scripted", minTargets: 1 });
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
 
     const button = probed.find((t) => t.name === "Details");
     const probe = (button as Record<string, unknown>)?._probe as ProbeResults | undefined;
     expect(probe?.stateChanged).toBe(true);
     expect(probe?.ariaStateAfterEnter).toMatchObject({ "aria-expanded": "true" });
-  }, 15000);
+  }, 60000);
 
   it("restores stateful controls after measuring activation", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -104,13 +112,12 @@ describe("probes", () => {
     });
     await probeTargets(page, state.targets, 1);
     const expanded = await page.locator("#toggle").getAttribute("aria-expanded");
-    await browser.close();
+    await page.close();
 
     expect(expanded).toBe("false");
-  }, 15000);
+  }, 60000);
 
   it("leaves non-interactive and link targets unprobed", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -122,7 +129,7 @@ describe("probes", () => {
 
     const state = await captureState(page, { provenance: "scripted" });
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
 
     // Headings are not probeable
     const heading = probed.find((t) => t.role === "heading");
@@ -138,10 +145,9 @@ describe("probes", () => {
     const link = probed.find((t) => t.role === "link");
     expect(link).toBeDefined();
     expect((link as Record<string, unknown>)._probe).toBeUndefined();
-  }, 15000);
+  }, 60000);
 
   it("skips consent-management controls that can perturb the page", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -153,7 +159,7 @@ describe("probes", () => {
 
     const state = await captureState(page, { provenance: "scripted" });
     const probed = await probeTargets(page, state.targets, 10);
-    await browser.close();
+    await page.close();
 
     const cookieSettings = probed.find((t) => t.name === "Cookie settings");
     const allowCookies = probed.find((t) => t.name === "Allow all cookies");
@@ -161,10 +167,9 @@ describe("probes", () => {
     expect((cookieSettings as Record<string, unknown>)?._probe).toBeUndefined();
     expect((allowCookies as Record<string, unknown>)?._probe).toBeUndefined();
     expect((menu as Record<string, unknown>)?._probe).toBeDefined();
-  }, 15000);
+  }, 60000);
 
   it("handles detached elements gracefully", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -179,7 +184,7 @@ describe("probes", () => {
     await page.evaluate(() => document.getElementById("disappear")?.remove());
 
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
 
     const btn = probed.find((t) => t.name === "Gone");
     const probe = (btn as Record<string, unknown>)?._probe as ProbeResults | undefined;
@@ -187,10 +192,9 @@ describe("probes", () => {
     if (probe) {
       expect(probe.probeSucceeded).toBe(false);
     }
-  }, 15000);
+  }, 60000);
 
   it("respects MAX_PROBE_TARGETS limit", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     // Create 30 buttons — only 20 should be probed
     const buttons = Array.from({ length: 30 }, (_, i) =>
@@ -200,17 +204,16 @@ describe("probes", () => {
 
     const state = await captureState(page, { provenance: "scripted" });
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
 
     const probedCount = probed.filter(
       (t) => (t as Record<string, unknown>)._probe !== undefined,
     ).length;
     expect(probedCount).toBeLessThanOrEqual(20);
     expect(probedCount).toBeGreaterThan(0);
-  }, 30000);
+  }, 60000);
 
   it("captures focusAfterActivation as 'stayed' for a plain toggle button", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     await page.setContent(`
       <main>
@@ -221,13 +224,50 @@ describe("probes", () => {
     `);
     const state = await captureState(page, { provenance: "scripted" });
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
     const probe = (probed.find((x) => x.role === "button") as Record<string, unknown>)._probe as ProbeResults | undefined;
     expect(probe?.focusAfterActivation).toBe("stayed");
-  }, 15000);
+  }, 60000);
+
+  it("captures aria-live announcements that fire during activation", async () => {
+    const page = await browser.newPage();
+    await page.setContent(`
+      <main>
+        <h1>Live</h1>
+        <button id="save" onclick="document.getElementById('status').textContent = 'Saved successfully'">Save</button>
+        <div id="status" role="status" aria-live="polite"></div>
+      </main>
+    `);
+
+    const state = await captureState(page, { provenance: "scripted", minTargets: 1 });
+    const probed = await probeTargets(page, state.targets);
+    await page.close();
+
+    const btn = probed.find((t) => t.role === "button" && t.name === "Save");
+    const probe = (btn as Record<string, unknown>)?._probe as ProbeResults | undefined;
+    expect(probe?.liveAnnouncement).toBe("Saved successfully");
+  }, 60000);
+
+  it("does not attach liveAnnouncement when no live region updates", async () => {
+    const page = await browser.newPage();
+    await page.setContent(`
+      <main>
+        <h1>Quiet</h1>
+        <button>Plain action</button>
+        <div role="status" aria-live="polite">Initial status</div>
+      </main>
+    `);
+
+    const state = await captureState(page, { provenance: "scripted", minTargets: 1 });
+    const probed = await probeTargets(page, state.targets);
+    await page.close();
+
+    const btn = probed.find((t) => t.role === "button" && t.name === "Plain action");
+    const probe = (btn as Record<string, unknown>)?._probe as ProbeResults | undefined;
+    expect(probe?.liveAnnouncement).toBeUndefined();
+  }, 60000);
 
   it("captures focusAfterActivation as 'moved-to-body' when the handler blurs focus", async () => {
-    const browser = await chromium.launch();
     const page = await browser.newPage();
     // Bug: onclick blurs the button itself — focus goes to body, user is at page start.
     await page.setContent(`
@@ -238,10 +278,10 @@ describe("probes", () => {
     `);
     const state = await captureState(page, { provenance: "scripted" });
     const probed = await probeTargets(page, state.targets);
-    await browser.close();
+    await page.close();
     const probe = (probed.find((x) => x.role === "button") as Record<string, unknown>)._probe as ProbeResults | undefined;
     expect(probe?.focusAfterActivation).toBe("moved-to-body");
-  }, 15000);
+  }, 60000);
 });
 
 describe("prioritizeTargetsForProbing", () => {

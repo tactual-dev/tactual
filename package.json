@@ -1,14 +1,14 @@
 {
   "name": "tactual",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "mcpName": "io.github.tactual-dev/tactual",
   "description": "Screen-reader navigation cost analyzer. Measures how hard it is for AT users to discover, reach, and operate web content.",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "tactual": "./dist/cli/index.js",
-    "tactual-mcp": "./dist/mcp/cli.js"
+    "tactual": "dist/cli/index.js",
+    "tactual-mcp": "dist/mcp/cli.js"
   },
   "exports": {
     ".": {
@@ -45,12 +45,29 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:benchmark": "vitest run src/benchmark/benchmark.test.ts",
+    "test:shard": "node scripts/vitest-shards.mjs",
+    "test:shards": "node scripts/vitest-shards.mjs --all",
+    "test:release": "node scripts/test-release.mjs",
+    "benchmark:known-pages": "node scripts/known-pages-corpus.mjs --build",
     "lint": "eslint src/",
     "format": "prettier --write \"src/**/*.ts\"",
     "typecheck": "tsc --noEmit",
     "calibrate": "node scripts/aria-at-calibrate.mjs",
+    "calibration:corpus": "node scripts/calibration-corpus.mjs audit",
+    "calibration:matrix": "node scripts/calibration-matrix.mjs",
+    "calibration:import-nvda": "node scripts/calibration-corpus.mjs import-nvda-batch",
     "smoke:pack": "node scripts/pack-smoke.mjs",
-    "release:verify": "npm run typecheck && npm run lint && npm test && npm run test:coverage && npm run test:benchmark && npm audit --omit=dev && npm run calibrate && npm run smoke:pack",
+    "smoke:release": "node scripts/release-smoke.mjs",
+    "nvda:vm:observe": "node scripts/nvda-vm-observe.mjs",
+    "nvda:vm:preflight": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/nvda-vm-preflight.ps1",
+    "nvda:vm:sequence": "node scripts/nvda-vm-sequence.mjs",
+    "nvda:vm:guest-bootstrap": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/nvda-vm-guest-bootstrap.ps1",
+    "nvda:vm:batch-calibrate": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/nvda-vm-batch-calibrate.ps1",
+    "nvda:vm:batch-report": "node scripts/nvda-vm-batch-report.mjs",
+    "nvda:vm:host-calibrate": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/nvda-vm-host-calibrate.ps1",
+    "nvda:vm:host-smoke": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/nvda-vm-host-smoke.ps1",
+    "release:drift": "node scripts/release-drift.mjs",
+    "release:verify": "npm run test:release",
     "prepack": "npm run build"
   },
   "publishConfig": {
@@ -74,7 +91,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tactual-dev/tactual.git"
+    "url": "git+https://github.com/tactual-dev/tactual.git"
   },
   "homepage": "https://github.com/tactual-dev/tactual#readme",
   "bugs": {
@@ -83,36 +100,31 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "peerDependencies": {
-    "playwright": ">=1.40.0"
-  },
-  "peerDependenciesMeta": {
-    "playwright": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@guidepup/virtual-screen-reader": "^0.32.1",
-    "@types/jsdom": "^28.0.1",
-    "@types/node": "^25.5.2",
-    "@typescript-eslint/eslint-plugin": "^8.58.2",
-    "@typescript-eslint/parser": "^8.58.2",
-    "@vitest/coverage-v8": "^4.1.4",
-    "eslint": "^10.2.1",
-    "playwright": "^1.59.1",
-    "prettier": "^3.8.3",
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^25.9.3",
+    "@typescript-eslint/eslint-plugin": "^8.61.1",
+    "@typescript-eslint/parser": "^8.61.1",
+    "@vitest/coverage-v8": "^4.1.9",
+    "eslint": "^10.5.0",
+    "prettier": "^3.8.4",
     "tsup": "^8.5.1",
-    "typescript": "^5.7.0",
-    "vitest": "^4.1.2"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "commander": "^14.0.3",
-    "zod": "^4.3.6"
+    "playwright": "^1.61.0",
+    "zod": "^4.4.3"
   },
   "optionalDependencies": {
     "@guidepup/virtual-screen-reader": "^0.32.1",
-    "jsdom": "^29.0.2"
+    "jsdom": "^29.1.1"
+  },
+  "overrides": {
+    "esbuild": "^0.28.1"
   }
 }

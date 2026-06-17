@@ -1,0 +1,121 @@
+{
+  "name": "nvda-vm-spa-button-2026-06-14",
+  "collectedAt": "2026-06-14T05:28:04.138Z",
+  "observations": [
+    {
+      "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+      "profileId": "nvda-desktop-v0",
+      "targetName": "Open orders route",
+      "targetId": "state-80c10f0ec0c5:button:open-orders-route",
+      "targetSelector": "getByRole('button', { name: 'Open orders route' })",
+      "observedAnnouncement": "button, Open orders route",
+      "observedAnnouncementTokens": [
+        "button",
+        "Open orders route"
+      ],
+      "announcementSource": "nvda-vm",
+      "atVersion": "NVDA 2026.1.1",
+      "browser": "Microsoft Edge (guest)",
+      "testerId": "vm-nvda-scripted",
+      "timestamp": "2026-06-14T05:28:03.787Z",
+      "announcementNotes": "nvda-vm full 1 button:open-orders-route; mode=button; speechLine=154; matched=open orders route|button; source=scripted-sequence",
+      "actualStepsToReach": 1,
+      "strategyUsed": "button",
+      "requiredStrategySwitch": false,
+      "knewTargetExisted": true,
+      "timeToDiscoverSeconds": 1,
+      "discoveryMethod": "scripted-button-sequence",
+      "couldOperate": true,
+      "operabilityNotes": "Scripted VM sequence confirmed reachability and announcement; activation was not exercised.",
+      "couldRecover": true,
+      "recoverySteps": 0,
+      "difficultyRating": 1,
+      "observationSource": "nvda-vm-scripted",
+      "observationUse": {
+        "reachability": true,
+        "announcement": true,
+        "discoverability": "proxy",
+        "severity": "proxy",
+        "operability": false,
+        "recovery": false,
+        "notes": "Derived from deterministic NVDA quick-navigation sequence. Use for reachability/action-cost calibration before subjective score-weight tuning."
+      }
+    },
+    {
+      "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+      "profileId": "nvda-desktop-v0",
+      "targetName": "Open settings route",
+      "targetId": "state-80c10f0ec0c5:button:open-settings-route",
+      "targetSelector": "getByRole('button', { name: 'Open settings route' })",
+      "observedAnnouncement": "button, Open settings route",
+      "observedAnnouncementTokens": [
+        "button",
+        "Open settings route"
+      ],
+      "announcementSource": "nvda-vm",
+      "atVersion": "NVDA 2026.1.1",
+      "browser": "Microsoft Edge (guest)",
+      "testerId": "vm-nvda-scripted",
+      "timestamp": "2026-06-14T05:28:03.787Z",
+      "announcementNotes": "nvda-vm full 2 button:open-settings-route; mode=button; speechLine=156; matched=open settings route|button; source=scripted-sequence",
+      "actualStepsToReach": 2,
+      "strategyUsed": "button",
+      "requiredStrategySwitch": false,
+      "knewTargetExisted": true,
+      "timeToDiscoverSeconds": 2,
+      "discoveryMethod": "scripted-button-sequence",
+      "couldOperate": true,
+      "operabilityNotes": "Scripted VM sequence confirmed reachability and announcement; activation was not exercised.",
+      "couldRecover": true,
+      "recoverySteps": 0,
+      "difficultyRating": 1,
+      "observationSource": "nvda-vm-scripted",
+      "observationUse": {
+        "reachability": true,
+        "announcement": true,
+        "discoverability": "proxy",
+        "severity": "proxy",
+        "operability": false,
+        "recovery": false,
+        "notes": "Derived from deterministic NVDA quick-navigation sequence. Use for reachability/action-cost calibration before subjective score-weight tuning."
+      }
+    }
+  ],
+  "announcementObservations": [
+    {
+      "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+      "profileId": "nvda-desktop-v0",
+      "targetName": "Open orders route",
+      "targetId": "state-80c10f0ec0c5:button:open-orders-route",
+      "targetSelector": "getByRole('button', { name: 'Open orders route' })",
+      "announcementAt": "nvda",
+      "observedAnnouncement": "button, Open orders route",
+      "announcementSource": "nvda-vm",
+      "atVersion": "NVDA 2026.1.1",
+      "browser": "Microsoft Edge (guest)",
+      "testerId": "vm-nvda",
+      "announcementNotes": "nvda-vm 1 button:open-orders-route; mode=button; speechLine=154; matched=open orders route|button",
+      "timestamp": "2026-06-14T05:28:04.136Z"
+    },
+    {
+      "url": "tactual-fixture://fixtures/calibration-spa-route-lab.html",
+      "profileId": "nvda-desktop-v0",
+      "targetName": "Open settings route",
+      "targetId": "state-80c10f0ec0c5:button:open-settings-route",
+      "targetSelector": "getByRole('button', { name: 'Open settings route' })",
+      "announcementAt": "nvda",
+      "observedAnnouncement": "button, Open settings route",
+      "announcementSource": "nvda-vm",
+      "atVersion": "NVDA 2026.1.1",
+      "browser": "Microsoft Edge (guest)",
+      "testerId": "vm-nvda",
+      "announcementNotes": "nvda-vm 2 button:open-settings-route; mode=button; speechLine=156; matched=open settings route|button",
+      "timestamp": "2026-06-14T05:28:04.339Z"
+    }
+  ],
+  "corpusMetadata": {
+    "schema": "tactual-calibration-corpus-dataset@1",
+    "importedAt": "2026-06-14T05:35:28.761Z",
+    "transientUrlsRewritten": true
+  }
+}

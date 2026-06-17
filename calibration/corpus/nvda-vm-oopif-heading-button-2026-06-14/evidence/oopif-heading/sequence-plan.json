@@ -1,0 +1,98 @@
+{
+  "schema": "tactual-nvda-vm-sequence-plan@1",
+  "createdAt": "2026-06-14T09:31:24.422Z",
+  "url": "tactual-fixture://fixtures/calibration-oopif-parent.html",
+  "profile": "nvda-desktop-v0",
+  "mode": "heading",
+  "navigation": {
+    "keyName": "h",
+    "preludeScancodes": [
+      "01",
+      "81",
+      "1d",
+      "e0",
+      "47",
+      "e0",
+      "c7",
+      "9d"
+    ],
+    "scancodes": [
+      "23",
+      "a3"
+    ],
+    "description": "NVDA browse-mode next-heading quick navigation."
+  },
+  "state": "first",
+  "maxSteps": 5,
+  "targetCount": 4,
+  "targets": [
+    {
+      "index": 1,
+      "mode": "heading",
+      "stateId": "state-4af961a9dd6c",
+      "id": "heading:oopif-calibration-parent",
+      "kind": "heading",
+      "role": "heading",
+      "name": "OOPIF Calibration Parent",
+      "selector": "getByRole('heading', { name: 'OOPIF Calibration Parent' })",
+      "expectedAnnouncement": "OOPIF Calibration Parent, heading, level 1",
+      "expectedTokens": [
+        "oopif calibration parent",
+        "heading",
+        "level 1"
+      ]
+    },
+    {
+      "index": 2,
+      "mode": "heading",
+      "stateId": "state-4af961a9dd6c",
+      "id": "heading:parent-account-controls",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Parent account controls",
+      "selector": "getByRole('heading', { name: 'Parent account controls' })",
+      "expectedAnnouncement": "Parent account controls, heading, level 2",
+      "expectedTokens": [
+        "parent account controls",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 3,
+      "mode": "heading",
+      "stateId": "state-4af961a9dd6c",
+      "id": "heading:cross-origin-checkout-frame",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Cross-origin checkout frame",
+      "selector": "getByRole('heading', { name: 'Cross-origin checkout frame' })",
+      "expectedAnnouncement": "Cross-origin checkout frame, heading, level 2",
+      "expectedTokens": [
+        "cross origin checkout frame",
+        "heading",
+        "level 2"
+      ]
+    },
+    {
+      "index": 4,
+      "mode": "heading",
+      "stateId": "state-4af961a9dd6c",
+      "id": "f1.heading:embedded-payment-form",
+      "kind": "heading",
+      "role": "heading",
+      "name": "Embedded payment form",
+      "selector": "getByRole('heading', { name: 'Embedded payment form' })",
+      "expectedAnnouncement": "Embedded payment form, heading, level 1",
+      "expectedTokens": [
+        "embedded payment form",
+        "heading",
+        "level 1"
+      ]
+    }
+  ],
+  "notes": [
+    "Observed speech is version-, browser-, mode-, verbosity-, and page-state-specific.",
+    "Unmatched speech can indicate browser chrome chatter, contextual landmark output, timing noise, or content NVDA reached that Tactual did not model."
+  ]
+}

@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildGraph } from "./graph-builder.js";
 import { genericMobileWebSrV0 } from "../profiles/generic-mobile.js";
+import { nvdaDesktopV0 } from "../profiles/nvda-desktop.js";
 import type { PageState } from "./types.js";
 
 function makeState(overrides: Partial<PageState> = {}): PageState {
@@ -83,6 +84,197 @@ describe("buildGraph", () => {
       .filter((e) => e.action === "nextControl");
     expect(controlEdges.length).toBe(1);
     expect(controlEdges[0].to).toBe("s1:t-link-2");
+  });
+
+  it("generates richer AT mode edges for forms, buttons, landmarks, rotor, and touch exploration", () => {
+    const baseTargets = makeState().targets;
+    const state = makeState({
+      viewport: { width: 800, height: 600 },
+      targets: [
+        ...baseTargets.map((target) =>
+          target.id === "t-button-1"
+            ? {
+                ...target,
+                _rect: { x: 20, y: 30, width: 120, height: 40 },
+              } as PageState["targets"][number]
+            : target,
+        ),
+        { id: "t-formfield-2", kind: "formField", role: "textbox", name: "Phone", requiresBranchOpen: false },
+        { id: "t-button-2", kind: "button", role: "button", name: "Cancel", requiresBranchOpen: false },
+      ],
+    });
+    const graph = buildGraph([state], genericMobileWebSrV0);
+
+    expect(graph.edgesOfAction("nextFormField").some((edge) => edge.to === "s1:t-formfield-2")).toBe(true);
+    expect(graph.edgesOfAction("nextButton").some((edge) => edge.to === "s1:t-button-2")).toBe(true);
+    expect(graph.edgesOfAction("nextLandmark").length).toBeGreaterThan(0);
+    expect(graph.getOutEdges("s1").some((e) => e.action === "rotor")).toBe(true);
+    expect(graph.getOutEdges("s1").some((e) => e.action === "formsMode")).toBe(true);
+    expect(graph.getOutEdges("s1").some((e) => e.action === "touchExplore" && e.to === "s1:t-button-1")).toBe(true);
+  });
+
+  it("models NVDA form-field quick-nav over the calibrated target subset", () => {
+    const state = makeState({
+      targets: [
+        {
+          id: "save",
+          kind: "button",
+          role: "button",
+          name: "Save draft",
+          requiresBranchOpen: false,
+        } as PageState["targets"][number],
+        {
+          id: "native-email",
+          kind: "formField",
+          role: "textbox",
+          name: "Email",
+          requiresBranchOpen: false,
+          _nativeHtmlControl: "input",
+          _inputType: "email",
+        } as PageState["targets"][number],
+        {
+          id: "aria-combo",
+          kind: "formField",
+          role: "combobox",
+          name: "Assignee",
+          requiresBranchOpen: false,
+          _nativeHtmlControl: "input",
+          _inputType: "text",
+        } as PageState["targets"][number],
+        {
+          id: "range",
+          kind: "formField",
+          role: "slider",
+          name: "Priority",
+          requiresBranchOpen: false,
+          _nativeHtmlControl: "input",
+          _inputType: "range",
+        } as PageState["targets"][number],
+        {
+          id: "spin",
+          kind: "formField",
+          role: "spinbutton",
+          name: "Seats",
+          requiresBranchOpen: false,
+        } as PageState["targets"][number],
+        {
+          id: "actions",
+          kind: "button",
+          role: "button",
+          name: "Actions",
+          requiresBranchOpen: false,
+        } as PageState["targets"][number],
+        {
+          id: "native-select",
+          kind: "formField",
+          role: "combobox",
+          name: "Plan",
+          requiresBranchOpen: false,
+          _nativeHtmlControl: "select",
+        } as PageState["targets"][number],
+        {
+          id: "frame-text",
+          kind: "formField",
+          role: "textbox",
+          name: "Card number",
+          requiresBranchOpen: false,
+          _nativeHtmlControl: "input",
+          _inputType: "text",
+          _frame: { url: "https://example.com/frame", source: "ariaSnapshot" },
+        } as PageState["targets"][number],
+      ],
+    });
+    const graph = buildGraph([state], nvdaDesktopV0);
+
+    const quickNavEdges = graph.edgesOfAction("nextFormField");
+    expect(quickNavEdges.map((edge) => [edge.from, edge.to])).toEqual([
+      ["s1:save", "s1:native-email"],
+      ["s1:native-email", "s1:aria-combo"],
+      ["s1:aria-combo", "s1:spin"],
+      ["s1:spin", "s1:actions"],
+      ["s1:actions", "s1:native-select"],
+      ["s1:native-select", "s1:frame-text"],
+    ]);
+    expect(graph.getOutEdges("s1").some((edge) => edge.action === "formsMode" && edge.to === "s1:aria-combo")).toBe(true);
+    expect(graph.getOutEdges("s1").some((edge) => edge.action === "formsMode" && edge.to === "s1:range")).toBe(true);
+    expect(graph.getOutEdges("s1").some((edge) => edge.action === "formsMode" && edge.to === "s1:frame-text")).toBe(true);
+  });
+
+  it("generates relationship edges from ARIA controls metadata", () => {
+    const state = makeState({
+      targets: [
+        {
+          id: "trigger",
+          kind: "button",
+          role: "button",
+          name: "Open settings",
+          requiresBranchOpen: false,
+          _ariaRelationships: {
+            controls: [{ id: "settings", role: "dialog", name: "Settings" }],
+          },
+        } as PageState["targets"][number],
+        {
+          id: "dialog",
+          kind: "dialog",
+          role: "dialog",
+          name: "Settings",
+          requiresBranchOpen: false,
+          _domId: "settings",
+        } as PageState["targets"][number],
+      ],
+    });
+    const graph = buildGraph([state], genericMobileWebSrV0);
+
+    const relationship = graph
+      .getOutEdges("s1:trigger")
+      .find((edge) => edge.action === "relationshipJump");
+    expect(relationship?.to).toBe("s1:dialog");
+  });
+
+  it("generates active-descendant edges from composite owner metadata", () => {
+    const state = makeState({
+      targets: [
+        {
+          id: "combo",
+          kind: "formField",
+          role: "combobox",
+          name: "Assignee",
+          requiresBranchOpen: false,
+          _ariaRelationships: {
+            activeDescendant: { id: "active-assignee", role: "button", name: "Assign to Ada" },
+          },
+        } as PageState["targets"][number],
+        {
+          id: "active",
+          kind: "button",
+          role: "button",
+          name: "Assign to Ada",
+          requiresBranchOpen: false,
+          _domId: "active-assignee",
+        } as PageState["targets"][number],
+      ],
+    });
+    const graph = buildGraph([state], genericMobileWebSrV0);
+
+    const active = graph
+      .getOutEdges("s1:combo")
+      .find((edge) => edge.action === "activeDescendant");
+    expect(active?.to).toBe("s1:active");
+  });
+
+  it("generates composite-widget arrow navigation between adjacent tabs", () => {
+    const state = makeState({
+      targets: [
+        { id: "tab-1", kind: "tab", role: "tab", name: "Details", requiresBranchOpen: false },
+        { id: "tab-2", kind: "tab", role: "tab", name: "Activity", requiresBranchOpen: false },
+      ],
+    });
+    const graph = buildGraph([state], genericMobileWebSrV0);
+
+    const composite = graph
+      .getOutEdges("s1:tab-1")
+      .find((edge) => edge.action === "compositeNavigation");
+    expect(composite?.to).toBe("s1:tab-2");
   });
 
   it("generates heading navigation from state entry", () => {
